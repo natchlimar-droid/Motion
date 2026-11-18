@@ -126,7 +126,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
       <div class="flex-1">
-        <p class="font-bold" data-i18n="https_warning_title">HTTPS Required for Mobile Cameras (ต้องเปิดผ่าน HTTPS)</p>
+        <p class="font-bold" data-i18n="https_warning_title">HTTPS Required for Mobile Cameras</p>
         <p class="text-xs text-slate-900 mt-0.5" data-i18n="https_warning_desc">
           iOS Safari และ Android Chrome ปิดกั้นการใช้กล้องบน HTTP ธรรมดา กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel หรือ Cloudflare Pages)
         </p>
@@ -219,13 +219,11 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <div class="text-xs sm:text-sm">
-          <p class="font-bold text-rose-100" data-i18n="cam_error_title">Camera Access Error / ข้อผิดพลาดกล้อง</p>
+          <p class="font-bold text-rose-100" data-i18n="cam_error_title">Camera Access Error</p>
           <p class="text-xs text-rose-300/90 mt-0.5" id="cameraAlertMsg" data-i18n="cam_error_desc">Please enable camera permission in your browser settings.</p>
         </div>
       </div>
-      <button id="retryCamBtn" class="min-h-touch px-4 py-2 bg-rose-700 hover:bg-rose-600 active:scale-95 text-white rounded-xl text-xs font-bold transition w-full sm:w-auto text-center shrink-0" data-i18n="btn_retry_cam">
-        Retry Camera (ลองใหม่)
-      </button>
+      <button id="retryCamBtn" class="min-h-touch px-4 py-2 bg-rose-700 hover:bg-rose-600 active:scale-95 text-white rounded-xl text-xs font-bold transition w-full sm:w-auto text-center shrink-0" data-i18n="btn_retry_cam">Retry Camera</button>
     </div>
 
     <!-- UPPER SCREENING STAGE (Video & Live Controls) -->
@@ -248,7 +246,7 @@
             <!-- Top angle helper pill -->
             <div id="handPoseGuidancePill" class="px-3.5 py-1.5 rounded-full bg-surface-900/90 backdrop-blur-md border border-slate-700 text-[11px] text-slate-200 flex items-center gap-2 shadow-xl text-center">
               <span id="poseIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-teal-400 shrink-0"></span>
-              <span id="poseGuidanceText" data-i18n="pose_guidance_init">Position hand at ~45° angle (เอียงมือ 45 องศา)</span>
+              <span id="poseGuidanceText" data-i18n="pose_guidance_init">Position hand at ~45° angle in front of camera</span>
             </div>
 
             <!-- Visual 45-degree angle dashed guide box -->
@@ -279,7 +277,7 @@
           <!-- Big Countdown Overlay (3-2-1) -->
           <div id="countdownOverlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md z-30 flex flex-col items-center justify-center p-4">
             <span id="countdownText" class="text-8xl sm:text-9xl font-black text-teal-400 tracking-tighter drop-shadow-2xl animate-bounce">3</span>
-            <span id="countdownSub" class="text-xs sm:text-sm font-semibold text-slate-300 mt-2 uppercase tracking-widest text-center" data-i18n="countdown_ready">Get Ready / เตรียมพร้อม</span>
+            <span id="countdownSub" class="text-xs sm:text-sm font-semibold text-slate-300 mt-2 uppercase tracking-widest text-center" data-i18n="countdown_ready">Get Ready for Assessment</span>
           </div>
 
           <!-- Initial Loading Spinner -->
@@ -321,7 +319,7 @@
               <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <span data-i18n="battery_header">Screening Battery / แบบทดสอบ</span>
+              <span data-i18n="battery_header">Screening Battery / Protocol</span>
             </h2>
             <div class="flex items-center gap-3">
               <!-- Haptic Toggle -->
@@ -342,19 +340,19 @@
           <!-- Protocol Selection Tabs (5 Options: Bilateral, Facial, Full, Tap, Dual) -->
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-surface-950 rounded-xl border border-slate-800 text-xs font-semibold">
             <button id="tabBilateral" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg bg-teal-500 text-slate-950 font-bold transition shadow text-center" data-mode="BILATERAL">
-              <span data-i18n="tab_bilateral">Bilateral</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_bilateral_sub">ตรวจเทียบ 2 ข้าง</span>
+              <span data-i18n="tab_bilateral">Bilateral</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_bilateral_sub">2-Hand Compare</span>
             </button>
             <button id="tabFacial" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="FACIAL">
-              <span data-i18n="tab_facial">Facial & Blink</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_facial_sub">กะพริบตา & รอยยิ้ม</span>
+              <span data-i18n="tab_facial">Facial & Blink</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_facial_sub">Blink & Smile</span>
             </button>
             <button id="tabFull" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="FULL">
-              <span data-i18n="tab_full">Full Battery</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_full_sub">ครบชุด</span>
+              <span data-i18n="tab_full">Full Battery</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_full_sub">Tap + Hold + Dual</span>
             </button>
             <button id="tabModuleA" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="MOD_A">
-              <span data-i18n="tab_tap">15s Tap</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_tap_sub">แตะนิ้ว+สั่น</span>
+              <span data-i18n="tab_tap">15s Tap</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_tap_sub">Tap & Tremor</span>
             </button>
             <button id="tabModuleB" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center col-span-2 sm:col-span-1" data-mode="MOD_B">
-              <span data-i18n="tab_dual">Dual-Task</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_dual_sub">ประสานสองมือ</span>
+              <span data-i18n="tab_dual">Dual-Task</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_dual_sub">Bimanual</span>
             </button>
           </div>
 
@@ -373,12 +371,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span data-i18n="btn_begin_test">Begin Assessment / เริ่มการตรวจ</span>
+              <span data-i18n="btn_begin_test">Begin Assessment</span>
             </button>
 
-            <button id="abortTestBtn" class="hidden min-h-touch w-full mt-2 py-3 px-4 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-semibold tracking-wide uppercase transition text-center" data-i18n="btn_abort_test">
-              Abort Test (ยกเลิกการทดสอบ)
-            </button>
+            <button id="abortTestBtn" class="hidden min-h-touch w-full mt-2 py-3 px-4 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-semibold tracking-wide uppercase transition text-center" data-i18n="btn_abort_test">Abort Test</button>
           </div>
         </div>
 
@@ -804,20 +800,20 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_hn">Patient HN / Identifier (รหัสผู้ป่วย)</label>
+          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_hn">Patient HN / Identifier</label>
           <input type="text" id="inputPatientHN" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:border-teal-400 focus:outline-none" value="DEMO-001">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_age">Age (อายุ - ใช้คำนวณ Z-Score)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_age">Age (Years - for Normative Z-Score)</label>
             <input type="number" id="inputPatientAge" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:border-teal-400 focus:outline-none" value="65">
           </div>
           <div>
             <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_sex">Biological Sex</label>
             <select id="inputPatientSex" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="Male" data-i18n="opt_male">Male (ชาย)</option>
-              <option value="Female" data-i18n="opt_female">Female (หญิง)</option>
+              <option value="Male" data-i18n="opt_male">Male</option>
+              <option value="Female" data-i18n="opt_female">Female</option>
               <option value="Other" data-i18n="opt_other">Other / Unspecified</option>
             </select>
           </div>
@@ -825,32 +821,30 @@
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_testing_hand">Testing Hand (มือที่ทำการตรวจ)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_testing_hand">Testing Hand</label>
             <select id="inputTestingHand" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="Right" data-i18n="opt_right">Right Hand (มือขวา)</option>
-              <option value="Left" data-i18n="opt_left">Left Hand (มือซ้าย)</option>
+              <option value="Right" data-i18n="opt_right">Right Hand</option>
+              <option value="Left" data-i18n="opt_left">Left Hand</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_med_state">Medication State (สถานะยา)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_med_state">Medication State</label>
             <select id="inputMedState" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="ON-Meds" data-i18n="opt_on_meds">ON-State (หลังทานยา)</option>
-              <option value="OFF-Meds" data-i18n="opt_off_meds">OFF-State (ก่อนทานยา / งดยา)</option>
-              <option value="Drug-Naive" data-i18n="opt_drug_naive">Drug-Naïve (ยังไม่เริ่มยา)</option>
+              <option value="ON-Meds" data-i18n="opt_on_meds">ON-State (Optimal Response)</option>
+              <option value="OFF-Meds" data-i18n="opt_off_meds">OFF-State (>12h Withdrawal)</option>
+              <option value="Drug-Naive" data-i18n="opt_drug_naive">Drug-Naïve (Untreated)</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_examiner">Examiner Name (แพทย์ / ผู้ประเมิน)</label>
+          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_examiner">Examiner Name</label>
           <input type="text" id="inputExaminer" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none" value="Dr. Neurologist">
         </div>
       </div>
 
       <div class="pt-2 flex justify-end gap-2">
-        <button id="savePatientBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_profile">
-          Save Profile (บันทึก)
-        </button>
+        <button id="savePatientBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_profile">Save Profile</button>
       </div>
 
     </div>
@@ -882,7 +876,7 @@
 
         <div class="flex items-center gap-2 pt-1">
           <input type="checkbox" id="checkAutoSync" class="rounded bg-surface-950 border-slate-800 text-teal-500 focus:ring-0">
-          <label for="checkAutoSync" class="text-slate-300 font-medium" data-i18n="lbl_auto_sync">Auto-sync upon assessment completion (ส่งข้อมูลทันทีเมื่อตรวจเสร็จ)</label>
+          <label for="checkAutoSync" class="text-slate-300 font-medium" data-i18n="lbl_auto_sync">Auto-sync upon assessment completion</label>
         </div>
 
         <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
@@ -897,9 +891,7 @@
         <button id="testWebhookBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition" data-i18n="btn_test_webhook">
           Test Connection
         </button>
-        <button id="saveWebhookBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_webhook">
-          Save Settings (บันทึก)
-        </button>
+        <button id="saveWebhookBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_webhook">Save Settings</button>
       </div>
 
     </div>
@@ -982,58 +974,60 @@
 
     export const I18N_DICT = {
       th: {
-        https_warning_title: "HTTPS Required for Mobile Cameras (ต้องเปิดผ่าน HTTPS)",
-        https_warning_desc: "iOS Safari และ Android Chrome ปิดกั้นการใช้กล้องบน HTTP ธรรมดา กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel หรือ Cloudflare Pages)",
-        badge_compliance: "MDS-UPDRS COMPLIANT",
-        btn_cloud: "Cloud ซิงก์",
+        https_warning_title: "ต้องเปิดผ่าน HTTPS สำหรับการใช้งานกล้องบนมือถือ",
+        https_warning_desc: "iOS Safari และ Android Chrome ปิดกั้นการเข้าถึงกล้องบนเว็บที่ไม่ปลอดภัย (HTTP) กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel หรือ Cloudflare Pages)",
+        badge_compliance: "มาตรฐาน MDS-UPDRS",
+        btn_cloud: "คลาวด์ซิงก์",
         btn_trends: "แนวโน้ม",
         btn_profile: "ข้อมูลคนไข้",
-        cam_error_title: "Camera Access Error / ข้อผิดพลาดกล้อง",
+        cam_error_title: "ข้อผิดพลาดในการเข้าถึงกล้อง",
         cam_error_desc: "กรุณาเปิดสิทธิ์การเข้าถึงกล้องในหน้าต่างตั้งค่าของเบราว์เซอร์",
-        btn_retry_cam: "Retry Camera (ลองใหม่)",
+        btn_retry_cam: "ลองเปิดกล้องใหม่อีกครั้ง",
         pose_guidance_init: "จัดท่ายกมือทำมุมประมาณ ~45° หน้ากล้อง",
-        target_zone: "กรอบเป้าหมาย",
-        awaiting_hand: "กำลังรอมือเป้าหมาย...",
+        target_zone: "กรอบตรวจจับ",
+        awaiting_hand: "กำลังรอมือเป้าหมายในกรอบ...",
+        awaiting_face: "กำลังตรวจหาใบหน้า...",
+        tracking_face: "ตรวจจับใบหน้าเรียบร้อย",
         live_pinch_lbl: "ระยะกางนิ้ว D_t:",
         front_cam: "กล้องหน้า",
         rear_cam: "กล้องหลัง",
         countdown_ready: "เตรียมพร้อมสำหรับการทดสอบ",
-        loader_init: "กำลังโหลด MediaPipe Vision WASM & AI Models...",
-        loader_privacy: "Edge AI ประมวลผลในหน่วยความจำเครื่อง ไม่มีการส่งภาพวิดีโอออกภายนอก",
+        loader_init: "กำลังโหลดโมเดล AI Vision WASM & WebAssembly...",
+        loader_privacy: "Edge AI ประมวลผลในเครื่องแบบเรียลไทม์ ไม่มีการบันทึกหรือส่งวิดีโอออกภายนอก",
         telem_palm: "ขนาดฝ่ามือ (2D)",
         telem_hand: "มือที่ทำการตรวจ",
         telem_quality: "คุณภาพสัญญาณ",
         telem_mode: "โหมดกล้อง",
-        battery_header: "Screening Battery / แบบทดสอบ",
+        battery_header: "เลือกแบบทดสอบทางคลินิก (Protocol)",
         lbl_sound: "เสียง",
-        tab_bilateral: "Bilateral",
-        tab_bilateral_sub: "ตรวจเทียบ 2 ข้าง",
-        tab_facial: "Facial & Blink",
-        tab_facial_sub: "กะพริบตา & ยิ้ม",
-        tab_full: "Full Battery",
-        tab_full_sub: "แตะ+สั่น+สองมือ",
-        tab_tap: "15s Tap",
-        tab_tap_sub: "แตะนิ้ว+สั่น",
-        tab_dual: "Dual-Task",
-        tab_dual_sub: "ประสานสองมือ",
-        proto_bilateral_title: "Bilateral Asymmetry Protocol (ตรวจเปรียบเทียบมือซ้าย-ขวา)",
+        tab_bilateral: "ตรวจเทียบสองข้าง",
+        tab_bilateral_sub: "Bilateral 2 ข้าง",
+        tab_facial: "ใบหน้าและกะพริบตา",
+        tab_facial_sub: "Blink & Smile",
+        tab_full: "ชุดตรวจสมบูรณ์",
+        tab_full_sub: "ครบทุกด่าน",
+        tab_tap: "แตะนิ้ว 15 วินาที",
+        tab_tap_sub: "แตะนิ้ว + การสั่น",
+        tab_dual: "ประสานสองมือ",
+        tab_dual_sub: "Dual-Task",
+        proto_bilateral_title: "การตรวจเปรียบเทียบความไม่สมมาตรของมือซ้าย-ขวา (Bilateral Protocol)",
         proto_bilateral_body: "ตรวจมือขวา 15 วินาที → พักสลับมือ 3 วินาที → ตรวจมือซ้าย 15 วินาที เพื่อคำนวณ Bilateral Asymmetry Index (%) สำหรับประเมินความไม่สมมาตรของพาร์กินสันระยะแรก",
-        proto_facial_title: "Facial Expressivity & Blink Rate Screening (การแสดงออกทางใบหน้า)",
+        proto_facial_title: "การคัดกรองการแสดงออกทางใบหน้าและอัตราการกะพริบตา (Facial & Blink)",
         proto_facial_body: "ตรวจจับอัตราการกะพริบตาธรรมชาติ (Spontaneous Blink Rate) 10 วินาที และความสมมาตรของรอยยิ้ม (Smile Symmetry Index) เพื่อคัดกรองภาวะ Facial Masking / Hypomimia",
-        proto_full_title: "Full Comprehensive Protocol (การทดสอบครบชุด)",
+        proto_full_title: "ชุดการทดสอบสมบูรณ์ (Full Comprehensive Protocol)",
         proto_full_body: "1. Module A: แตะนิ้วรัวเร็ว 15 วินาที + กางมือนิ่งๆ 5 วินาที\n2. Module B: การประสานสองมือสลับ 5 ชุดทดสอบ",
-        proto_tap_title: "Module A Only: Rapid Finger Tapping & Tremor (แตะนิ้ว & การสั่น)",
+        proto_tap_title: "การทดสอบแตะนิ้วรัวเร็วและการสั่น (Rapid Finger Tapping & Tremor)",
         proto_tap_body: "ประเมินความช้า (Bradykinesia), ความถี่แตะนิ้ว (Hz), จังหวะสะดุด (CV%), และการล้าของแอมพลิจูด (Fatigue Decay)",
-        proto_dual_title: "Module B Only: Dual-Task Bimanual Coordination (การประสานสองมือ)",
+        proto_dual_title: "การทดสอบประสานสองมือสลับตามโจทย์ (Dual-Task Bimanual Coordination)",
         proto_dual_body: "5 ชุดทดสอบสุ่มสองมือพร้อมกัน (Open Palm, Fist, Peace, Pinch) เพื่อวัดความเร็วการตอบสนองสมองและข้อผิดพลาด (Commission Errors)",
-        btn_begin_test: "Begin Assessment / เริ่มการตรวจ",
-        btn_abort_test: "Abort Test (ยกเลิกการทดสอบ)",
+        btn_begin_test: "เริ่มทำการทดสอบ",
+        btn_abort_test: "ยกเลิกการทดสอบ",
         stage_monitor: "จอสังเกตการณ์การตรวจ",
         ready_to_start: "พร้อมเริ่มการตรวจ",
         time_remaining: "เวลาที่เหลือ",
         live_taps: "จำนวนครั้งที่แตะได้",
         live_cadence: "ความถี่จังหวะสด",
-        aperture_gauge: "Pinch Aperture (D_t) / ระยะกางนิ้ว 2D",
+        aperture_gauge: "ระยะกางนิ้วสัมพัทธ์ (D_t 2D)",
         trial: "รอบที่",
         errors: "ข้อผิดพลาด:",
         screen_left: "ซีกซ้ายของจอ",
@@ -1042,17 +1036,17 @@
         blink_count_lbl: "จำนวนครั้งที่กะพริบตา",
         smile_symmetry_lbl: "ความสมมาตรรอยยิ้ม",
         facial_instrux: "มองตรงมาที่กล้อง กะพริบตาตามธรรมชาติ จากนั้นยิ้มกว้างค้างไว้ 3 วินาที",
-        tremor_hold_title: "Tremor Postural Hold / วัดการสั่น",
+        tremor_hold_title: "การตรวจวัดการสั่นขณะเหยียดมือ (Postural Tremor Hold)",
         tremor_hold_desc: "กางมือค้างนิ่งๆ หน้ากล้องเพื่อวิเคราะห์ความถี่การสั่น 4-6 Hz",
-        res_dashboard_title: "Quantitative Motor & Cognitive Assessment Profile",
-        btn_sync_cloud: "ส่งข้อมูลเข้า Cloud",
+        res_dashboard_title: "รายงานผลการประเมินการเคลื่อนไหวและการทำงานของระบบประสาท",
+        btn_sync_cloud: "ส่งข้อมูลเข้าคลาวด์",
         btn_print_pdf: "พิมพ์ / บันทึกรายงาน PDF",
         btn_csv: "ส่งออกไฟล์ CSV",
-        btn_share_fhir: "แชร์ FHIR / JSON",
-        btn_new_test: "เริ่มตรวจเคสใหม่",
-        mds_rating_header: "MDS-UPDRS Part III Item 3.4 Automated Rating (ปรับเกณฑ์ตามอายุ)",
-        patient_profile_hdr: "ข้อมูลประวัติผู้ป่วย",
-        bilateral_asym_hdr: "การวิเคราะห์ความไม่สมมาตรสองข้าง (Bilateral Asymmetry)",
+        btn_share_fhir: "แชร์ JSON / FHIR",
+        btn_new_test: "เริ่มการตรวจเคสใหม่",
+        mds_rating_header: "การจัดเกรดอัตโนมัติตามมาตรฐาน MDS-UPDRS Part III Item 3.4 (ปรับเกณฑ์ตามช่วงวัย)",
+        patient_profile_hdr: "ข้อมูลประวัติผู้รับการตรวจ",
+        bilateral_asym_hdr: "การวิเคราะห์ความไม่สมมาตรระหว่างสองข้าง (Bilateral Asymmetry)",
         asym_index_lbl: "ดัชนีความไม่สมมาตร:",
         right_hand: "มือขวา",
         left_hand: "มือซ้าย",
@@ -1066,18 +1060,18 @@
         kpi_cv: "ความแปรปรวนจังหวะ (CV)",
         kpi_tremor: "การสั่น (4-6 Hz)",
         kpi_composite: "คะแนนรวม (0-100)",
-        snapshots_title: "Key-Frame Clinical Evidence Snapshots (ภาพหลักฐานจุดวิกฤต)",
-        snapshots_sub: "ภาพถ่ายหลักฐานจังหวะกางนิ้วกว้างสุด เปรียบเทียบกับจังหวะล้าหรือหยุดชะงักช่วงท้าย เพื่อให้แพทย์พิจารณา",
-        snap_max_title: "1. Max Amplitude Peak (กางกว้างสุด)",
-        snap_fatigue_title: "2. Late Decrement / Fatigue (ล้าช่วงท้าย)",
+        snapshots_title: "ภาพถ่ายหลักฐานจุดวิกฤตทางคลินิก (Key-Frame Evidence Snapshots)",
+        snapshots_sub: "ภาพถ่ายเปรียบเทียบจังหวะกางนิ้วกว้างสุด กับจังหวะล้าหรือหยุดชะงักช่วงท้าย เพื่อให้แพทย์พิจารณา",
+        snap_max_title: "1. จังหวะกางนิ้วกว้างสุด (Max Amplitude)",
+        snap_fatigue_title: "2. จังหวะล้าช่วงท้าย (Late Decrement / Fatigue)",
         snap_waiting: "ยังไม่มีภาพบันทึก",
-        chart_wave_title: "2D Normalized Pinch Waveform & Amplitude Decay",
-        chart_wave_sub: "สัญญาณการกางนิ้ว D_t ตลอด 15 วินาที พร้อมเส้นแนวโน้มถดถอย OLS แสดงการล้า",
-        chart_radar_title: "5-Domain Neuromotor Radar Profile",
-        chart_radar_sub: "เปรียบเทียบคะแนน 5 มิติเทียบกับค่ามาตรฐานอ้างอิงตามกลุ่มอายุ",
-        chart_tremor_title: "Postural Tremor Power Spectrum (0.5 – 12.0 Hz)",
-        chart_tremor_sub: "การกระจายกำลังสเปกตรัม (Uniform Resampled PSD) ตรวจจับย่าน 4-6 Hz",
-        table_bimanual_title: "Bimanual Coordination Trial Telemetry",
+        chart_wave_title: "สัญญาณคลื่นการกางนิ้วและแนวโน้มการล้า (2D Normalized Waveform)",
+        chart_wave_sub: "สัญญาณระยะกางนิ้ว D_t ตลอด 15 วินาที พร้อมจุดยอดการแตะนิ้วและเส้นแนวโน้มถดถอย OLS แสดงอัตราการล้า",
+        chart_radar_title: "แผนภูมิเรดาร์วิเคราะห์ 5 มิติ (5-Domain Neuromotor Radar)",
+        chart_radar_sub: "เปรียบเทียบคะแนน 5 มิติกับเกณฑ์ปกติมาตรฐานอ้างอิงตามช่วงวัยของผู้รับการตรวจ",
+        chart_tremor_title: "สเปกตรัมกำลังการสั่น (Postural Tremor Power Spectrum 0.5 – 12.0 Hz)",
+        chart_tremor_sub: "การกระจายกำลังสเปกตรัม (Uniform Resampled PSD 2D) ตรวจจับย่านความถี่ 4-6 Hz ของอาการสั่นพาร์กินสัน",
+        table_bimanual_title: "บันทึกผลการทดสอบการประสานสองมือ (Bimanual Coordination)",
         table_bimanual_badge: "5 ชุดการทดสอบ",
         col_trial: "ชุดที่",
         col_left_target: "เป้าหมายมือซ้าย",
@@ -1086,37 +1080,37 @@
         col_err: "ข้อผิดพลาด",
         no_bimanual_data: "ยังไม่มีข้อมูลการทดสอบสองมือ",
         print_physician_notes: "บันทึกและความเห็นแพทย์ผู้ตรวจ:",
-        print_disclaimer: "รายงานนี้เป็นการวัดผลเชิงปริมาณเบื้องต้นเพื่อสนับสนุนการตรวจรักษา ควรแปลผลร่วมกับการซักประวัติตรวจร่างกายทางระบบประสาท",
+        print_disclaimer: "รายงานนี้เป็นการวัดผลเชิงปริมาณเบื้องต้นเพื่อสนับสนุนการตรวจรักษา ควรแปลผลร่วมกับการซักประวัติตรวจร่างกายทางระบบประสาทอย่างครบถ้วน",
         print_qualification: "แพทย์ผู้ตรวจ / ผู้เชี่ยวชาญด้านความผิดปกติของการเคลื่อนไหว",
-        modal_patient_title: "Patient Profile & Clinical Setup",
-        modal_patient_sub: "ข้อมูลผู้รับการตรวจและสถานะการรักษา",
-        lbl_hn: "Patient HN / Identifier (รหัสผู้ป่วย)",
-        lbl_age: "Age (อายุ - ใช้ปรับเกณฑ์อ้างอิง Z-Score)",
-        lbl_sex: "Biological Sex (เพศกำเนิด)",
-        opt_male: "Male (ชาย)",
-        opt_female: "Female (หญิง)",
-        opt_other: "Other (อื่นๆ / ไม่ระบุ)",
-        lbl_testing_hand: "Testing Hand (มือที่ทำการตรวจ)",
-        opt_right: "Right Hand (มือขวา)",
-        opt_left: "Left Hand (มือซ้าย)",
-        lbl_med_state: "Medication State (สถานะยา)",
-        opt_on_meds: "ON-State (หลังทานยา)",
-        opt_off_meds: "OFF-State (ก่อนทานยา / งดยา)",
+        modal_patient_title: "ข้อมูลผู้รับการตรวจและการตั้งค่าทางคลินิก",
+        modal_patient_sub: "ข้อมูลประชากรศาสตร์และสถานะการรักษา",
+        lbl_hn: "รหัสผู้ป่วย (HN)",
+        lbl_age: "อายุ (ปี - ใช้อ้างอิง Z-Score)",
+        lbl_sex: "เพศกำเนิด",
+        opt_male: "ชาย (Male)",
+        opt_female: "หญิง (Female)",
+        opt_other: "อื่นๆ / ไม่ระบุ (Other)",
+        lbl_testing_hand: "มือที่ทำการตรวจ",
+        opt_right: "มือขวา (Right Hand)",
+        opt_left: "มือซ้าย (Left Hand)",
+        lbl_med_state: "สถานะการได้รับยา",
+        opt_on_meds: "ON-State (ช่วงยาออกฤทธิ์)",
+        opt_off_meds: "OFF-State (ช่วงหมดฤทธิ์ยา/งดยา)",
         opt_drug_naive: "Drug-Naïve (ยังไม่เริ่มยา)",
-        lbl_examiner: "Examiner Name (แพทย์ / ผู้ประเมิน)",
-        btn_save_profile: "Save Profile (บันทึกข้อมูล)",
-        webhook_title: "Cloud & Google Sheets Webhook Sync",
-        webhook_sub: "ระบบส่งข้อมูลเข้าฐานข้อมูลกลางอัตโนมัติ (Zero-Backend Data Pipeline)",
-        lbl_webhook_url: "Google Apps Script Webhook URL / REST Endpoint",
-        webhook_url_hint: "ส่งเฉพาะ JSON Summary (ไม่ส่งภาพวิดีโอ เพื่อความปลอดภัยตามมาตรฐาน PDPA / HIPAA)",
-        lbl_auto_sync: "Auto-sync upon assessment completion (ส่งข้อมูลทันทีเมื่อตรวจเสร็จ)",
+        lbl_examiner: "แพทย์ / ผู้ประเมิน",
+        btn_save_profile: "บันทึกข้อมูลประวัติ",
+        webhook_title: "คลาวด์และกูเกิลชีตเว็บฮุก (Webhook Sync)",
+        webhook_sub: "ส่งข้อมูลผลการตรวจเข้าฐานข้อมูลกลางอัตโนมัติ (Zero-Backend)",
+        lbl_webhook_url: "URL เว็บฮุก Google Apps Script / REST Endpoint",
+        webhook_url_hint: "ส่งเฉพาะข้อมูลสรุปตัวเลข (ไม่ส่งภาพวิดีโอ เพื่อความปลอดภัยตามมาตรฐาน PDPA / HIPAA)",
+        lbl_auto_sync: "ส่งข้อมูลอัตโนมัติทันทีเมื่อตรวจเสร็จสิ้น",
         webhook_howto_title: "💡 วิธีสร้าง Google Sheets Webhook ฟรีใน 1 นาที:",
-        webhook_howto_desc: "เปิด Google Sheets > Extensions > Apps Script > วางโค้ด doPost(e) > Deploy as Web App (เลือก Anyone) > นำ URL มาวางที่นี่",
+        webhook_howto_desc: "เปิด Google Sheets > Extensions > Apps Script > วางโค้ดฟังก์ชัน doPost(e) > Deploy as Web App (เลือก Anyone) > นำ URL มาวางที่นี่",
         btn_test_webhook: "ทดสอบการเชื่อมต่อ",
         btn_save_webhook: "บันทึกการตั้งค่า",
-        history_modal_title: "Longitudinal Motor Trends & History",
-        history_modal_sub: "ประวัติการตรวจและแนวโน้มการตอบสนองต่อการรักษา",
-        hist_chart_title: "Composite Score & Cadence Trajectory",
+        history_modal_title: "แนวโน้มและประวัติการตรวจระยะยาว (Longitudinal Trends)",
+        history_modal_sub: "บันทึกข้อมูลเพื่อติดตามการตอบสนองต่อการรักษาทางคลินิก",
+        hist_chart_title: "กราฟแนวโน้มคะแนนรวมและความถี่การแตะนิ้ว",
         col_hist_date: "วัน / เวลา",
         col_hist_hand: "มือ",
         col_hist_meds: "สถานะยา",
@@ -1124,9 +1118,64 @@
         col_hist_cadence: "ความถี่ (Hz)",
         col_hist_decay: "การล้า (%)",
         col_hist_score: "คะแนน",
-        no_history_data: "ยังไม่มีประวัติการตรวจสำหรับ HN นี้",
+        no_history_data: "ยังไม่มีประวัติการตรวจสำหรับรหัสผู้ป่วย (HN) นี้",
         btn_clear_history: "ล้างประวัติของ HN นี้",
-        btn_close: "ปิดหน้าต่าง"
+        btn_close: "ปิดหน้าต่าง",
+        lbl_age_short: "อายุ",
+        lbl_tested: "ตรวจ",
+        lbl_meds_short: "สถานะยา",
+        pose_face_guide: "จัดตำแหน่งใบหน้าให้อยู่ในกรอบภาพ",
+        pose_face_tracking: "ตรวจพบใบหน้า กะพริบตาตามธรรมชาติ",
+        smile_detected: "ตรวจพบรอยยิ้ม",
+        natural_expression: "สีหน้าปกติ",
+        asym_marked_title: "ความไม่สมมาตรชัดเจน",
+        asym_marked_desc: "ตรวจพบการลดลงของการทำงานของมือข้าง{hand}อย่างมีนัยสำคัญ",
+        asym_mild_title: "ความไม่สมมาตรเล็กน้อย",
+        asym_mild_desc: "พบความแตกต่างของประสิทธิภาพระหว่างมือทั้งสองข้าง",
+        asym_symmetric_title: "สมมาตรปกติ",
+        asym_symmetric_desc: "ประสิทธิภาพการทำงานของมือทั้งสองข้างใกล้เคียงกัน",
+        hypomimia_alert_title: "ข้อสังเกตภาวะ Hypomimia",
+        hypomimia_alert_desc: "อัตราการกะพริบตาธรรมชาติลดลงต่ำกว่าเกณฑ์ (<8 ครั้ง/นาที) ซึ่งสัมพันธ์กับอาการเคลื่อนไหวช้าที่ใบหน้า (Facial Bradykinesia)",
+        hypomimia_normal_desc: "อัตราการกะพริบตาธรรมชาติและความสมมาตรของรอยยิ้มอยู่ในเกณฑ์ปกติ",
+        quality_warning: "คุณภาพสัญญาณการตรวจต่ำ ({ratio}% Valid Tracking - แนะนำให้ตรวจซ้ำ)",
+        valid_tracking_sec: "บันทึกสัญญาณสมบูรณ์ {sec} วินาที",
+        hesitations_lbl: "จังหวะสะดุด/ชะงัก (>1s): {count} ครั้ง",
+        tremor_flagged: "ตรวจพบการสั่นผิดปกติ",
+        tremor_normal: "ปกติ",
+        peak_tremor_lbl: "ยอดความถี่: {freq} Hz",
+        status_normal: "ปกติ / ค่ามาตรฐานอ้างอิง",
+        status_mild: "บกพร่องเล็กน้อย (Mild)",
+        status_marked: "บกพร่องชัดเจน (Marked)",
+        chart_dataset_waveform: "ระยะกางนิ้ว D_t (2D)",
+        chart_dataset_peaks: "ยอดการแตะนิ้ว",
+        chart_dataset_trend: "เส้นแนวโน้มการล้า (OLS)",
+        chart_axis_time: "เวลา (วินาที)",
+        chart_axis_aperture: "ระยะกางนิ้ว (D_t 2D Normalized)",
+        radar_speed: "ความเร็วแตะ (Speed)",
+        radar_rhythm: "จังหวะสม่ำเสมอ (Rhythm)",
+        radar_endurance: "ความทนทาน (Endurance)",
+        radar_stability: "ความนิ่ง (Stability)",
+        radar_coordination: "การประสานมือ (Coordination)",
+        radar_patient_score: "คะแนนของผู้ป่วย",
+        radar_norm: "เกณฑ์ปกติอ้างอิงตามช่วงวัย",
+        chart_axis_tremor_freq: "ความถี่ (Hz) [ย่าน 4-6 Hz อาการสั่นพาร์กินสัน]",
+        chart_axis_tremor_power: "กำลังสเปกตรัม (Power 2D)",
+        hist_dataset_composite: "คะแนนรวม (0-100)",
+        hist_dataset_cadence: "ความถี่แตะนิ้ว (Hz x 20)",
+        countdown_pos_right: "จัดท่ายกมือขวาทำมุม ~45°",
+        countdown_pos_left: "จัดท่ายกมือซ้ายทำมุม ~45°",
+        countdown_pos_face: "มองตรงมาที่กล้องหน้า",
+        countdown_pos_dual: "เตรียมพร้อมยกสองมือสำหรับแบบทดสอบ",
+        stage_tap_title: "แตะนิ้วรัวเร็ว ({hand})",
+        stage_switch_hand: "สลับไปใช้มือซ้าย",
+        stage_dual_title: "การประสานสองมือสลับตามโจทย์",
+        stage_facial_title: "ตรวจอัตราการกะพริบตาและความสมมาตรรอยยิ้ม",
+        stage_completed: "การทดสอบเสร็จสมบูรณ์",
+        move_closer: "ขยับมือเข้าใกล้กล้องอีกนิด",
+        move_back: "ถอยมือห่างกล้องเล็กน้อย",
+        optimal_pos: "ระยะและมุมเหมาะสม (~45°)",
+        position_hand_zone: "ยกมือเป้าหมายในกรอบที่กำหนด",
+        tracking_target_hand: "กำลังตรวจจับ{hand} ({score}%)"
       },
       en: {
         https_warning_title: "HTTPS Required for Mobile Cameras",
@@ -1141,12 +1190,14 @@
         pose_guidance_init: "Position hand at ~45° angle in front of camera",
         target_zone: "TARGET ZONE",
         awaiting_hand: "Awaiting Target Hand...",
+        awaiting_face: "Awaiting Face...",
+        tracking_face: "Face Tracked",
         live_pinch_lbl: "Pinch D_t:",
         front_cam: "Front Cam",
         rear_cam: "Rear Cam",
         countdown_ready: "Get Ready for Assessment",
         loader_init: "Loading MediaPipe Vision WASM & AI Models...",
-        loader_privacy: "Edge AI running in local memory. Zero video uploaded.",
+        loader_privacy: "Edge AI running locally inside browser memory. Zero video uploaded.",
         telem_palm: "Palm Scale (2D)",
         telem_hand: "Testing Hand",
         telem_quality: "Signal Quality",
@@ -1238,7 +1289,7 @@
         modal_patient_title: "Patient Profile & Clinical Setup",
         modal_patient_sub: "Demographic and treatment status parameters",
         lbl_hn: "Patient HN / Identifier",
-        lbl_age: "Age (Used for Age-Stratified Z-Score)",
+        lbl_age: "Age (Years - for Normative Z-Score)",
         lbl_sex: "Biological Sex",
         opt_male: "Male",
         opt_female: "Female",
@@ -1258,7 +1309,7 @@
         webhook_url_hint: "Transmits sanitized JSON summary only (No video data for PDPA/HIPAA compliance)",
         lbl_auto_sync: "Auto-sync upon assessment completion",
         webhook_howto_title: "💡 Free Google Sheets Webhook in 1 minute:",
-        webhook_howto_desc: "Open Google Sheets > Extensions > Apps Script > Paste doPost(e) > Deploy as Web App (Access: Anyone) > Paste URL here.",
+        webhook_howto_desc: "Open Google Sheets > Extensions > Apps Script > Paste script with doPost(e) > Deploy as Web App (Access: Anyone) > Paste URL here.",
         btn_test_webhook: "Test Connection",
         btn_save_webhook: "Save Settings",
         history_modal_title: "Longitudinal Motor Trends & History",
@@ -1273,7 +1324,62 @@
         col_hist_score: "Score",
         no_history_data: "No test history saved yet for this HN.",
         btn_clear_history: "Clear History for this HN",
-        btn_close: "Close"
+        btn_close: "Close",
+        lbl_age_short: "Age",
+        lbl_tested: "Tested",
+        lbl_meds_short: "Meds",
+        pose_face_guide: "Position face within camera frame",
+        pose_face_tracking: "Face detected. Blink naturally",
+        smile_detected: "Smile Detected",
+        natural_expression: "Natural Expression",
+        asym_marked_title: "Marked Asymmetry",
+        asym_marked_desc: "Significant lateralized motor decrement in {hand} hand.",
+        asym_mild_title: "Mild Asymmetry",
+        asym_mild_desc: "Noticeable difference between upper extremities.",
+        asym_symmetric_title: "Symmetric",
+        asym_symmetric_desc: "Symmetrical neuromotor performance between both hands.",
+        hypomimia_alert_title: "Hypomimia Alert",
+        hypomimia_alert_desc: "Decreased spontaneous blink rate (<8 /min), suggestive of facial bradykinesia.",
+        hypomimia_normal_desc: "Normal spontaneous blinking cadence without facial hypomimia.",
+        quality_warning: "Low Tracking Quality ({ratio}% Valid Tracking - Recommend repeating test)",
+        valid_tracking_sec: "{sec}s valid tracking",
+        hesitations_lbl: "Hesitations (>1s): {count}",
+        tremor_flagged: "FLAGGED",
+        tremor_normal: "Normal",
+        peak_tremor_lbl: "Peak: {freq} Hz",
+        status_normal: "Normal / Reference",
+        status_mild: "Mild Impairment",
+        status_marked: "Marked Impairment",
+        chart_dataset_waveform: "Normalized Aperture D_t",
+        chart_dataset_peaks: "Tap Peaks",
+        chart_dataset_trend: "Trendline (Fatigue)",
+        chart_axis_time: "Time (s)",
+        chart_axis_aperture: "Aperture (D_t 2D Normalized)",
+        radar_speed: "Speed",
+        radar_rhythm: "Rhythm CV",
+        radar_endurance: "Endurance",
+        radar_stability: "Stability",
+        radar_coordination: "Coordination",
+        radar_patient_score: "Patient Score",
+        radar_norm: "Age-Adjusted Norm",
+        chart_axis_tremor_freq: "Frequency (Hz) [4-6 Hz Parkinsonian Band]",
+        chart_axis_tremor_power: "Power (2D Norm)",
+        hist_dataset_composite: "Composite Score (0-100)",
+        hist_dataset_cadence: "Cadence (Hz x 20)",
+        countdown_pos_right: "Position Right Hand at ~45°",
+        countdown_pos_left: "Position Left Hand at ~45°",
+        countdown_pos_face: "Look directly into front camera",
+        countdown_pos_dual: "Prepare both hands for Dual-Task",
+        stage_tap_title: "Rapid Finger Tapping ({hand})",
+        stage_switch_hand: "Switch to Left Hand",
+        stage_dual_title: "Dual-Task Bimanual Coordination",
+        stage_facial_title: "Blink Rate & Smile Symmetry Test",
+        stage_completed: "Assessment Completed",
+        move_closer: "Move closer to camera",
+        move_back: "Move hand back slightly",
+        optimal_pos: "Optimal distance & angle at ~45°",
+        position_hand_zone: "Position target hand in zone",
+        tracking_target_hand: "Tracking {hand} ({score}%)"
       }
     };
 
@@ -1969,6 +2075,21 @@
         this.currentLang = this.currentLang === 'th' ? 'en' : 'th';
         localStorage.setItem('neuroscreen_lang', this.currentLang);
         this.applyTranslations();
+
+        // Update Camera Facing label
+        this.dom.cameraFacingLabel.textContent = (this.currentFacingMode === 'user') ? this.t('front_cam') : this.t('rear_cam');
+
+        // Re-render final results and charts in new language if currently visible
+        if (this.state === STATES.RESULT && this.screeningResults) {
+          this.computeAndRenderFinalResults(true);
+        }
+
+        // Re-render longitudinal history modal if open
+        const histModal = document.getElementById('historyModal');
+        if (histModal && !histModal.classList.contains('hidden')) {
+          this.renderLongitudinalHistoryModal();
+        }
+
         this.showToast(this.currentLang === 'th' ? 'สลับเป็นภาษาไทยเรียบร้อย' : 'Switched to English');
       }
 
@@ -2409,9 +2530,11 @@
           this.dom.hudModBContainer.classList.add('hidden');
           this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
-          const handName = this.selectedMode === 'BILATERAL' ? (this.bilateralStage === 'RIGHT' ? 'RIGHT HAND' : 'LEFT HAND') : `${this.patientProfile.testingHand.toUpperCase()} HAND`;
-          this.dom.hudStageLabel.textContent = `MODULE A: TAP TEST (${handName})`;
-          this.dom.hudStageTitle.textContent = `Rapid Finger Tapping (${handName})`;
+          const targetHandStr = this.selectedMode === 'BILATERAL' 
+            ? (this.bilateralStage === 'RIGHT' ? this.t('right_hand') : this.t('left_hand')) 
+            : (this.patientProfile.testingHand.toLowerCase() === 'right' ? this.t('right_hand') : this.t('left_hand'));
+          this.dom.hudStageLabel.textContent = `MODULE A (${targetHandStr})`;
+          this.dom.hudStageTitle.textContent = this.t('stage_tap_title').replace('{hand}', targetHandStr);
         } else if (newState === STATES.MODULE_A_STATIC) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
           this.dom.hudModAContainer.classList.add('hidden');
@@ -2424,7 +2547,7 @@
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
           this.dom.countdownOverlay.classList.remove('hidden');
           this.dom.countdownText.textContent = 'SWITCH';
-          this.dom.countdownSub.textContent = 'Switch to Left Hand (สลับไปใช้มือซ้าย)';
+          this.dom.countdownSub.textContent = this.t('stage_switch_hand');
         } else if (newState === STATES.MODULE_B_BIMANUAL) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
           this.dom.hudModAContainer.classList.add('hidden');
@@ -2432,7 +2555,7 @@
           this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
           this.dom.hudStageLabel.textContent = 'MODULE B: BIMANUAL';
-          this.dom.hudStageTitle.textContent = 'Dual-Task Coordination / สองมือ';
+          this.dom.hudStageTitle.textContent = this.t('stage_dual_title');
         } else if (newState === STATES.MODULE_C_FACIAL) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
           this.dom.countdownOverlay.classList.add('hidden');
@@ -2441,13 +2564,13 @@
           this.dom.hudFacialContainer.classList.remove('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
           this.dom.hudStageLabel.textContent = 'MODULE C: FACIAL & BLINK';
-          this.dom.hudStageTitle.textContent = 'Blink Rate & Smile Symmetry Test';
+          this.dom.hudStageTitle.textContent = this.t('stage_facial_title');
         } else if (newState === STATES.RESULT) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
           this.dom.startTestBtn.classList.remove('hidden');
           this.dom.abortTestBtn.classList.add('hidden');
           this.dom.countdownOverlay.classList.add('hidden');
-          this.dom.hudStageTitle.textContent = 'Assessment Completed';
+          this.dom.hudStageTitle.textContent = this.t('stage_completed');
           this.dom.hudTimer.textContent = 'DONE';
           this.dom.resultsSection.classList.remove('hidden');
           this.releaseWakeLock();
@@ -2462,14 +2585,14 @@
         if (this.selectedMode === 'BILATERAL') {
           this.bilateralStage = 'RIGHT';
           this.bilateralResults = { right: null, left: null };
-          this.startCountdown('Position Right Hand at ~45° (ยกมือขวา)', () => this.startModuleATapping());
+          this.startCountdown(this.t('countdown_pos_right'), () => this.startModuleATapping());
         } else if (this.selectedMode === 'FACIAL') {
-          this.startCountdown('Look directly into front camera (มองหน้าตรง)', () => this.startModuleCFacial());
+          this.startCountdown(this.t('countdown_pos_face'), () => this.startModuleCFacial());
         } else if (this.selectedMode === 'MOD_B') {
-          this.startCountdown('Prepare both hands for Dual-Task (สองมือ)', () => this.startModuleB());
+          this.startCountdown(this.t('countdown_pos_dual'), () => this.startModuleB());
         } else {
-          const handText = `${this.patientProfile.testingHand} Hand`;
-          this.startCountdown(`Position ${handText} at ~45°`, () => this.startModuleATapping());
+          const isRight = (this.patientProfile.testingHand.toLowerCase() === 'right');
+          this.startCountdown(isRight ? this.t('countdown_pos_right') : this.t('countdown_pos_left'), () => this.startModuleATapping());
         }
       }
 
@@ -2770,9 +2893,38 @@
         if (!this.faceLandmarker || this.videoEl.readyState < 2) return;
 
         const results = this.faceLandmarker.detectForVideo(this.videoEl, now);
-        if (!results || !results.faceBlendshapes || results.faceBlendshapes.length === 0) {
+        if (!results) return;
+
+        const W = this.canvasEl.width;
+        const H = this.canvasEl.height;
+        const isMirrored = (this.currentFacingMode === 'user');
+        const mapX = (x) => isMirrored ? ((1 - x) * W) : (x * W);
+
+        // Draw facial key anchor landmarks for user feedback (eyes, nose, mouth)
+        if (results.faceLandmarks && results.faceLandmarks.length > 0) {
+          const landmarks = results.faceLandmarks[0];
+          this.ctx.fillStyle = 'rgba(45, 212, 191, 0.75)';
+          const keyPoints = [1, 33, 133, 362, 263, 61, 291];
+          for (const idx of keyPoints) {
+            const p = landmarks[idx];
+            if (p) {
+              this.ctx.beginPath();
+              this.ctx.arc(mapX(p.x), p.y * H, 2.5, 0, 2 * Math.PI);
+              this.ctx.fill();
+            }
+          }
+        }
+
+        if (!results.faceBlendshapes || results.faceBlendshapes.length === 0) {
+          this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0';
+          this.dom.poseGuidanceText.innerHTML = this.t('pose_face_guide');
+          this.dom.detectedHandLabel.textContent = this.t('awaiting_face');
           return;
         }
+
+        this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-teal-400 shrink-0';
+        this.dom.poseGuidanceText.innerHTML = this.t('pose_face_tracking');
+        this.dom.detectedHandLabel.textContent = this.t('tracking_face');
 
         const categories = results.faceBlendshapes[0].categories;
         const blinkL = categories.find(c => c.categoryName === 'eyeBlinkLeft')?.score || 0;
@@ -2784,9 +2936,11 @@
         const isBlinkingNow = (blinkL > 0.55 || blinkR > 0.55);
         if (isBlinkingNow && !this.modCData.isBlinking) {
           this.modCData.isBlinking = true;
-          this.modCData.blinkCount++;
-          this.dom.liveBlinkCount.textContent = this.modCData.blinkCount;
-          audioHaptics.tapClick();
+          if (this.state === STATES.MODULE_C_FACIAL) {
+            this.modCData.blinkCount++;
+            this.dom.liveBlinkCount.textContent = this.modCData.blinkCount;
+            audioHaptics.tapClick();
+          }
         } else if (!isBlinkingNow && this.modCData.isBlinking) {
           this.modCData.isBlinking = false;
         }
@@ -2796,9 +2950,13 @@
           const maxS = Math.max(smileL, smileR, 0.01);
           const minS = Math.min(smileL, smileR);
           const symIndex = Math.round((minS / maxS) * 100);
-          this.modCData.smileSymmetries.push(symIndex);
+          if (this.state === STATES.MODULE_C_FACIAL) {
+            this.modCData.smileSymmetries.push(symIndex);
+          }
           this.dom.liveSmileSymmetry.textContent = `${symIndex}%`;
-          this.dom.liveFacialState.textContent = 'Smile Detected';
+          this.dom.liveFacialState.textContent = this.t('smile_detected');
+        } else {
+          this.dom.liveFacialState.textContent = this.t('natural_expression');
         }
       }
 
@@ -2891,12 +3049,28 @@
         const H = this.canvasEl.height;
         this.ctx.clearRect(0, 0, W, H);
 
-        // Process Facial Tracking if in Module C
-        if (this.state === STATES.MODULE_C_FACIAL) {
-          this.processFacialFrame(now);
+        // When viewing results, pause vision models entirely to conserve GPU/WebGL memory
+        if (this.state === STATES.RESULT) {
           return;
         }
 
+        // During 3-2-1 countdown or pause, skip vision inference to prevent frame stutter
+        if (this.state === STATES.COUNTDOWN || this.state === STATES.BILATERAL_PAUSE) {
+          return;
+        }
+
+        // STRICT MODEL GATING: Facial vs Hand Mutual Exclusion
+        const isFacialProtocol = (this.selectedMode === 'FACIAL' || this.state === STATES.MODULE_C_FACIAL);
+
+        if (isFacialProtocol) {
+          // Strictly run ONLY faceLandmarker (skip handLandmarker completely)
+          if (this.faceLandmarker) {
+            this.processFacialFrame(now);
+          }
+          return;
+        }
+
+        // Hand Mode: Strictly run ONLY handLandmarker (skip faceLandmarker completely)
         if (!this.handLandmarker) return;
 
         const results = this.handLandmarker.detectForVideo(this.videoEl, now);
@@ -2947,17 +3121,19 @@
           // Update guidance text
           if (palmScale < 0.12) {
             this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
-            this.dom.poseGuidanceText.innerHTML = 'Move closer to camera (ขยับมือเข้าใกล้กล้องอีกนิด)';
+            this.dom.poseGuidanceText.innerHTML = this.t('move_closer');
           } else if (palmScale > 0.45) {
             this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0';
-            this.dom.poseGuidanceText.innerHTML = 'Move hand back slightly (ถอยมือห่างกล้องเล็กน้อย)';
+            this.dom.poseGuidanceText.innerHTML = this.t('move_back');
           } else {
             this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-teal-400 shrink-0';
-            this.dom.poseGuidanceText.innerHTML = 'Optimal distance & angle at <strong class="text-teal-300">~45°</strong> (ระยะและมุมเหมาะสม)';
+            this.dom.poseGuidanceText.innerHTML = this.t('optimal_pos');
           }
 
-          const targetLabel = (this.selectedMode === 'BILATERAL') ? `${this.bilateralStage} Hand` : `${this.patientProfile.testingHand} Hand`;
-          this.dom.detectedHandLabel.textContent = `Tracking ${targetLabel} (${primaryHand.score}%)`;
+          const targetHandStr = (this.selectedMode === 'BILATERAL') 
+            ? (this.bilateralStage === 'RIGHT' ? this.t('right_hand') : this.t('left_hand'))
+            : (this.patientProfile.testingHand.toLowerCase() === 'right' ? this.t('right_hand') : this.t('left_hand'));
+          this.dom.detectedHandLabel.textContent = this.t('tracking_target_hand').replace('{hand}', targetHandStr).replace('{score}', primaryHand.score);
           this.dom.liveDtVal.textContent = filteredD_t.toFixed(2);
           this.dom.gaugeDtVal.textContent = filteredD_t.toFixed(2);
           this.dom.telemetryPalmScale.textContent = palmScale.toFixed(3);
@@ -3015,7 +3191,7 @@
           this.dom.liveDtVal.textContent = '0.00';
           this.dom.apertureBar.style.width = '0%';
           this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0';
-          this.dom.poseGuidanceText.innerHTML = 'Position target hand in zone (ยกมือเป้าหมายในกรอบ)';
+          this.dom.poseGuidanceText.innerHTML = this.t('position_hand_zone');
         }
 
         // Live Tracking Quality
@@ -3196,37 +3372,22 @@
         };
       }
 
-      computeAndRenderFinalResults() {
-        const sessionId = 'NS-CLIN-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(Math.random() * 1000);
-        const timestamp = new Date().toISOString();
-
+            computeAndRenderFinalResults(isLanguageRefresh = false) {
         let primaryMetrics = null;
         let asymmetryPct = 0;
 
-        if (this.selectedMode === 'BILATERAL') {
+        if (isLanguageRefresh && this.lastPrimaryMetrics) {
+          primaryMetrics = this.lastPrimaryMetrics;
+          asymmetryPct = this.screeningResults?.asymmetry_index_pct || 0;
+        } else if (this.selectedMode === 'BILATERAL') {
           const r = this.bilateralResults.right;
           const l = this.bilateralResults.left;
 
           const maxScore = Math.max(r.compositeScore, l.compositeScore, 1);
           asymmetryPct = Number(((Math.abs(r.compositeScore - l.compositeScore) / maxScore) * 100).toFixed(1));
           primaryMetrics = (r.compositeScore <= l.compositeScore) ? r : l;
-
-          this.dom.bilateralBanner.classList.remove('hidden');
-          document.getElementById('resAsymmetryVal').textContent = `${asymmetryPct}%`;
-          document.getElementById('resRightScore').textContent = `${r.compositeScore} / 100`;
-          document.getElementById('resLeftScore').textContent = `${l.compositeScore} / 100`;
-
-          const interpEl = document.getElementById('resAsymmetryInterpretation');
-          if (asymmetryPct > 25) {
-            interpEl.innerHTML = `<strong class="text-rose-400">Marked Asymmetry (&gt;25%):</strong> Significant lateralized motor decrement in ${r.compositeScore < l.compositeScore ? 'Right' : 'Left'} hand.`;
-          } else if (asymmetryPct > 12) {
-            interpEl.innerHTML = `<strong class="text-amber-400">Mild Asymmetry (12-25%):</strong> Noticeable difference between upper extremities.`;
-          } else {
-            interpEl.innerHTML = `<strong class="text-emerald-400">Symmetric (&lt;12%):</strong> Symmetrical neuromotor performance between both hands.`;
-          }
-
+          this.lastPrimaryMetrics = primaryMetrics;
         } else if (this.selectedMode === 'FACIAL') {
-          // Facial module output
           primaryMetrics = {
             hand: 'Facial',
             totalTaps: 0,
@@ -3246,15 +3407,37 @@
             tapSamples: [],
             qualityRatio: 100
           };
+          this.lastPrimaryMetrics = primaryMetrics;
+        } else {
+          primaryMetrics = this.calculateModuleAMetrics(this.patientProfile.testingHand);
+          this.lastPrimaryMetrics = primaryMetrics;
+        }
+
+        if (this.selectedMode === 'BILATERAL' && this.bilateralResults.right && this.bilateralResults.left) {
+          const r = this.bilateralResults.right;
+          const l = this.bilateralResults.left;
+          this.dom.bilateralBanner.classList.remove('hidden');
+          document.getElementById('resAsymmetryVal').textContent = `${asymmetryPct}%`;
+          document.getElementById('resRightScore').textContent = `${r.compositeScore} / 100`;
+          document.getElementById('resLeftScore').textContent = `${l.compositeScore} / 100`;
+
+          const interpEl = document.getElementById('resAsymmetryInterpretation');
+          const weakerHand = r.compositeScore < l.compositeScore ? this.t('right_hand') : this.t('left_hand');
+          if (asymmetryPct > 25) {
+            interpEl.innerHTML = `<strong class="text-rose-400">${this.t('asym_marked_title')} (&gt;25%):</strong> ${this.t('asym_marked_desc').replace('{hand}', weakerHand)}`;
+          } else if (asymmetryPct > 12) {
+            interpEl.innerHTML = `<strong class="text-amber-400">${this.t('asym_mild_title')} (12-25%):</strong> ${this.t('asym_mild_desc')}`;
+          } else {
+            interpEl.innerHTML = `<strong class="text-emerald-400">${this.t('asym_symmetric_title')} (&lt;12%):</strong> ${this.t('asym_symmetric_desc')}`;
+          }
         } else {
           this.dom.bilateralBanner.classList.add('hidden');
-          primaryMetrics = this.calculateModuleAMetrics(this.patientProfile.testingHand);
         }
 
         // Quality Alert Guard
         if (primaryMetrics.qualityRatio < 85) {
           this.dom.qualityWarningBanner.classList.remove('hidden');
-          document.getElementById('qualityWarningTitle').textContent = `Low Tracking Quality (${primaryMetrics.qualityRatio}% Valid Tracking)`;
+          document.getElementById('qualityWarningTitle').textContent = this.t('quality_warning').replace('{ratio}', primaryMetrics.qualityRatio);
         } else {
           this.dom.qualityWarningBanner.classList.add('hidden');
         }
@@ -3271,9 +3454,9 @@
           document.getElementById('resSmileSymmetry').textContent = `${meanSmileSym}%`;
           const fInterp = document.getElementById('resFacialInterpretation');
           if (blinkRatePerMin < 8) {
-            fInterp.innerHTML = `<strong class="text-rose-400">Hypomimia Alert:</strong> Decreased spontaneous blink rate (&lt;8 /min), suggestive of facial bradykinesia.`;
+            fInterp.innerHTML = `<strong class="text-rose-400">${this.t('hypomimia_alert_title')}:</strong> ${this.t('hypomimia_alert_desc')}`;
           } else {
-            fInterp.textContent = 'Normal spontaneous blinking cadence without facial hypomimia.';
+            fInterp.textContent = this.t('hypomimia_normal_desc');
           }
         } else {
           this.dom.facialResultBanner.classList.add('hidden');
@@ -3337,19 +3520,23 @@
           }))
         };
 
-        // Persistent Local Tracking
-        this.saveSessionToLocalStorage(this.screeningResults);
-
-        // Auto Cloud Webhook Sync if enabled
-        if (this.webhookConfig.url && this.webhookConfig.autoSync) {
-          this.syncToWebhook(this.screeningResults, false);
+        // Persistent Local Tracking (Skip duplicates during language switch)
+        if (!isLanguageRefresh) {
+          this.saveSessionToLocalStorage(this.screeningResults);
+          if (this.webhookConfig.url && this.webhookConfig.autoSync) {
+            this.syncToWebhook(this.screeningResults, false);
+          }
         }
 
         // Render UI Header & MDS Banner
         document.getElementById('resSessionId').textContent = sessionId;
         document.getElementById('resTimestamp').textContent = new Date().toLocaleTimeString();
-        document.getElementById('resPatientHN').textContent = `HN: ${this.patientProfile.hn} (Age: ${this.patientProfile.age}, ${this.patientProfile.sex})`;
-        document.getElementById('resHandMedStatus').textContent = `Tested: ${primaryMetrics.hand} Hand | Meds: ${this.patientProfile.medState}`;
+        const sexTranslated = this.patientProfile.sex === 'Male' ? this.t('opt_male') : (this.patientProfile.sex === 'Female' ? this.t('opt_female') : this.t('opt_other'));
+        const testedHandTranslated = (primaryMetrics.hand === 'Right' || primaryMetrics.hand === 'RIGHT') ? this.t('right_hand') : ((primaryMetrics.hand === 'Left' || primaryMetrics.hand === 'LEFT') ? this.t('left_hand') : primaryMetrics.hand);
+        const medStateTranslated = this.patientProfile.medState === 'ON-Meds' ? this.t('opt_on_meds') : (this.patientProfile.medState === 'OFF-Meds' ? this.t('opt_off_meds') : (this.patientProfile.medState === 'Drug-Naive' ? this.t('opt_drug_naive') : this.patientProfile.medState));
+
+        document.getElementById('resPatientHN').textContent = `HN: ${this.patientProfile.hn} (${this.t('lbl_age_short')}: ${this.patientProfile.age}, ${sexTranslated})`;
+        document.getElementById('resHandMedStatus').textContent = `${this.t('lbl_tested')}: ${testedHandTranslated} | ${this.t('lbl_meds_short')}: ${medStateTranslated}`;
         document.getElementById('printExaminerName').textContent = this.patientProfile.examiner;
 
         // Render MDS Badge & Z-Score Tag
@@ -3389,7 +3576,7 @@
         // Render KPI Cards
         document.getElementById('cardTotalTaps').textContent = primaryMetrics.totalTaps;
         document.getElementById('cardFreq').textContent = `(${primaryMetrics.frequencyHz} Hz)`;
-        document.getElementById('cardValidDuration').textContent = `${primaryMetrics.validDurationSec.toFixed(1)}s valid tracking`;
+        document.getElementById('cardValidDuration').textContent = this.t('valid_tracking_sec').replace('{sec}', primaryMetrics.validDurationSec.toFixed(1));
 
         const decayEl = document.getElementById('cardDecay');
         decayEl.textContent = `${primaryMetrics.amplitudeDecayPct > 0 ? '+' : ''}${primaryMetrics.amplitudeDecayPct}%`;
@@ -3401,22 +3588,22 @@
         const cvEl = document.getElementById('cardCv');
         cvEl.textContent = `${primaryMetrics.rhythmCvPct}%`;
         cvEl.className = primaryMetrics.rhythmCvPct > 20 ? 'text-xl sm:text-2xl font-mono font-bold text-amber-400' : 'text-xl sm:text-2xl font-mono font-bold text-teal-400';
-        document.getElementById('cardHesitations').textContent = `Hesitations (>1s): ${primaryMetrics.hesitationsCount}`;
+        document.getElementById('cardHesitations').textContent = this.t('hesitations_lbl').replace('{count}', primaryMetrics.hesitationsCount);
 
         const tremorEl = document.getElementById('cardTremor');
         if (primaryMetrics.tremorRes.tremorFlag) {
-          tremorEl.textContent = 'FLAGGED';
+          tremorEl.textContent = this.t('tremor_flagged');
           tremorEl.className = 'text-base sm:text-lg font-mono font-bold text-rose-400';
-          document.getElementById('cardTremorFreq').textContent = `Peak: ${primaryMetrics.tremorRes.dominantFreqHz} Hz (4-6 Hz)`;
+          document.getElementById('cardTremorFreq').textContent = `${this.t('peak_tremor_lbl').replace('{freq}', primaryMetrics.tremorRes.dominantFreqHz)} (4-6 Hz)`;
         } else {
-          tremorEl.textContent = 'Normal';
+          tremorEl.textContent = this.t('tremor_normal');
           tremorEl.className = 'text-base sm:text-lg font-mono font-bold text-emerald-400';
-          document.getElementById('cardTremorFreq').textContent = `Peak: ${primaryMetrics.tremorRes.dominantFreqHz} Hz`;
+          document.getElementById('cardTremorFreq').textContent = this.t('peak_tremor_lbl').replace('{freq}', primaryMetrics.tremorRes.dominantFreqHz);
         }
 
         document.getElementById('cardComposite').textContent = `${primaryMetrics.compositeScore} / 100`;
         const statusLabel = document.getElementById('cardStatusLabel');
-        statusLabel.textContent = primaryMetrics.compositeScore >= 75 ? 'Normal / Reference' : (primaryMetrics.compositeScore >= 55 ? 'Mild Impairment' : 'Marked Impairment');
+        statusLabel.textContent = primaryMetrics.compositeScore >= 75 ? this.t('status_normal') : (primaryMetrics.compositeScore >= 55 ? this.t('status_mild') : this.t('status_marked'));
         statusLabel.className = primaryMetrics.compositeScore >= 75 ? 'text-[10px] font-semibold text-emerald-400' : (primaryMetrics.compositeScore >= 55 ? 'text-[10px] font-semibold text-amber-400' : 'text-[10px] font-semibold text-rose-400');
 
         // Bimanual Table
@@ -3467,7 +3654,7 @@
           data: {
             datasets: [
               {
-                label: 'Normalized Aperture D_t',
+                label: this.t('chart_dataset_waveform'),
                 data: rawPoints,
                 borderColor: '#14b8a6',
                 backgroundColor: 'rgba(20, 184, 166, 0.08)',
@@ -3477,7 +3664,7 @@
                 tension: 0.2
               },
               {
-                label: 'Tap Peaks',
+                label: this.t('chart_dataset_peaks'),
                 data: peakPoints,
                 borderColor: '#f59e0b',
                 backgroundColor: '#f59e0b',
@@ -3485,7 +3672,7 @@
                 showLine: false
               },
               {
-                label: 'Trendline',
+                label: this.t('chart_dataset_trend'),
                 data: trendlineData,
                 borderColor: '#fbbf24',
                 borderWidth: 2,
@@ -3498,25 +3685,25 @@
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: { duration: 500 },
+            animation: { duration: 300 },
             scales: {
               x: {
                 type: 'linear',
-                title: { display: true, text: 'Time (s)', color: '#94a3b8', font: { size: 10 } },
+                title: { display: true, text: this.t('chart_axis_time'), color: '#94a3b8', font: { size: 10 } },
                 min: 0,
                 max: 15,
                 grid: { color: 'rgba(51, 65, 85, 0.3)' },
                 ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
               },
               y: {
-                title: { display: true, text: 'Aperture (D_t 2D)', color: '#94a3b8', font: { size: 10 } },
+                title: { display: true, text: this.t('chart_axis_aperture'), color: '#94a3b8', font: { size: 10 } },
                 min: 0,
                 max: Math.max(1.8, ...rawPoints.map(p => p.y)),
                 grid: { color: 'rgba(51, 65, 85, 0.3)' },
                 ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
               }
             },
-            plugins: { legend: { display: false } }
+            plugins: { legend: { display: true, position: 'top', labels: { color: '#94a3b8', font: { size: 9 } } } }
           }
         });
 
@@ -3545,7 +3732,7 @@
           });
         } else {
           radarDatasets.push({
-            label: 'Patient Score',
+            label: this.t('radar_patient_score'),
             data: [
               primaryMetrics.scores.speedScore,
               primaryMetrics.scores.rhythmScore,
@@ -3561,7 +3748,7 @@
         }
 
         radarDatasets.push({
-          label: 'Age-Adjusted Norm',
+          label: this.t('radar_norm'),
           data: [85, 85, 85, 90, 85],
           backgroundColor: 'rgba(148, 163, 184, 0.08)',
           borderColor: '#64748b',
@@ -3573,7 +3760,13 @@
         this.charts.radar = new Chart(ctxRadar, {
           type: 'radar',
           data: {
-            labels: ['Speed', 'Rhythm CV', 'Endurance', 'Stability', 'Coordination'],
+            labels: [
+              this.t('radar_speed'),
+              this.t('radar_rhythm'),
+              this.t('radar_endurance'),
+              this.t('radar_stability'),
+              this.t('radar_coordination')
+            ],
             datasets: radarDatasets
           },
           options: {
@@ -3616,14 +3809,14 @@
             scales: {
               x: {
                 type: 'linear',
-                title: { display: true, text: 'Frequency (Hz) [4-6 Hz Parkinsonian Band]', color: '#94a3b8', font: { size: 10 } },
+                title: { display: true, text: this.t('chart_axis_tremor_freq'), color: '#94a3b8', font: { size: 10 } },
                 min: 0.5,
                 max: 12.0,
                 grid: { color: 'rgba(51, 65, 85, 0.3)' },
                 ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
               },
               y: {
-                title: { display: true, text: 'Power (2D Norm)', color: '#94a3b8', font: { size: 10 } },
+                title: { display: true, text: this.t('chart_axis_tremor_power'), color: '#94a3b8', font: { size: 10 } },
                 grid: { color: 'rgba(51, 65, 85, 0.3)' },
                 ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
               }
@@ -3681,20 +3874,24 @@
           return;
         }
 
-        tbody.innerHTML = records.map(r => `
+        tbody.innerHTML = records.map(r => {
+          const handStr = (r.hand === 'Right' || r.hand === 'RIGHT') ? this.t('right_hand') : ((r.hand === 'Left' || r.hand === 'LEFT') ? this.t('left_hand') : r.hand);
+          const medStr = r.medState === 'ON-Meds' ? this.t('opt_on_meds') : (r.medState === 'OFF-Meds' ? this.t('opt_off_meds') : (r.medState === 'Drug-Naive' ? this.t('opt_drug_naive') : r.medState));
+          return `
           <tr class="hover:bg-slate-800/40">
             <td class="p-2 font-medium text-white">${r.dateStr} ${r.timeStr}</td>
-            <td class="p-2"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-teal-300 font-semibold">${r.hand}</span></td>
-            <td class="p-2 text-slate-300">${r.medState}</td>
+            <td class="p-2"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-teal-300 font-semibold">${handStr}</span></td>
+            <td class="p-2 text-slate-300">${medStr}</td>
             <td class="p-2 font-bold ${r.mdsRating === 0 ? 'text-emerald-400' : 'text-amber-400'}">MDS-${r.mdsRating}</td>
-            <td class="p-2 text-white">${r.cadenceHz} Hz</td>
-            <td class="p-2 ${r.decayPct > 20 ? 'text-rose-400' : 'text-slate-300'}">${r.decayPct}%</td>
-            <td class="p-2 font-black text-teal-400">${r.compositeScore}</td>
+            <td class="p-2 text-white font-mono">${r.cadenceHz} Hz</td>
+            <td class="p-2 font-mono ${r.decayPct > 20 ? 'text-rose-400' : 'text-slate-300'}">${r.decayPct}%</td>
+            <td class="p-2 font-mono font-black text-teal-400">${r.compositeScore}</td>
           </tr>
-        `).join('');
+        `;
+        }).join('');
 
         const chronological = records.slice().reverse();
-        const labels = chronological.map(r => `${r.dateStr} (${r.hand[0]})`);
+        const labels = chronological.map(r => `${r.dateStr} (${r.hand ? r.hand[0] : 'R'})`);
         const scores = chronological.map(r => r.compositeScore);
         const cadences = chronological.map(r => r.cadenceHz * 20);
 
@@ -3706,7 +3903,7 @@
             labels,
             datasets: [
               {
-                label: 'Composite Score (0-100)',
+                label: this.t('hist_dataset_composite'),
                 data: scores,
                 borderColor: '#2dd4bf',
                 backgroundColor: 'rgba(45, 212, 191, 0.1)',
@@ -3716,7 +3913,7 @@
                 pointRadius: 4
               },
               {
-                label: 'Cadence (Hz x 20)',
+                label: this.t('hist_dataset_cadence'),
                 data: cadences,
                 borderColor: '#38bdf8',
                 borderDash: [4, 4],
