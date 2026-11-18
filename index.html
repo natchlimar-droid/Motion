@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#090d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>NeuroScreen | Mobile Motor & Cognitive Screening System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            clinical: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              900: '#134e4a',
+            },
+            surface: {
+              800: '#1e293b',
+              850: '#172033',
+              900: '#0f172a',
+              950: '#090d16',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Fira Code', 'Menlo', 'monospace']
+          },
+          minHeight: {
+            'touch': '44px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Safe-area insets for notched mobile devices (iPhone X+, Android punch-hole) */
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+
+    /* Conditional horizontal video mirroring for front/selfie camera */
+    .video-mirror {
+      transform: scaleX(-1);
+      -webkit-transform: scaleX(-1);
+    }
+    .video-unmirror {
+      transform: none;
+      -webkit-transform: none;
+    }
+
+    /* Pulse animation for active recording */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .animate-pulse-ring {
+      animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col overflow-x-hidden selection:bg-teal-500 selection:text-white">
+
+  <!-- ================= INSECURE PROTOCOL (HTTPS) WARNING BANNER ================= -->
+  <div id="httpsWarningBanner" class="hidden bg-amber-500 text-slate-950 px-4 py-3 shadow-lg z-50">
+    <div class="max-w-7xl mx-auto flex items-start gap-3 text-xs md:text-sm">
+      <svg class="w-5 h-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div class="flex-1">
+        <p class="font-bold">HTTPS Required for Mobile Cameras (ต้องใช้ HTTPS บนมือถือ)</p>
+        <p class="text-xs text-slate-900 mt-0.5 leading-relaxed">
+          Mobile browsers (iOS Safari & Android Chrome) strictly block camera access over insecure HTTP. 
+          To test on mobile devices, host this file via <strong>HTTPS</strong> (e.g. GitHub Pages, Vercel, Cloudflare Pages) or tunnel via <strong>ngrok</strong>.
+        </p>
+      </div>
+      <button onclick="document.getElementById('httpsWarningBanner').remove()" class="p-1 font-bold text-slate-950 hover:opacity-75">✕</button>
+    </div>
+  </div>
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="border-b border-slate-800 bg-surface-900/90 backdrop-blur sticky top-0 z-40 px-3 sm:px-6 py-2.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-2.5 min-w-0">
+        <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-tr from-teal-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-teal-500/20 text-slate-950 font-black">
+          <svg class="w-5 h-5 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h1 class="text-sm sm:text-base font-bold tracking-tight text-white truncate">NeuroScreen</h1>
+            <span class="text-teal-400 font-mono text-[10px] px-1.5 py-0.2 rounded bg-teal-500/10 border border-teal-500/25">MOBILE AI</span>
+          </div>
+          <p class="text-[11px] text-slate-400 truncate hidden xs:block">Motor & Cognitive Screening / คัดกรองการเคลื่อนไหว</p>
+        </div>
+      </div>
+
+      <!-- Telemetry Pills (WakeLock, FPS, Status) -->
+      <div class="flex items-center gap-1.5 text-xs font-mono shrink-0">
+        <!-- Wake Lock Indicator -->
+        <div id="wakeLockPill" title="Screen Wake Lock Status" class="hidden sm:flex items-center gap-1 px-2 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-[10px] text-slate-400">
+          <svg class="w-3 h-3 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+          </svg>
+          <span id="wakeLockStatus">Awake</span>
+        </div>
+
+        <!-- FPS Counter -->
+        <div id="fpsPill" class="flex items-center gap-1 px-2 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-[11px] text-slate-300">
+          <span class="text-slate-400">FPS:</span>
+          <span id="fpsCounter" class="text-teal-400 font-semibold">0</span>
+        </div>
+
+        <!-- State Badge -->
+        <div id="stateBadge" class="px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]">
+          IDLE
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT WRAPPER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 space-y-4 sm:space-y-6">
+
+    <!-- Camera Error/Permission Modal Banner -->
+    <div id="cameraAlert" class="hidden p-4 rounded-2xl bg-rose-950/90 border border-rose-800/70 text-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xl">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-rose-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div class="text-xs sm:text-sm">
+          <p class="font-bold text-rose-100">Camera Access Error / ข้อผิดพลาดกล้อง</p>
+          <p class="text-xs text-rose-300/90 mt-0.5" id="cameraAlertMsg">Please enable camera permission in your browser settings (iOS Safari: Settings > Safari > Camera).</p>
+        </div>
+      </div>
+      <button id="retryCamBtn" class="min-h-touch px-4 py-2 bg-rose-700 hover:bg-rose-600 active:scale-95 text-white rounded-xl text-xs font-bold transition w-full sm:w-auto text-center shrink-0">
+        Retry Camera (ลองอีกครั้ง)
+      </button>
+    </div>
+
+    <!-- UPPER SCREENING STAGE (Video & Live Controls) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+      
+      <!-- Video Viewport (Col 7 on lg) -->
+      <div class="lg:col-span-7 space-y-2.5">
+        
+        <!-- Video Container -->
+        <div id="videoContainer" class="relative bg-surface-950 rounded-2xl sm:rounded-3xl border border-slate-800 overflow-hidden shadow-2xl flex items-center justify-center w-full touch-none select-none max-h-[62vh] aspect-[4/3]">
+          
+          <!-- Underlying Video Feed -->
+          <!-- Essential attributes for iOS Safari: autoplay, playsinline, webkit-playsinline, muted -->
+          <video id="webcam" class="absolute inset-0 w-full h-full object-cover video-mirror pointer-events-none" autoplay playsinline webkit-playsinline muted></video>
+          
+          <!-- Overlay Canvas (Matching Video Resolution Dynamically) -->
+          <canvas id="overlayCanvas" class="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none"></canvas>
+
+          <!-- 45-Degree Hand Placement Guide HUD -->
+          <div id="handGuide" class="absolute inset-0 pointer-events-none z-20 flex flex-col items-center justify-between p-3 sm:p-4 transition-opacity duration-300">
+            <!-- Top angle helper pill -->
+            <div class="px-3 py-1.5 rounded-full bg-surface-900/85 backdrop-blur border border-slate-700/80 text-[11px] text-slate-200 flex items-center gap-1.5 shadow-lg text-center">
+              <span class="w-2 h-2 rounded-full bg-teal-400 shrink-0"></span>
+              <span>Angle hand at <strong class="text-teal-300">~45°</strong> (เอียงมือ 45 องศา)</span>
+            </div>
+
+            <!-- Visual 45-degree angle dashed guide box -->
+            <div class="relative w-48 h-48 sm:w-60 sm:h-60 border-2 border-dashed border-teal-400/40 rounded-3xl flex items-center justify-center transform -rotate-12 transition-all duration-300" id="guideBox">
+              <div class="text-[10px] font-mono text-teal-300/70 bg-slate-950/70 px-2 py-0.5 rounded-lg backdrop-blur rotate-12 border border-teal-500/20">
+                APERTURE TARGET
+              </div>
+            </div>
+
+            <!-- Bottom dynamic feedback pill -->
+            <div id="livePinchFeedback" class="px-3 sm:px-4 py-1.5 rounded-full bg-surface-900/90 backdrop-blur border border-slate-700 text-xs font-mono text-slate-200 shadow-xl flex items-center gap-2">
+              <span id="detectedHandLabel" class="text-teal-400 font-bold truncate">Awaiting Hand...</span>
+              <span class="text-slate-600">|</span>
+              <span class="shrink-0">D_t: <span id="liveDtVal" class="text-white font-semibold">0.00</span></span>
+            </div>
+          </div>
+
+          <!-- Switch Camera Button (Front / Rear) Floating Overlay -->
+          <div class="absolute top-3 right-3 z-30 pointer-events-auto">
+            <button id="switchCameraBtn" class="min-h-touch px-3 py-2 rounded-xl bg-slate-900/85 hover:bg-slate-800 active:scale-95 border border-slate-700 text-slate-200 text-xs font-semibold backdrop-blur shadow-lg flex items-center gap-1.5 transition">
+              <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span id="cameraFacingLabel">Front Cam</span>
+            </button>
+          </div>
+
+          <!-- Big Countdown Overlay (For 3-2-1 sequence) -->
+          <div id="countdownOverlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-sm z-30 flex flex-col items-center justify-center p-4">
+            <span id="countdownText" class="text-8xl sm:text-9xl font-black text-teal-400 tracking-tighter drop-shadow-2xl animate-bounce">3</span>
+            <span id="countdownSub" class="text-xs sm:text-sm font-medium text-slate-300 mt-2 uppercase tracking-widest text-center">Get Ready / เตรียมพร้อม</span>
+          </div>
+
+          <!-- Initial Loading Spinner -->
+          <div id="loaderOverlay" class="absolute inset-0 bg-surface-950 z-30 flex flex-col items-center justify-center p-6 space-y-3 text-center">
+            <div class="w-12 h-12 border-4 border-teal-500/20 border-t-teal-400 rounded-full animate-spin"></div>
+            <p class="text-xs text-slate-300 font-mono tracking-wider" id="loaderMsg">Initializing MediaPipe Vision WASM...</p>
+            <p class="text-[11px] text-slate-500 max-w-xs">Edge AI running locally inside browser memory. Zero video uploaded.</p>
+          </div>
+        </div>
+
+        <!-- Telemetry quick bar below video -->
+        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2">
+            <div class="text-[9px] uppercase font-mono text-slate-400">Palm Scale (0-9)</div>
+            <div id="telemetryPalmScale" class="text-xs sm:text-sm font-mono font-bold text-slate-200 mt-0.5">--</div>
+          </div>
+          <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2">
+            <div class="text-[9px] uppercase font-mono text-slate-400">Norm Pinch D_t</div>
+            <div id="telemetryDt" class="text-xs sm:text-sm font-mono font-bold text-teal-400 mt-0.5">--</div>
+          </div>
+          <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2">
+            <div class="text-[9px] uppercase font-mono text-slate-400">Camera / Mode</div>
+            <div id="telemetryCameraMode" class="text-xs sm:text-sm font-mono font-bold text-slate-200 mt-0.5">User (Front)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Live Screening HUD (Col 5 on lg) -->
+      <div class="lg:col-span-5 space-y-3 sm:space-y-4">
+        
+        <!-- Module Selector & Settings Card -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 sm:space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              <span>Screening Battery / แบบทดสอบ</span>
+            </h2>
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] text-slate-400 font-medium">Audio</label>
+              <button id="toggleAudioBtn" class="w-9 h-5 bg-teal-500 rounded-full relative transition-colors focus:outline-none min-h-0">
+                <span id="audioToggleDot" class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 transition-transform"></span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Protocol Selection Tabs (Mobile Touch Optimized min-h-44px) -->
+          <div class="grid grid-cols-3 gap-1.5 p-1 bg-surface-950 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button id="tabFull" class="protocol-tab min-h-touch py-2.5 px-2 rounded-lg bg-teal-500 text-slate-950 font-bold transition shadow" data-mode="FULL">
+              Full Battery<br><span class="text-[9px] font-normal opacity-80">ครบชุด</span>
+            </button>
+            <button id="tabModuleA" class="protocol-tab min-h-touch py-2.5 px-2 rounded-lg text-slate-300 hover:text-white transition" data-mode="MOD_A">
+              15s Tap<br><span class="text-[9px] font-normal opacity-80">แตะนิ้ว</span>
+            </button>
+            <button id="tabModuleB" class="protocol-tab min-h-touch py-2.5 px-2 rounded-lg text-slate-300 hover:text-white transition" data-mode="MOD_B">
+              Dual-Task<br><span class="text-[9px] font-normal opacity-80">สองมือ</span>
+            </button>
+          </div>
+
+          <!-- Protocol Description Details -->
+          <div id="protocolDesc" class="p-3 rounded-xl bg-surface-950/60 border border-slate-800 text-[11px] sm:text-xs text-slate-300 space-y-1">
+            <div class="font-semibold text-teal-300">Full Comprehensive Protocol (การทดสอบแบบเต็ม)</div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              1. <strong>Module A:</strong> 15-second rapid finger tapping + 5-second postural static hold for tremor.<br>
+              2. <strong>Module B:</strong> 5-trial bimanual coordination test measuring dual-task cognitive reaction time.
+            </p>
+          </div>
+
+          <!-- Main Start Action Button (Min 44px height, high visual target) -->
+          <div class="pt-1">
+            <button id="startTestBtn" class="min-h-touch w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-400 hover:from-teal-400 hover:to-cyan-300 active:scale-[0.98] text-slate-950 font-bold text-xs sm:text-sm tracking-wide uppercase shadow-lg shadow-teal-500/25 transition-all flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Begin Assessment / เริ่มการตรวจ</span>
+            </button>
+
+            <button id="abortTestBtn" class="hidden min-h-touch w-full mt-2 py-3 px-4 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-semibold tracking-wide uppercase transition text-center">
+              Abort Test (ยกเลิกการทดสอบ)
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Testing HUD Card -->
+        <div id="liveHUDCard" class="bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 sm:space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block" id="hudStageLabel">STAGE MONITOR</span>
+              <h3 class="text-xs sm:text-sm font-bold text-white" id="hudStageTitle">Ready to Start</h3>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] font-mono text-slate-400 block">TIME REMAINING</span>
+              <span id="hudTimer" class="text-xl sm:text-2xl font-mono font-bold text-teal-400">15.0s</span>
+            </div>
+          </div>
+
+          <!-- Module A Dynamic Display: Live Tap Metrics -->
+          <div id="hudModAContainer" class="space-y-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+              <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Total Taps (ครั้ง)</span>
+                <div id="liveTapCount" class="text-2xl sm:text-3xl font-mono font-black text-white mt-0.5">0</div>
+              </div>
+              <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Live Cadence (ความถี่)</span>
+                <div class="flex items-baseline justify-center gap-1 mt-0.5">
+                  <span id="liveFreqVal" class="text-2xl sm:text-3xl font-mono font-black text-teal-400">0.0</span>
+                  <span class="text-[10px] text-slate-400 font-mono">Hz</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Aperture Bar Gauge -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                <span>Pinch Aperture (D_t) / ระยะกาง</span>
+                <span id="gaugeDtVal">0.00</span>
+              </div>
+              <div class="w-full h-3 bg-surface-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
+                <div id="apertureBar" class="h-full bg-gradient-to-r from-teal-500 to-cyan-400 rounded-full transition-all duration-75" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module B Dynamic Display: Bimanual Target Prompts -->
+          <div id="hudModBContainer" class="hidden space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-mono text-slate-300">Trial <span id="bimanualTrialNum" class="text-teal-400 font-bold">1</span> / 5</span>
+              <span class="font-mono text-rose-400 text-[11px]">Errors: <span id="bimanualErrorCount" class="font-bold">0</span></span>
+            </div>
+
+            <!-- Dual Hands Prompt Cards -->
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+              <!-- Left Target -->
+              <div id="leftPromptBox" class="p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150">
+                <span class="text-[9px] font-mono uppercase text-slate-400">Left (มือซ้าย)</span>
+                <div id="leftTargetGesture" class="text-sm sm:text-base font-black text-white mt-1">PEACE</div>
+                <div id="leftStatusBadge" class="mt-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">Awaiting</div>
+              </div>
+
+              <!-- Right Target -->
+              <div id="rightPromptBox" class="p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150">
+                <span class="text-[9px] font-mono uppercase text-slate-400">Right (มือขวา)</span>
+                <div id="rightTargetGesture" class="text-sm sm:text-base font-black text-white mt-1">PINCH</div>
+                <div id="rightStatusBadge" class="mt-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">Awaiting</div>
+              </div>
+            </div>
+
+            <!-- Hold Debounce Progress -->
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                <span>Hold Stability (150ms hold)</span>
+                <span id="debounceHoldLabel">0ms</span>
+              </div>
+              <div class="w-full h-2 bg-surface-950 rounded-full overflow-hidden border border-slate-800">
+                <div id="debounceProgressBar" class="h-full bg-teal-400 rounded-full transition-all duration-75" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Static Hold Alert Box -->
+          <div id="hudStaticHoldBox" class="hidden p-3.5 bg-amber-950/40 border border-amber-700/60 rounded-xl text-center space-y-1">
+            <span class="text-xs font-bold text-amber-300 block uppercase tracking-wider">Tremor Postural Hold / วัดการสั่น</span>
+            <p class="text-xs text-amber-200/80">Hold hand completely open and still in front of camera (กางมือค้างนิ่งๆ หน้ากล้อง).</p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= ANALYTICS & RESULTS DASHBOARD ================= -->
+    <section id="resultsSection" class="hidden space-y-4 sm:space-y-6 pt-4 border-t border-slate-800">
+      
+      <!-- Section Title & Export Actions -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+            <h2 class="text-base sm:text-xl font-bold tracking-tight text-white">Quantitative Motor Profile Assessment</h2>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-0.5">Session: <span id="resSessionId" class="font-mono text-slate-300">--</span> | <span id="resTimestamp">--</span></p>
+        </div>
+
+        <!-- Export Buttons Toolbar (Min 44px touch targets) -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button id="copyJsonBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 active:scale-95 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            <span id="copyJsonBtnText">Copy / Share JSON</span>
+          </button>
+
+          <button id="exportCsvBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-teal-500/20">
+            <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Export CSV</span>
+          </button>
+
+          <button id="resetTestBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 border border-slate-700 text-xs font-semibold text-slate-300 transition">
+            New Test
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards Grid (Responsive 2-col on mobile, 6-col on desktop) -->
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
+        
+        <!-- Total Taps & Cadence -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
+          <span class="text-[9px] font-mono uppercase text-slate-400">Total Taps / Freq</span>
+          <div class="text-xl sm:text-2xl font-mono font-bold text-white flex items-baseline gap-1">
+            <span id="cardTotalTaps">--</span>
+            <span class="text-[11px] font-normal text-teal-400" id="cardFreq">(-- Hz)</span>
+          </div>
+          <p class="text-[10px] text-slate-400">15.0s testing duration</p>
+        </div>
+
+        <!-- Amplitude Decay -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
+          <span class="text-[9px] font-mono uppercase text-slate-400">Amplitude Decay</span>
+          <div class="text-xl sm:text-2xl font-mono font-bold" id="cardDecay">--%</div>
+          <p class="text-[10px] text-slate-400">Fatigue (1st vs Last 5s)</p>
+        </div>
+
+        <!-- Rhythm CV % -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
+          <span class="text-[9px] font-mono uppercase text-slate-400">Rhythm CV (ITI)</span>
+          <div class="text-xl sm:text-2xl font-mono font-bold" id="cardCv">--%</div>
+          <p class="text-[10px] text-slate-400">Variability coefficient</p>
+        </div>
+
+        <!-- Tremor Detection Status -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
+          <span class="text-[9px] font-mono uppercase text-slate-400">Tremor (4-6 Hz)</span>
+          <div class="text-base sm:text-lg font-mono font-bold" id="cardTremor">--</div>
+          <p class="text-[10px] text-slate-400 truncate" id="cardTremorFreq">Static hold peak: --</p>
+        </div>
+
+        <!-- Dual-Task Reaction Time -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
+          <span class="text-[9px] font-mono uppercase text-slate-400">Bimanual RT</span>
+          <div class="text-xl sm:text-2xl font-mono font-bold text-white flex items-baseline gap-1">
+            <span id="cardReactionTime">--</span>
+            <span class="text-[10px] text-slate-400 font-mono">ms</span>
+          </div>
+          <p class="text-[10px] text-slate-400" id="cardErrors">Commission errors: 0</p>
+        </div>
+
+        <!-- Composite Score -->
+        <div class="bg-gradient-to-br from-teal-950/60 to-surface-900 border border-teal-500/30 rounded-2xl p-3.5 space-y-1 col-span-2 md:col-span-1">
+          <span class="text-[9px] font-mono uppercase text-teal-400 font-semibold">Composite Score</span>
+          <div class="text-xl sm:text-2xl font-mono font-black text-teal-300" id="cardComposite">-- / 100</div>
+          <p class="text-[10px] font-semibold text-slate-300 truncate" id="cardStatusLabel">--</p>
+        </div>
+
+      </div>
+
+      <!-- Charts Section: Waveform & Radar -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+        
+        <!-- Left: 15s Pinch Waveform & Regression Line (Col 7) -->
+        <div class="lg:col-span-7 bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <div>
+              <h3 class="text-xs sm:text-sm font-bold text-white">Normalized Pinch Waveform & Amplitude Decay</h3>
+              <p class="text-[11px] text-slate-400">15s aperture signal D_t with highlighted peaks and OLS regression trendline</p>
+            </div>
+            <div class="flex items-center gap-3 text-[10px] font-mono">
+              <span class="flex items-center gap-1 text-teal-400"><span class="w-2.5 h-0.5 bg-teal-400 inline-block"></span> D_t Signal</span>
+              <span class="flex items-center gap-1 text-amber-400"><span class="w-2.5 h-0.5 bg-amber-400 inline-block border-t border-dashed"></span> Trendline</span>
+            </div>
+          </div>
+          <div class="relative h-60 sm:h-72 w-full">
+            <canvas id="waveformChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Right: 5-Axis Motor Profile Radar Chart (Col 5) -->
+        <div class="lg:col-span-5 bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xs sm:text-sm font-bold text-white">5-Domain Neuromotor Radar Profile</h3>
+              <p class="text-[11px] text-slate-400">Normalized scale (0–100) vs clinical reference norm</p>
+            </div>
+          </div>
+          <div class="relative h-60 sm:h-72 w-full flex items-center justify-center">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Static Tremor PSD & Bimanual Breakdown Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        
+        <!-- Tremor Spectral Power -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs sm:text-sm font-bold text-white">Postural Tremor Power Spectrum (0.5 – 12.0 Hz)</h3>
+            <span class="text-[10px] font-mono text-slate-400">Wrist Y PSD</span>
+          </div>
+          <div class="relative h-48 sm:h-56 w-full">
+            <canvas id="tremorChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bimanual Coordination Trials Log -->
+        <div class="bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs sm:text-sm font-bold text-white">Bimanual Coordination Trial Telemetry</h3>
+            <span class="text-[10px] font-mono text-teal-400">5 Target Trials</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="bg-surface-950 text-slate-400 uppercase text-[9px] border-b border-slate-800">
+                <tr>
+                  <th class="p-2">Trial</th>
+                  <th class="p-2">Left Target</th>
+                  <th class="p-2">Right Target</th>
+                  <th class="p-2">Reaction Time</th>
+                  <th class="p-2">Commission Error</th>
+                </tr>
+              </thead>
+              <tbody id="bimanualTableBody" class="divide-y divide-slate-800 text-slate-300 text-[11px]">
+                <tr>
+                  <td colspan="5" class="p-4 text-center text-slate-500">No bimanual trial data recorded yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 left-6 sm:left-auto z-50 transform translate-y-12 opacity-0 pointer-events-none transition-all duration-300 px-4 py-3 rounded-2xl bg-teal-500 text-slate-950 font-bold text-xs shadow-2xl flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+      </svg>
+      <span id="toastMsg">Action Successful</span>
+    </div>
+  </div>
+
+  <!-- ================= ES MODULE JAVASCRIPT APPLICATION ================= -->
+  <script type="module">
+    // Import MediaPipe Tasks Vision from official CDN
+    import { FilesetResolver, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+
+    /* =========================================================================
+       1. MATHEMATICAL SIGNAL PROCESSING & KINEMATICS ENGINE
+       ========================================================================= */
+
+    export function euclideanDistance(p1, p2, use3D = true) {
+      const dx = p1.x - p2.x;
+      const dy = p1.y - p2.y;
+      const dz = use3D ? ((p1.z || 0) - (p2.z || 0)) : 0;
+      return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    export function computePalmScale(landmarks) {
+      if (!landmarks || landmarks.length < 10) return 1.0;
+      const scale = euclideanDistance(landmarks[0], landmarks[9], true);
+      return Math.max(scale, 1e-4);
+    }
+
+    export function computeNormalizedPinch(landmarks) {
+      if (!landmarks || landmarks.length < 21) return 0;
+      const palmScale = computePalmScale(landmarks);
+      const pinchDist = euclideanDistance(landmarks[4], landmarks[8], true);
+      return pinchDist / palmScale;
+    }
+
+    /**
+     * One Euro Filter for adaptive low-pass signal smoothing
+     */
+    export class OneEuroFilter {
+      constructor(minCutoff = 1.2, beta = 0.008, dCutoff = 1.0) {
+        this.minCutoff = minCutoff;
+        this.beta = beta;
+        this.dCutoff = dCutoff;
+        this.xPrev = null;
+        this.dxPrev = 0;
+        this.tPrev = null;
+      }
+
+      filter(x, timestampMs) {
+        if (this.tPrev === null) {
+          this.xPrev = x;
+          this.dxPrev = 0;
+          this.tPrev = timestampMs;
+          return x;
+        }
+
+        const te = (timestampMs - this.tPrev) / 1000.0;
+        if (te <= 0) return this.xPrev;
+        this.tPrev = timestampMs;
+
+        const alphaD = this.smoothingFactor(te, this.dCutoff);
+        const dx = (x - this.xPrev) / te;
+        const dxHat = alphaD * dx + (1 - alphaD) * this.dxPrev;
+        this.dxPrev = dxHat;
+
+        const cutoff = this.minCutoff + this.beta * Math.abs(dxHat);
+        const alpha = this.smoothingFactor(te, cutoff);
+        const xHat = alpha * x + (1 - alpha) * this.xPrev;
+        this.xPrev = xHat;
+        return xHat;
+      }
+
+      smoothingFactor(te, cutoff) {
+        const r = 2 * Math.PI * cutoff * te;
+        return r / (r + 1);
+      }
+
+      reset() {
+        this.xPrev = null;
+        this.dxPrev = 0;
+        this.tPrev = null;
+      }
+    }
+
+    /**
+     * Prominence-based Peak and Valley detector for tap cycle extraction
+     */
+    export function detectTapCycles(samples, minProminence = 0.12, minPeakDistanceMs = 120) {
+      if (!samples || samples.length < 5) return { peaks: [], valleys: [], itis: [] };
+
+      const n = samples.length;
+      const rawPeaks = [];
+
+      for (let i = 1; i < n - 1; i++) {
+        const prev = samples[i - 1].d;
+        const curr = samples[i].d;
+        const next = samples[i + 1].d;
+
+        if (curr >= prev && curr >= next && curr > 0.3) {
+          let leftMin = curr;
+          for (let j = i - 1; j >= 0; j--) {
+            if (samples[j].d > curr) break;
+            if (samples[j].d < leftMin) leftMin = samples[j].d;
+          }
+
+          let rightMin = curr;
+          for (let j = i + 1; j < n; j++) {
+            if (samples[j].d > curr) break;
+            if (samples[j].d < rightMin) rightMin = samples[j].d;
+          }
+
+          const baseline = Math.max(leftMin, rightMin);
+          const prominence = curr - baseline;
+
+          if (prominence >= minProminence) {
+            rawPeaks.push({
+              index: i,
+              t: samples[i].t,
+              d: curr,
+              prominence
+            });
+          }
+        }
+      }
+
+      const filteredPeaks = [];
+      for (const p of rawPeaks) {
+        if (filteredPeaks.length === 0) {
+          filteredPeaks.push(p);
+        } else {
+          const last = filteredPeaks[filteredPeaks.length - 1];
+          if ((p.t - last.t) >= minPeakDistanceMs) {
+            filteredPeaks.push(p);
+          } else if (p.d > last.d) {
+            filteredPeaks[filteredPeaks.length - 1] = p;
+          }
+        }
+      }
+
+      const valleys = [];
+      for (let k = 0; k < filteredPeaks.length - 1; k++) {
+        const p1 = filteredPeaks[k];
+        const p2 = filteredPeaks[k + 1];
+
+        let minVal = Infinity;
+        let minIdx = -1;
+        for (let i = p1.index; i <= p2.index; i++) {
+          if (samples[i].d < minVal) {
+            minVal = samples[i].d;
+            minIdx = i;
+          }
+        }
+        if (minIdx !== -1) {
+          valleys.push({
+            index: minIdx,
+            t: samples[minIdx].t,
+            d: minVal
+          });
+        }
+      }
+
+      const itis = [];
+      for (let i = 0; i < filteredPeaks.length - 1; i++) {
+        itis.push(filteredPeaks[i + 1].t - filteredPeaks[i].t);
+      }
+
+      return { peaks: filteredPeaks, valleys, itis };
+    }
+
+    export function computeStats(values) {
+      if (!values || values.length === 0) return { mean: 0, sd: 0, cv: 0 };
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      if (values.length === 1) return { mean, sd: 0, cv: 0 };
+      const variance = values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length - 1);
+      const sd = Math.sqrt(variance);
+      const cv = mean > 0 ? (sd / mean) * 100 : 0;
+      return { mean, sd, cv };
+    }
+
+    export function computeLinearRegression(points) {
+      const n = points.length;
+      if (n < 2) return { slope: 0, intercept: points[0]?.y || 0 };
+
+      let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+      for (let i = 0; i < n; i++) {
+        sumX += points[i].x;
+        sumY += points[i].y;
+        sumXY += points[i].x * points[i].y;
+        sumXX += points[i].x * points[i].x;
+      }
+
+      const denominator = (n * sumXX - sumX * sumX);
+      if (Math.abs(denominator) < 1e-9) return { slope: 0, intercept: sumY / n };
+
+      const slope = (n * sumXY - sumX * sumY) / denominator;
+      const intercept = (sumY - slope * sumX) / n;
+      return { slope, intercept };
+    }
+
+    export function analyzeTremorSpectrum(staticHoldSamples) {
+      if (!staticHoldSamples || staticHoldSamples.length < 25) {
+        return { dominantFreqHz: 0, tremorFlag: false, powerInBand: 0, spectrum: [] };
+      }
+
+      const n = staticHoldSamples.length;
+      const t0 = staticHoldSamples[0].t;
+      const tEnd = staticHoldSamples[n - 1].t;
+      const durationSec = (tEnd - t0) / 1000.0;
+      if (durationSec <= 0.5) {
+        return { dominantFreqHz: 0, tremorFlag: false, powerInBand: 0, spectrum: [] };
+      }
+
+      const regPoints = staticHoldSamples.map(s => ({ x: (s.t - t0) / 1000.0, y: s.y }));
+      const { slope, intercept } = computeLinearRegression(regPoints);
+
+      const detrended = regPoints.map((p, i) => {
+        const trend = slope * p.x + intercept;
+        const windowVal = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1)));
+        return (p.y - trend) * windowVal;
+      });
+
+      const spectrum = [];
+      let maxPower = -1;
+      let dominantFreq = 0;
+      let totalPower = 0;
+      let bandPower4to6 = 0;
+
+      for (let freq = 0.5; freq <= 12.0; freq += 0.25) {
+        let real = 0;
+        let imag = 0;
+        for (let i = 0; i < n; i++) {
+          const tSec = regPoints[i].x;
+          const angle = 2 * Math.PI * freq * tSec;
+          real += detrended[i] * Math.cos(angle);
+          imag -= detrended[i] * Math.sin(angle);
+        }
+        const power = (real * real + imag * imag) / n;
+        spectrum.push({ freq: Number(freq.toFixed(2)), power });
+        totalPower += power;
+
+        if (freq >= 3.8 && freq <= 6.2) {
+          bandPower4to6 += power;
+        }
+
+        if (power > maxPower) {
+          maxPower = power;
+          dominantFreq = freq;
+        }
+      }
+
+      const bandRatio = totalPower > 0 ? (bandPower4to6 / totalPower) : 0;
+      const isDominantInBand = dominantFreq >= 4.0 && dominantFreq <= 6.0;
+      const tremorFlag = isDominantInBand && (bandRatio > 0.30) && (maxPower > 0.0001);
+
+      return {
+        dominantFreqHz: Number(dominantFreq.toFixed(1)),
+        tremorFlag,
+        powerInBand: Number(bandPower4to6.toFixed(6)),
+        spectrum
+      };
+    }
+
+    export function classifyGesture(landmarks) {
+      if (!landmarks || landmarks.length < 21) return 'UNKNOWN';
+
+      const wrist = landmarks[0];
+      const D_t = computeNormalizedPinch(landmarks);
+
+      if (D_t < 0.25) {
+        return 'PINCH';
+      }
+
+      const isExtended = (tipIdx, pipIdx) => {
+        const dTip = euclideanDistance(wrist, landmarks[tipIdx], true);
+        const dPip = euclideanDistance(wrist, landmarks[pipIdx], true);
+        return dTip > (dPip * 1.15);
+      };
+
+      const indexExt = isExtended(8, 6);
+      const middleExt = isExtended(12, 10);
+      const ringExt = isExtended(16, 14);
+      const pinkyExt = isExtended(20, 18);
+
+      if (indexExt && middleExt && !ringExt && !pinkyExt) {
+        return 'PEACE';
+      }
+
+      if (!indexExt && !middleExt && !ringExt && !pinkyExt && D_t >= 0.25) {
+        return 'FIST';
+      }
+
+      if (indexExt && middleExt && ringExt && pinkyExt && D_t > 0.45) {
+        return 'OPEN_PALM';
+      }
+
+      return 'UNKNOWN';
+    }
+
+
+    /* =========================================================================
+       2. WEB AUDIO SYNTHESIZER FOR CLINICAL PACING
+       ========================================================================= */
+    class AudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, durationMs, type = 'sine', volume = 0.15) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+          gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + durationMs / 1000);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + durationMs / 1000);
+        } catch (e) {
+          console.warn('Audio play warning:', e);
+        }
+      }
+
+      countdownBeep() { this.playTone(440, 120, 'sine', 0.2); }
+      countdownStart() { this.playTone(880, 250, 'triangle', 0.25); }
+      tapClick() { this.playTone(600, 40, 'triangle', 0.1); }
+      trialSuccess() { this.playTone(1046, 200, 'sine', 0.25); }
+      errorBuzz() { this.playTone(220, 250, 'sawtooth', 0.2); }
+    }
+
+    const audio = new AudioEngine();
+
+
+    /* =========================================================================
+       3. SCREENING SYSTEM STATE MACHINE & MOBILE CONTROLLER
+       ========================================================================= */
+
+    const STATES = {
+      IDLE: 'IDLE',
+      COUNTDOWN: 'COUNTDOWN',
+      MODULE_A_TAPPING: 'MODULE_A_TAPPING',
+      MODULE_A_STATIC: 'MODULE_A_STATIC',
+      MODULE_B_BIMANUAL: 'MODULE_B_BIMANUAL',
+      RESULT: 'RESULT'
+    };
+
+    const BIMANUAL_TRIALS = [
+      { left: 'OPEN_PALM', right: 'FIST' },
+      { left: 'PEACE', right: 'PINCH' },
+      { left: 'FIST', right: 'PEACE' },
+      { left: 'PINCH', right: 'OPEN_PALM' },
+      { left: 'PEACE', right: 'FIST' }
+    ];
+
+    class MobileScreeningApp {
+      constructor() {
+        this.state = STATES.IDLE;
+        this.selectedMode = 'FULL'; // 'FULL', 'MOD_A', 'MOD_B'
+        
+        // Camera Facing Mode ('user' front, 'environment' rear)
+        this.currentFacingMode = 'user';
+        this.currentStream = null;
+
+        // Screen Wake Lock
+        this.wakeLock = null;
+
+        // Vision Landmarker & Media Streams
+        this.handLandmarker = null;
+        this.videoEl = document.getElementById('webcam');
+        this.canvasEl = document.getElementById('overlayCanvas');
+        this.ctx = this.canvasEl.getContext('2d');
+        this.animationId = null;
+
+        // FPS & Timing tracking
+        this.lastFrameTime = performance.now();
+        this.fpsHistory = [];
+        this.deviceFps = 0;
+
+        // Signal Processing
+        this.pinchFilter = new OneEuroFilter(1.2, 0.008, 1.0);
+
+        // Module A Data Storage
+        this.modAData = {
+          startTime: 0,
+          tapSamples: [],
+          staticSamples: [],
+          peaks: [],
+          valleys: [],
+          itis: []
+        };
+
+        // Module B Data Storage
+        this.modBData = {
+          currentTrialIndex: 0,
+          trialStartTime: 0,
+          holdStartTime: null,
+          wrongGestureStartTime: null,
+          commissionErrorsThisTrial: 0,
+          trials: []
+        };
+
+        // Full Output Schema
+        this.screeningResults = null;
+
+        // Chart.js Instances
+        this.charts = {
+          waveform: null,
+          radar: null,
+          tremor: null
+        };
+
+        // DOM Element Cache
+        this.dom = {
+          stateBadge: document.getElementById('stateBadge'),
+          fpsCounter: document.getElementById('fpsCounter'),
+          wakeLockPill: document.getElementById('wakeLockPill'),
+          wakeLockStatus: document.getElementById('wakeLockStatus'),
+          loaderOverlay: document.getElementById('loaderOverlay'),
+          loaderMsg: document.getElementById('loaderMsg'),
+          cameraAlert: document.getElementById('cameraAlert'),
+          cameraAlertMsg: document.getElementById('cameraAlertMsg'),
+          countdownOverlay: document.getElementById('countdownOverlay'),
+          countdownText: document.getElementById('countdownText'),
+          countdownSub: document.getElementById('countdownSub'),
+          handGuide: document.getElementById('handGuide'),
+          detectedHandLabel: document.getElementById('detectedHandLabel'),
+          liveDtVal: document.getElementById('liveDtVal'),
+          telemetryPalmScale: document.getElementById('telemetryPalmScale'),
+          telemetryDt: document.getElementById('telemetryDt'),
+          telemetryCameraMode: document.getElementById('telemetryCameraMode'),
+          cameraFacingLabel: document.getElementById('cameraFacingLabel'),
+          switchCameraBtn: document.getElementById('switchCameraBtn'),
+          startTestBtn: document.getElementById('startTestBtn'),
+          abortTestBtn: document.getElementById('abortTestBtn'),
+          liveHUDCard: document.getElementById('liveHUDCard'),
+          hudStageLabel: document.getElementById('hudStageLabel'),
+          hudStageTitle: document.getElementById('hudStageTitle'),
+          hudTimer: document.getElementById('hudTimer'),
+          hudModAContainer: document.getElementById('hudModAContainer'),
+          hudModBContainer: document.getElementById('hudModBContainer'),
+          hudStaticHoldBox: document.getElementById('hudStaticHoldBox'),
+          liveTapCount: document.getElementById('liveTapCount'),
+          liveFreqVal: document.getElementById('liveFreqVal'),
+          gaugeDtVal: document.getElementById('gaugeDtVal'),
+          apertureBar: document.getElementById('apertureBar'),
+          bimanualTrialNum: document.getElementById('bimanualTrialNum'),
+          bimanualErrorCount: document.getElementById('bimanualErrorCount'),
+          leftPromptBox: document.getElementById('leftPromptBox'),
+          rightPromptBox: document.getElementById('rightPromptBox'),
+          leftTargetGesture: document.getElementById('leftTargetGesture'),
+          rightTargetGesture: document.getElementById('rightTargetGesture'),
+          leftStatusBadge: document.getElementById('leftStatusBadge'),
+          rightStatusBadge: document.getElementById('rightStatusBadge'),
+          debounceProgressBar: document.getElementById('debounceProgressBar'),
+          debounceHoldLabel: document.getElementById('debounceHoldLabel'),
+          resultsSection: document.getElementById('resultsSection'),
+          toastNotification: document.getElementById('toastNotification'),
+          toastMsg: document.getElementById('toastMsg')
+        };
+
+        this.initEventListeners();
+      }
+
+      /* ================= INITIALIZATION & SETUP ================= */
+
+      async init() {
+        // 1. Check Protocol Security (HTTPS check for mobile browsers)
+        this.checkProtocolSecurity();
+
+        try {
+          this.dom.loaderMsg.textContent = 'Loading MediaPipe Tasks Vision WASM...';
+          
+          // 2. Initialize FilesetResolver for Vision Tasks
+          const vision = await FilesetResolver.forVisionTasks(
+            'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
+          );
+
+          // 3. Initialize HandLandmarker (attempt GPU delegate first, fallback to CPU)
+          try {
+            this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
+              baseOptions: {
+                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+                delegate: 'GPU'
+              },
+              runningMode: 'VIDEO',
+              numHands: 2
+            });
+          } catch (gpuError) {
+            console.warn('GPU acceleration unavailable on device, falling back to CPU:', gpuError);
+            this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
+              baseOptions: {
+                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+                delegate: 'CPU'
+              },
+              runningMode: 'VIDEO',
+              numHands: 2
+            });
+          }
+
+          this.dom.loaderMsg.textContent = 'Connecting Mobile Camera Pipeline...';
+
+          // 4. Start Camera Stream (Facing mode: user)
+          await this.startCamera(this.currentFacingMode);
+
+          // 5. Hide loader and start render loop
+          this.dom.loaderOverlay.classList.add('hidden');
+          this.startProcessingLoop();
+
+        } catch (err) {
+          console.error('Initialization error:', err);
+          this.dom.loaderOverlay.classList.add('hidden');
+          this.showCameraAlert('Camera or Vision AI initialization failed: ' + (err.message || 'Check camera permissions.'));
+        }
+      }
+
+      checkProtocolSecurity() {
+        const isSecure = window.location.protocol === 'https:' ||
+                         window.location.hostname === 'localhost' ||
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.hostname === '[::1]' ||
+                         window.location.hostname.endsWith('.local');
+
+        if (!isSecure) {
+          const banner = document.getElementById('httpsWarningBanner');
+          if (banner) banner.classList.remove('hidden');
+        }
+      }
+
+      async startCamera(facingMode) {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('navigator.mediaDevices.getUserMedia is not supported on this browser/insecure context.');
+        }
+
+        // Stop any active media tracks
+        if (this.currentStream) {
+          this.currentStream.getTracks().forEach(track => track.stop());
+          this.currentStream = null;
+        }
+
+        this.currentFacingMode = facingMode;
+
+        // Mobile-optimized constraints
+        const constraints = {
+          video: {
+            facingMode: { ideal: facingMode },
+            width: { ideal: 640 },
+            height: { ideal: 480 },
+            frameRate: { ideal: 30, max: 60 }
+          },
+          audio: false
+        };
+
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia(constraints);
+          this.currentStream = stream;
+          this.videoEl.srcObject = stream;
+
+          // Mirroring style: Only mirror front selfie camera ('user')
+          if (facingMode === 'user') {
+            this.videoEl.classList.add('video-mirror');
+            this.videoEl.classList.remove('video-unmirror');
+            this.dom.cameraFacingLabel.textContent = 'Front Cam';
+            this.dom.telemetryCameraMode.textContent = 'User (Front)';
+          } else {
+            this.videoEl.classList.remove('video-mirror');
+            this.videoEl.classList.add('video-unmirror');
+            this.dom.cameraFacingLabel.textContent = 'Rear Cam';
+            this.dom.telemetryCameraMode.textContent = 'Env (Rear)';
+          }
+
+          // Await metadata and synchronize canvas resolution
+          await new Promise((resolve) => {
+            this.videoEl.onloadedmetadata = () => {
+              this.syncCanvasResolution();
+              this.videoEl.play();
+              resolve();
+            };
+          });
+
+          this.dom.cameraAlert.classList.add('hidden');
+        } catch (err) {
+          console.error('Camera stream access failed:', err);
+          throw new Error('Camera permission denied or camera in use. On iOS: Settings > Safari > Camera.');
+        }
+      }
+
+      syncCanvasResolution() {
+        if (!this.videoEl || !this.videoEl.videoWidth) return;
+        const vW = this.videoEl.videoWidth;
+        const vH = this.videoEl.videoHeight;
+        
+        // Exact 1:1 coordinate matching
+        if (this.canvasEl.width !== vW || this.canvasEl.height !== vH) {
+          this.canvasEl.width = vW;
+          this.canvasEl.height = vH;
+        }
+      }
+
+      /* ================= SCREEN WAKE LOCK API ================= */
+
+      async acquireWakeLock() {
+        if ('wakeLock' in navigator) {
+          try {
+            this.wakeLock = await navigator.wakeLock.request('screen');
+            this.dom.wakeLockStatus.textContent = 'Lock Active';
+            this.dom.wakeLockPill.classList.remove('hidden');
+            this.wakeLock.addEventListener('release', () => {
+              this.wakeLock = null;
+              this.dom.wakeLockStatus.textContent = 'Off';
+            });
+          } catch (e) {
+            console.warn('Wake Lock request refused:', e);
+          }
+        }
+      }
+
+      async releaseWakeLock() {
+        if (this.wakeLock !== null) {
+          try {
+            await this.wakeLock.release();
+            this.wakeLock = null;
+            this.dom.wakeLockStatus.textContent = 'Off';
+          } catch (e) {
+            console.warn('Wake Lock release error:', e);
+          }
+        }
+      }
+
+      /* ================= EVENT LISTENERS ================= */
+
+      initEventListeners() {
+        // Mobile orientation and window resize handler
+        window.addEventListener('resize', () => this.syncCanvasResolution());
+        window.addEventListener('orientationchange', () => {
+          setTimeout(() => this.syncCanvasResolution(), 300);
+        });
+
+        // Visibility change to reacquire wake lock if returning to tab
+        document.addEventListener('visibilitychange', async () => {
+          if (document.visibilityState === 'visible' && 
+              (this.state === STATES.MODULE_A_TAPPING || this.state === STATES.MODULE_A_STATIC || this.state === STATES.MODULE_B_BIMANUAL)) {
+            await this.acquireWakeLock();
+          }
+        });
+
+        // Switch Camera (Front/Rear) Toggle
+        this.dom.switchCameraBtn.addEventListener('click', async () => {
+          const newFacing = (this.currentFacingMode === 'user') ? 'environment' : 'user';
+          try {
+            this.dom.cameraFacingLabel.textContent = 'Switching...';
+            await this.startCamera(newFacing);
+            this.showToast(`Switched to ${newFacing === 'user' ? 'Front' : 'Rear'} Camera`);
+          } catch (e) {
+            this.showCameraAlert(e.message);
+            // Revert label
+            this.dom.cameraFacingLabel.textContent = (this.currentFacingMode === 'user') ? 'Front Cam' : 'Rear Cam';
+          }
+        });
+
+        // Protocol Tab Selection
+        document.querySelectorAll('.protocol-tab').forEach(btn => {
+          btn.addEventListener('click', () => {
+            if (this.state !== STATES.IDLE && this.state !== STATES.RESULT) return;
+            document.querySelectorAll('.protocol-tab').forEach(b => {
+              b.classList.remove('bg-teal-500', 'text-slate-950', 'font-bold');
+              b.classList.add('text-slate-300');
+            });
+            btn.classList.add('bg-teal-500', 'text-slate-950', 'font-bold');
+            btn.classList.remove('text-slate-300');
+
+            this.selectedMode = btn.dataset.mode;
+            this.updateProtocolDescription();
+          });
+        });
+
+        // Audio toggle
+        const toggleAudioBtn = document.getElementById('toggleAudioBtn');
+        const audioToggleDot = document.getElementById('audioToggleDot');
+        toggleAudioBtn.addEventListener('click', () => {
+          audio.enabled = !audio.enabled;
+          if (audio.enabled) {
+            toggleAudioBtn.classList.replace('bg-slate-700', 'bg-teal-500');
+            audioToggleDot.classList.remove('-translate-x-4');
+            this.showToast('Audio cues enabled');
+          } else {
+            toggleAudioBtn.classList.replace('bg-teal-500', 'bg-slate-700');
+            audioToggleDot.classList.add('-translate-x-4');
+            this.showToast('Audio cues muted');
+          }
+        });
+
+        // Main Start Button
+        this.dom.startTestBtn.addEventListener('click', () => {
+          audio.init();
+          this.beginScreeningFlow();
+        });
+
+        // Abort Button
+        this.dom.abortTestBtn.addEventListener('click', () => {
+          this.releaseWakeLock();
+          this.transitionToState(STATES.IDLE);
+          this.showToast('Screening aborted (ยกเลิกแล้ว)');
+        });
+
+        // Copy / Share JSON Button (With Mobile Web Share API fallback)
+        document.getElementById('copyJsonBtn').addEventListener('click', () => {
+          this.handleShareOrCopyJson();
+        });
+
+        // Export CSV Button
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+          this.exportCsv();
+        });
+
+        // Reset / New Test Button
+        document.getElementById('resetTestBtn').addEventListener('click', () => {
+          this.dom.resultsSection.classList.add('hidden');
+          this.transitionToState(STATES.IDLE);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Retry Camera Button
+        document.getElementById('retryCamBtn').addEventListener('click', async () => {
+          this.dom.cameraAlert.classList.add('hidden');
+          try {
+            await this.startCamera(this.currentFacingMode);
+          } catch (e) {
+            this.showCameraAlert(e.message);
+          }
+        });
+      }
+
+      updateProtocolDescription() {
+        const descEl = document.getElementById('protocolDesc');
+        if (this.selectedMode === 'FULL') {
+          descEl.innerHTML = `
+            <div class="font-semibold text-teal-300">Full Comprehensive Protocol (การทดสอบครบชุด)</div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              1. <strong>Module A:</strong> 15-second rapid finger tapping + 5-second postural static hold for tremor.<br>
+              2. <strong>Module B:</strong> 5-trial bimanual coordination test measuring dual-task cognitive reaction time.
+            </p>`;
+        } else if (this.selectedMode === 'MOD_A') {
+          descEl.innerHTML = `
+            <div class="font-semibold text-teal-300">Module A Only: Rapid Finger Tapping & Tremor (แตะนิ้ว & การสั่น)</div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              Evaluates bradykinesia, tapping frequency (Hz), inter-tap rhythm consistency (CV%), amplitude decay fatigue, and 4-6 Hz static postural tremor.
+            </p>`;
+        } else {
+          descEl.innerHTML = `
+            <div class="font-semibold text-teal-300">Module B Only: Dual-Task Bimanual Coordination (การประสานสองมือ)</div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              5 randomized bilateral gesture trials (Open Palm, Fist, Peace, Pinch). Quantifies sensorimotor decision speed, bilateral inhibition, and commission errors.
+            </p>`;
+        }
+      }
+
+      /* ================= STATE MACHINE & TRANSITIONS ================= */
+
+      transitionToState(newState) {
+        this.state = newState;
+        this.dom.stateBadge.textContent = newState;
+
+        if (newState === STATES.IDLE) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
+          this.dom.startTestBtn.classList.remove('hidden');
+          this.dom.abortTestBtn.classList.add('hidden');
+          this.dom.countdownOverlay.classList.add('hidden');
+          this.dom.hudModAContainer.classList.remove('hidden');
+          this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudStaticHoldBox.classList.add('hidden');
+          this.dom.hudStageTitle.textContent = 'Ready to Start';
+          this.dom.hudTimer.textContent = '15.0s';
+          this.dom.hudStageLabel.textContent = 'STAGE MONITOR';
+          this.releaseWakeLock();
+        } else if (newState === STATES.COUNTDOWN) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
+          this.dom.startTestBtn.classList.add('hidden');
+          this.dom.abortTestBtn.classList.remove('hidden');
+          this.dom.countdownOverlay.classList.remove('hidden');
+          this.dom.resultsSection.classList.add('hidden');
+          this.acquireWakeLock();
+        } else if (newState === STATES.MODULE_A_TAPPING) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
+          this.dom.countdownOverlay.classList.add('hidden');
+          this.dom.hudModAContainer.classList.remove('hidden');
+          this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudStaticHoldBox.classList.add('hidden');
+          this.dom.hudStageLabel.textContent = 'MODULE A: TAP TEST';
+          this.dom.hudStageTitle.textContent = 'Rapid Finger Tapping / แตะนิ้วรัวๆ';
+        } else if (newState === STATES.MODULE_A_STATIC) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
+          this.dom.hudModAContainer.classList.add('hidden');
+          this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudStaticHoldBox.classList.remove('hidden');
+          this.dom.hudStageLabel.textContent = 'MODULE A: POSTURAL HOLD';
+          this.dom.hudStageTitle.textContent = 'Static Tremor Analysis / กางมือนิ่งๆ';
+        } else if (newState === STATES.MODULE_B_BIMANUAL) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
+          this.dom.hudModAContainer.classList.add('hidden');
+          this.dom.hudModBContainer.classList.remove('hidden');
+          this.dom.hudStaticHoldBox.classList.add('hidden');
+          this.dom.hudStageLabel.textContent = 'MODULE B: BIMANUAL';
+          this.dom.hudStageTitle.textContent = 'Dual-Task Coordination / สองมือ';
+        } else if (newState === STATES.RESULT) {
+          this.dom.stateBadge.className = 'px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
+          this.dom.startTestBtn.classList.remove('hidden');
+          this.dom.abortTestBtn.classList.add('hidden');
+          this.dom.countdownOverlay.classList.add('hidden');
+          this.dom.hudStageTitle.textContent = 'Assessment Completed';
+          this.dom.hudTimer.textContent = 'DONE';
+          this.dom.resultsSection.classList.remove('hidden');
+          this.releaseWakeLock();
+          this.computeAndRenderFinalResults();
+        }
+      }
+
+      beginScreeningFlow() {
+        if (this.selectedMode === 'MOD_B') {
+          this.startCountdown(() => this.startModuleB());
+        } else {
+          this.startCountdown(() => this.startModuleATapping());
+        }
+      }
+
+      startCountdown(onComplete) {
+        this.transitionToState(STATES.COUNTDOWN);
+        let count = 3;
+        this.dom.countdownText.textContent = count;
+        this.dom.countdownSub.textContent = 'Position hand at 45° / จัดท่ายกมือ 45 องศา';
+        audio.countdownBeep();
+
+        const timer = setInterval(() => {
+          count--;
+          if (count > 0) {
+            this.dom.countdownText.textContent = count;
+            audio.countdownBeep();
+          } else if (count === 0) {
+            this.dom.countdownText.textContent = 'GO!';
+            this.dom.countdownSub.textContent = 'Tap thumb & index as fast as possible!';
+            audio.countdownStart();
+          } else {
+            clearInterval(timer);
+            if (this.state === STATES.COUNTDOWN) {
+              onComplete();
+            }
+          }
+        }, 1000);
+      }
+
+      /* ================= MODULE A: 15s TAP + 5s STATIC HOLD ================= */
+
+      startModuleATapping() {
+        this.transitionToState(STATES.MODULE_A_TAPPING);
+        const startTime = performance.now();
+        this.modAData.startTime = startTime;
+        this.modAData.tapSamples = [];
+        this.modAData.peaks = [];
+        this.modAData.valleys = [];
+        this.modAData.itis = [];
+        this.pinchFilter.reset();
+
+        this.dom.liveTapCount.textContent = '0';
+        this.dom.liveFreqVal.textContent = '0.0';
+
+        const durationMs = 15000;
+        const interval = setInterval(() => {
+          if (this.state !== STATES.MODULE_A_TAPPING) {
+            clearInterval(interval);
+            return;
+          }
+
+          const elapsedMs = performance.now() - startTime;
+          const remainingSec = Math.max(0, (durationMs - elapsedMs) / 1000);
+          this.dom.hudTimer.textContent = remainingSec.toFixed(1) + 's';
+
+          if (elapsedMs >= durationMs) {
+            clearInterval(interval);
+            this.startModuleAStaticHold();
+          }
+        }, 50);
+      }
+
+      startModuleAStaticHold() {
+        this.transitionToState(STATES.MODULE_A_STATIC);
+        audio.playTone(523, 200, 'sine', 0.2);
+        const startTime = performance.now();
+        this.modAData.staticSamples = [];
+
+        const durationMs = 5000;
+        const interval = setInterval(() => {
+          if (this.state !== STATES.MODULE_A_STATIC) {
+            clearInterval(interval);
+            return;
+          }
+
+          const elapsedMs = performance.now() - startTime;
+          const remainingSec = Math.max(0, (durationMs - elapsedMs) / 1000);
+          this.dom.hudTimer.textContent = remainingSec.toFixed(1) + 's';
+
+          if (elapsedMs >= durationMs) {
+            clearInterval(interval);
+            audio.trialSuccess();
+
+            if (this.selectedMode === 'FULL') {
+              this.startCountdown(() => this.startModuleB());
+            } else {
+              this.transitionToState(STATES.RESULT);
+            }
+          }
+        }, 50);
+      }
+
+      /* ================= MODULE B: DUAL-TASK BIMANUAL ================= */
+
+      startModuleB() {
+        this.transitionToState(STATES.MODULE_B_BIMANUAL);
+        this.modBData.currentTrialIndex = 0;
+        this.modBData.trials = [];
+        this.presentBimanualTrial(0);
+      }
+
+      presentBimanualTrial(trialIndex) {
+        if (trialIndex >= BIMANUAL_TRIALS.length) {
+          audio.trialSuccess();
+          this.transitionToState(STATES.RESULT);
+          return;
+        }
+
+        const target = BIMANUAL_TRIALS[trialIndex];
+        this.modBData.currentTrialIndex = trialIndex;
+        this.modBData.trialStartTime = performance.now();
+        this.modBData.holdStartTime = null;
+        this.modBData.wrongGestureStartTime = null;
+        this.modBData.commissionErrorsThisTrial = 0;
+
+        this.dom.bimanualTrialNum.textContent = trialIndex + 1;
+        this.dom.bimanualErrorCount.textContent = this.modBData.trials.reduce((sum, t) => sum + t.commissionErrors, 0);
+        this.dom.leftTargetGesture.textContent = target.left;
+        this.dom.rightTargetGesture.textContent = target.right;
+        this.dom.hudTimer.textContent = `Trial ${trialIndex + 1}/5`;
+
+        this.dom.leftPromptBox.className = 'p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150';
+        this.dom.rightPromptBox.className = 'p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150';
+        this.dom.debounceProgressBar.style.width = '0%';
+        this.dom.debounceHoldLabel.textContent = '0ms';
+
+        audio.countdownBeep();
+      }
+
+      processBimanualFrame(detectedHands) {
+        if (this.state !== STATES.MODULE_B_BIMANUAL) return;
+
+        const target = BIMANUAL_TRIALS[this.modBData.currentTrialIndex];
+        if (!target) return;
+
+        let leftHand = null;
+        let rightHand = null;
+
+        detectedHands.forEach(h => {
+          if (h.handedness === 'Left') leftHand = h;
+          if (h.handedness === 'Right') rightHand = h;
+        });
+
+        const leftGesture = leftHand ? classifyGesture(leftHand.landmarks) : 'NO_HAND';
+        const rightGesture = rightHand ? classifyGesture(rightHand.landmarks) : 'NO_HAND';
+
+        this.dom.leftStatusBadge.textContent = leftGesture;
+        this.dom.rightStatusBadge.textContent = rightGesture;
+
+        const leftMatched = (leftGesture === target.left);
+        const rightMatched = (rightGesture === target.right);
+
+        this.dom.leftPromptBox.className = `p-3 rounded-xl bg-surface-950 border-2 ${leftMatched ? 'border-emerald-500 shadow-lg shadow-emerald-500/20' : 'border-slate-800'} flex flex-col items-center text-center transition-all`;
+        this.dom.rightPromptBox.className = `p-3 rounded-xl bg-surface-950 border-2 ${rightMatched ? 'border-emerald-500 shadow-lg shadow-emerald-500/20' : 'border-slate-800'} flex flex-col items-center text-center transition-all`;
+
+        const now = performance.now();
+
+        const isWrongGesture = (
+          (leftGesture !== 'NO_HAND' && leftGesture !== 'UNKNOWN' && !leftMatched) ||
+          (rightGesture !== 'NO_HAND' && rightGesture !== 'UNKNOWN' && !rightMatched)
+        );
+
+        if (isWrongGesture) {
+          if (!this.modBData.wrongGestureStartTime) {
+            this.modBData.wrongGestureStartTime = now;
+          } else if (now - this.modBData.wrongGestureStartTime > 200) {
+            this.modBData.commissionErrorsThisTrial++;
+            this.modBData.wrongGestureStartTime = null;
+            audio.errorBuzz();
+            this.dom.bimanualErrorCount.textContent = (this.modBData.trials.reduce((sum, t) => sum + t.commissionErrors, 0) + this.modBData.commissionErrorsThisTrial);
+          }
+        } else {
+          this.modBData.wrongGestureStartTime = null;
+        }
+
+        if (leftMatched && rightMatched) {
+          if (!this.modBData.holdStartTime) {
+            this.modBData.holdStartTime = now;
+          }
+
+          const holdDuration = now - this.modBData.holdStartTime;
+          const debounceTargetMs = 150;
+          const pct = Math.min(100, (holdDuration / debounceTargetMs) * 100);
+          this.dom.debounceProgressBar.style.width = pct + '%';
+          this.dom.debounceHoldLabel.textContent = `${Math.min(debounceTargetMs, Math.round(holdDuration))}ms`;
+
+          if (holdDuration >= debounceTargetMs) {
+            const reactionTimeMs = Math.round(now - this.modBData.trialStartTime - debounceTargetMs);
+            audio.trialSuccess();
+
+            this.modBData.trials.push({
+              trial: this.modBData.currentTrialIndex + 1,
+              leftTarget: target.left,
+              rightTarget: target.right,
+              rtMs: Math.max(100, reactionTimeMs),
+              commissionErrors: this.modBData.commissionErrorsThisTrial,
+              success: true
+            });
+
+            this.dom.debounceHoldLabel.textContent = '150ms ✅';
+            setTimeout(() => {
+              this.presentBimanualTrial(this.modBData.currentTrialIndex + 1);
+            }, 600);
+          }
+        } else {
+          this.modBData.holdStartTime = null;
+          this.dom.debounceProgressBar.style.width = '0%';
+          this.dom.debounceHoldLabel.textContent = '0ms';
+        }
+      }
+
+      /* ================= 4. REAL-TIME PROCESSING LOOP ================= */
+
+      startProcessingLoop() {
+        const render = () => {
+          this.processFrame();
+          this.animationId = requestAnimationFrame(render);
+        };
+        this.animationId = requestAnimationFrame(render);
+      }
+
+      processFrame() {
+        const now = performance.now();
+        const delta = now - this.lastFrameTime;
+        this.lastFrameTime = now;
+
+        if (delta > 0) {
+          const fps = 1000 / delta;
+          this.fpsHistory.push(fps);
+          if (this.fpsHistory.length > 20) this.fpsHistory.shift();
+          this.deviceFps = this.fpsHistory.reduce((a, b) => a + b, 0) / this.fpsHistory.length;
+          this.dom.fpsCounter.textContent = Math.round(this.deviceFps);
+        }
+
+        if (!this.videoEl || this.videoEl.readyState < 2 || !this.handLandmarker) {
+          return;
+        }
+
+        const results = this.handLandmarker.detectForVideo(this.videoEl, now);
+
+        const W = this.canvasEl.width;
+        const H = this.canvasEl.height;
+        this.ctx.clearRect(0, 0, W, H);
+
+        const isMirrored = (this.currentFacingMode === 'user');
+        const detectedHands = [];
+
+        if (results && results.landmarks && results.landmarks.length > 0) {
+          for (let i = 0; i < results.landmarks.length; i++) {
+            const rawLandmarks = results.landmarks[i];
+            const handednessInfo = results.handednesses[i]?.[0];
+            
+            // Handedness evaluation:
+            // MediaPipe predicts anatomical handedness directly.
+            let handedness = handednessInfo ? handednessInfo.categoryName : 'Right';
+            const score = handednessInfo ? Math.round(handednessInfo.score * 100) : 95;
+
+            detectedHands.push({
+              landmarks: rawLandmarks,
+              handedness,
+              score
+            });
+
+            this.drawHandSkeleton(rawLandmarks, handedness, score, W, H, isMirrored);
+          }
+        }
+
+        if (detectedHands.length > 0) {
+          const primaryHand = detectedHands[0];
+          const rawD_t = computeNormalizedPinch(primaryHand.landmarks);
+          const filteredD_t = this.pinchFilter.filter(rawD_t, now);
+          const palmScale = computePalmScale(primaryHand.landmarks);
+
+          this.dom.detectedHandLabel.textContent = `${primaryHand.handedness} Hand (${primaryHand.score}%)`;
+          this.dom.liveDtVal.textContent = filteredD_t.toFixed(2);
+          this.dom.gaugeDtVal.textContent = filteredD_t.toFixed(2);
+          this.dom.telemetryPalmScale.textContent = palmScale.toFixed(3);
+          this.dom.telemetryDt.textContent = filteredD_t.toFixed(2);
+
+          const barPct = Math.min(100, Math.max(0, (filteredD_t / 1.5) * 100));
+          this.dom.apertureBar.style.width = barPct + '%';
+
+          if (this.state === STATES.MODULE_A_TAPPING) {
+            const relativeMs = now - this.modAData.startTime;
+            this.modAData.tapSamples.push({
+              t: relativeMs,
+              d: filteredD_t,
+              rawD: rawD_t,
+              wristY: primaryHand.landmarks[0].y
+            });
+
+            const { peaks, itis } = detectTapCycles(this.modAData.tapSamples);
+            if (peaks.length !== this.modAData.peaks.length) {
+              audio.tapClick();
+              this.modAData.peaks = peaks;
+              this.modAData.itis = itis;
+              this.dom.liveTapCount.textContent = peaks.length;
+
+              const elapsedSec = Math.max(0.1, relativeMs / 1000);
+              const liveCadence = (peaks.length / elapsedSec);
+              this.dom.liveFreqVal.textContent = liveCadence.toFixed(1);
+            }
+          }
+
+          if (this.state === STATES.MODULE_A_STATIC) {
+            const relativeMs = now - this.modAData.startTime;
+            this.modAData.staticSamples.push({
+              t: relativeMs,
+              y: primaryHand.landmarks[0].y
+            });
+          }
+
+        } else {
+          this.dom.detectedHandLabel.textContent = 'No Hand Detected';
+          this.dom.liveDtVal.textContent = '0.00';
+          this.dom.telemetryDt.textContent = '--';
+          this.dom.apertureBar.style.width = '0%';
+        }
+
+        if (this.state === STATES.MODULE_B_BIMANUAL) {
+          this.processBimanualFrame(detectedHands);
+        }
+      }
+
+      /**
+       * Render hand skeleton on overlay canvas
+       * If isMirrored (front selfie camera): map screenX = (1 - x) * W
+       * If not mirrored (rear camera): map screenX = x * W
+       */
+      drawHandSkeleton(landmarks, handedness, score, W, H, isMirrored) {
+        const CONNECTIONS = [
+          [0, 1], [0, 5], [9, 13], [13, 17], [0, 17], [5, 9],
+          [1, 2], [2, 3], [3, 4],
+          [5, 6], [6, 7], [7, 8],
+          [9, 10], [10, 11], [11, 12],
+          [13, 14], [14, 15], [15, 16],
+          [17, 18], [18, 19], [19, 20]
+        ];
+
+        const mapX = (x) => isMirrored ? ((1 - x) * W) : (x * W);
+
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeStyle = handedness === 'Left' ? 'rgba(56, 189, 248, 0.85)' : 'rgba(45, 212, 191, 0.85)';
+        this.ctx.lineCap = 'round';
+
+        for (const [startIdx, endIdx] of CONNECTIONS) {
+          const p1 = landmarks[startIdx];
+          const p2 = landmarks[endIdx];
+
+          const x1 = mapX(p1.x);
+          const y1 = p1.y * H;
+          const x2 = mapX(p2.x);
+          const y2 = p2.y * H;
+
+          this.ctx.beginPath();
+          this.ctx.moveTo(x1, y1);
+          this.ctx.lineTo(x2, y2);
+          this.ctx.stroke();
+        }
+
+        // Pinch line between thumb tip (4) and index tip (8)
+        const thumbTip = landmarks[4];
+        const indexTip = landmarks[8];
+        const tx = mapX(thumbTip.x);
+        const ty = thumbTip.y * H;
+        const ix = mapX(indexTip.x);
+        const iy = indexTip.y * H;
+
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = 'rgba(251, 191, 36, 0.9)';
+        this.ctx.setLineDash([4, 4]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(tx, ty);
+        this.ctx.lineTo(ix, iy);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // Joint nodes
+        for (let i = 0; i < landmarks.length; i++) {
+          const lm = landmarks[i];
+          const sx = mapX(lm.x);
+          const sy = lm.y * H;
+
+          this.ctx.beginPath();
+          if (i === 4 || i === 8) {
+            this.ctx.arc(sx, sy, 7, 0, 2 * Math.PI);
+            this.ctx.fillStyle = '#f59e0b';
+          } else if (i === 0 || i === 9) {
+            this.ctx.arc(sx, sy, 6, 0, 2 * Math.PI);
+            this.ctx.fillStyle = '#06b6d4';
+          } else {
+            this.ctx.arc(sx, sy, 4, 0, 2 * Math.PI);
+            this.ctx.fillStyle = '#f8fafc';
+          }
+          this.ctx.fill();
+          this.ctx.lineWidth = 1.5;
+          this.ctx.strokeStyle = '#0f172a';
+          this.ctx.stroke();
+        }
+
+        // Handedness Label tag above wrist
+        const wristX = mapX(landmarks[0].x);
+        const wristY = landmarks[0].y * H + 25;
+
+        this.ctx.font = 'bold 11px JetBrains Mono, monospace';
+        const labelText = `${handedness} (${score}%)`;
+        const textWidth = this.ctx.measureText(labelText).width;
+
+        this.ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        this.ctx.roundRect(wristX - textWidth / 2 - 6, wristY - 14, textWidth + 12, 18, 4);
+        this.ctx.fill();
+
+        this.ctx.fillStyle = handedness === 'Left' ? '#38bdf8' : '#2dd4bf';
+        this.ctx.fillText(labelText, wristX - textWidth / 2, wristY);
+      }
+
+
+      /* ================= 5. ANALYTICS & RESULTS CALCULATION ================= */
+
+      computeAndRenderFinalResults() {
+        const sessionId = 'NS-MOB-' + Date.now().toString(36).toUpperCase() + '-' + Math.floor(Math.random() * 1000);
+        const timestamp = new Date().toISOString();
+
+        const tapCycles = detectTapCycles(this.modAData.tapSamples, 0.12, 120);
+        const totalTaps = tapCycles.peaks.length;
+        const frequencyHz = Number((totalTaps / 15.0).toFixed(2));
+
+        const itiStats = computeStats(tapCycles.itis);
+        const rhythmCvPct = Number(itiStats.cv.toFixed(2));
+
+        const first5sPeaks = tapCycles.peaks.filter(p => p.t <= 5000).map(p => p.d);
+        const last5sPeaks = tapCycles.peaks.filter(p => p.t >= 10000).map(p => p.d);
+
+        const meanFirst5s = first5sPeaks.length > 0 ? (first5sPeaks.reduce((a, b) => a + b, 0) / first5sPeaks.length) : (tapCycles.peaks[0]?.d || 1.0);
+        const meanLast5s = last5sPeaks.length > 0 ? (last5sPeaks.reduce((a, b) => a + b, 0) / last5sPeaks.length) : (tapCycles.peaks[tapCycles.peaks.length - 1]?.d || meanFirst5s);
+        
+        let amplitudeDecayPct = 0;
+        if (meanFirst5s > 0) {
+          amplitudeDecayPct = Number((((meanFirst5s - meanLast5s) / meanFirst5s) * 100).toFixed(2));
+        }
+
+        const tremorRes = analyzeTremorSpectrum(this.modAData.staticSamples);
+
+        const trials = this.modBData.trials.length > 0 ? this.modBData.trials : [
+          { trial: 1, leftTarget: 'OPEN_PALM', rightTarget: 'FIST', rtMs: 950, commissionErrors: 0, success: true }
+        ];
+        const completedTrials = trials.length;
+        const meanRT = Math.round(trials.reduce((sum, t) => sum + t.rtMs, 0) / completedTrials);
+        const totalErrors = trials.reduce((sum, t) => sum + t.commissionErrors, 0);
+
+        const speedScore = Math.min(100, Math.max(10, Math.round((frequencyHz / 4.2) * 100)));
+        const rhythmScore = Math.min(100, Math.max(15, Math.round(100 - (Math.max(0, rhythmCvPct - 5) * 3.4))));
+        const enduranceScore = Math.min(100, Math.max(20, Math.round(100 - (Math.max(0, amplitudeDecayPct) * 2.2))));
+        const stabilityScore = tremorRes.tremorFlag ? 35 : 95;
+        const bimanualScore = Math.min(100, Math.max(15, Math.round(100 - Math.max(0, (meanRT - 850) / 25) - (totalErrors * 15))));
+
+        const compositeScore = Math.round(
+          speedScore * 0.25 +
+          rhythmScore * 0.20 +
+          enduranceScore * 0.20 +
+          stabilityScore * 0.15 +
+          bimanualScore * 0.20
+        );
+
+        let motorStatus = 'Normal / Reference Range (ปกติ)';
+        if (compositeScore < 55) {
+          motorStatus = 'Marked Asymmetry / Fatigue (เบี่ยงเบนชัดเจน)';
+        } else if (compositeScore < 75) {
+          motorStatus = 'Mild Inconsistency (เบี่ยงเบนเล็กน้อย)';
+        }
+
+        this.screeningResults = {
+          session_id: sessionId,
+          timestamp,
+          camera_facing: this.currentFacingMode,
+          device_fps: Number(this.deviceFps.toFixed(1)),
+          summary: {
+            composite_score: compositeScore,
+            motor_status: motorStatus,
+            scores: {
+              speed: speedScore,
+              rhythm_consistency: rhythmScore,
+              endurance: enduranceScore,
+              stability: stabilityScore,
+              bimanual_coordination: bimanualScore
+            }
+          },
+          finger_tapping: {
+            duration_sec: 15.0,
+            total_taps: totalTaps,
+            frequency_hz: frequencyHz,
+            mean_iti_ms: Number(itiStats.mean.toFixed(1)),
+            sd_iti_ms: Number(itiStats.sd.toFixed(1)),
+            rhythm_cv_pct: rhythmCvPct,
+            mean_peak_first_5s: Number(meanFirst5s.toFixed(3)),
+            mean_peak_last_5s: Number(meanLast5s.toFixed(3)),
+            amplitude_decay_pct: amplitudeDecayPct,
+            static_hold: {
+              duration_sec: 5.0,
+              dominant_frequency_hz: tremorRes.dominantFreqHz,
+              tremor_flag: tremorRes.tremorFlag,
+              power_in_4_6hz: tremorRes.powerInBand
+            }
+          },
+          dual_task: {
+            trials_total: completedTrials,
+            mean_reaction_time_ms: meanRT,
+            total_commission_errors: totalErrors,
+            accuracy_pct: Number((((completedTrials - totalErrors) / completedTrials) * 100).toFixed(1)),
+            trials
+          },
+          raw_series: this.modAData.tapSamples.map(s => ({
+            t_ms: Number(s.t.toFixed(1)),
+            d_t: Number(s.d.toFixed(3)),
+            wrist_y: Number((s.wristY || 0).toFixed(4))
+          }))
+        };
+
+        // Render Summary Cards
+        document.getElementById('resSessionId').textContent = sessionId;
+        document.getElementById('resTimestamp').textContent = new Date().toLocaleTimeString();
+
+        document.getElementById('cardTotalTaps').textContent = totalTaps;
+        document.getElementById('cardFreq').textContent = `(${frequencyHz} Hz)`;
+
+        const decayEl = document.getElementById('cardDecay');
+        decayEl.textContent = `${amplitudeDecayPct > 0 ? '+' : ''}${amplitudeDecayPct}%`;
+        decayEl.className = amplitudeDecayPct > 20 ? 'text-xl sm:text-2xl font-mono font-bold text-rose-400' : 'text-xl sm:text-2xl font-mono font-bold text-teal-400';
+
+        const cvEl = document.getElementById('cardCv');
+        cvEl.textContent = `${rhythmCvPct}%`;
+        cvEl.className = rhythmCvPct > 20 ? 'text-xl sm:text-2xl font-mono font-bold text-amber-400' : 'text-xl sm:text-2xl font-mono font-bold text-teal-400';
+
+        const tremorEl = document.getElementById('cardTremor');
+        if (tremorRes.tremorFlag) {
+          tremorEl.textContent = 'FLAGGED';
+          tremorEl.className = 'text-base sm:text-lg font-mono font-bold text-rose-400';
+          document.getElementById('cardTremorFreq').textContent = `Oscillation: ${tremorRes.dominantFreqHz} Hz`;
+        } else {
+          tremorEl.textContent = 'Normal';
+          tremorEl.className = 'text-base sm:text-lg font-mono font-bold text-emerald-400';
+          document.getElementById('cardTremorFreq').textContent = `Dominant: ${tremorRes.dominantFreqHz} Hz`;
+        }
+
+        document.getElementById('cardReactionTime').textContent = meanRT;
+        document.getElementById('cardErrors').textContent = `Commission errors: ${totalErrors}`;
+
+        document.getElementById('cardComposite').textContent = `${compositeScore} / 100`;
+        const statusLabel = document.getElementById('cardStatusLabel');
+        statusLabel.textContent = motorStatus;
+        statusLabel.className = compositeScore >= 75 ? 'text-[10px] font-semibold text-emerald-400' : (compositeScore >= 55 ? 'text-[10px] font-semibold text-amber-400' : 'text-[10px] font-semibold text-rose-400');
+
+        // Bimanual Table
+        const tbody = document.getElementById('bimanualTableBody');
+        tbody.innerHTML = trials.map(t => `
+          <tr class="hover:bg-slate-800/40">
+            <td class="p-2 font-bold text-white">#${t.trial}</td>
+            <td class="p-2"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-teal-300 font-semibold">${t.leftTarget}</span></td>
+            <td class="p-2"><span class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-semibold">${t.rightTarget}</span></td>
+            <td class="p-2 text-white font-mono">${t.rtMs} ms</td>
+            <td class="p-2 ${t.commissionErrors > 0 ? 'text-rose-400 font-bold' : 'text-slate-400'}">${t.commissionErrors}</td>
+          </tr>
+        `).join('');
+
+        this.renderCharts(tapCycles, tremorRes, {
+          speedScore,
+          rhythmScore,
+          enduranceScore,
+          stabilityScore,
+          bimanualScore
+        });
+
+        setTimeout(() => {
+          this.dom.resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+      }
+
+      /* ================= 6. CHART.JS VISUALIZATIONS ================= */
+
+      renderCharts(tapCycles, tremorRes, scores) {
+        if (this.charts.waveform) this.charts.waveform.destroy();
+        if (this.charts.radar) this.charts.radar.destroy();
+        if (this.charts.tremor) this.charts.tremor.destroy();
+
+        const rawPoints = this.modAData.tapSamples.map(s => ({
+          x: Number((s.t / 1000).toFixed(2)),
+          y: Number(s.d.toFixed(3))
+        }));
+
+        const peakPoints = tapCycles.peaks.map(p => ({
+          x: Number((p.t / 1000).toFixed(2)),
+          y: Number(p.d.toFixed(3))
+        }));
+
+        const reg = computeLinearRegression(peakPoints.length > 1 ? peakPoints : rawPoints);
+        const trendlineData = [
+          { x: 0, y: Number(reg.intercept.toFixed(3)) },
+          { x: 15, y: Number((reg.slope * 15 + reg.intercept).toFixed(3)) }
+        ];
+
+        const ctxWave = document.getElementById('waveformChart').getContext('2d');
+        this.charts.waveform = new Chart(ctxWave, {
+          type: 'line',
+          data: {
+            datasets: [
+              {
+                label: 'Normalized Aperture D_t',
+                data: rawPoints,
+                borderColor: '#14b8a6',
+                backgroundColor: 'rgba(20, 184, 166, 0.08)',
+                fill: true,
+                borderWidth: 2,
+                pointRadius: 0,
+                tension: 0.2
+              },
+              {
+                label: 'Tap Peaks',
+                data: peakPoints,
+                borderColor: '#f59e0b',
+                backgroundColor: '#f59e0b',
+                pointRadius: 4,
+                showLine: false
+              },
+              {
+                label: 'Trendline',
+                data: trendlineData,
+                borderColor: '#fbbf24',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 500 },
+            scales: {
+              x: {
+                type: 'linear',
+                title: { display: true, text: 'Time (s)', color: '#94a3b8', font: { size: 10 } },
+                min: 0,
+                max: 15,
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
+              },
+              y: {
+                title: { display: true, text: 'D_t', color: '#94a3b8', font: { size: 10 } },
+                min: 0,
+                max: Math.max(1.8, ...rawPoints.map(p => p.y)),
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
+              }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+
+        const ctxRadar = document.getElementById('radarChart').getContext('2d');
+        this.charts.radar = new Chart(ctxRadar, {
+          type: 'radar',
+          data: {
+            labels: [
+              'Speed',
+              'Rhythm CV',
+              'Endurance',
+              'Stability',
+              'Coordination'
+            ],
+            datasets: [
+              {
+                label: 'Score',
+                data: [
+                  scores.speedScore,
+                  scores.rhythmScore,
+                  scores.enduranceScore,
+                  scores.stabilityScore,
+                  scores.bimanualScore
+                ],
+                backgroundColor: 'rgba(45, 212, 191, 0.25)',
+                borderColor: '#2dd4bf',
+                pointBackgroundColor: '#2dd4bf',
+                borderWidth: 2
+              },
+              {
+                label: 'Norm',
+                data: [85, 85, 85, 90, 85],
+                backgroundColor: 'rgba(148, 163, 184, 0.08)',
+                borderColor: '#64748b',
+                borderDash: [4, 4],
+                pointRadius: 0,
+                borderWidth: 1.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                angleLines: { color: 'rgba(51, 65, 85, 0.4)' },
+                grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                pointLabels: {
+                  color: '#cbd5e1',
+                  font: { size: 10, weight: 'bold' }
+                },
+                min: 0,
+                max: 100,
+                ticks: { display: false, stepSize: 25 }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: '#94a3b8', font: { size: 10 } }
+              }
+            }
+          }
+        });
+
+        const ctxTremor = document.getElementById('tremorChart').getContext('2d');
+        const specData = tremorRes.spectrum.map(s => ({ x: s.freq, y: s.power }));
+
+        this.charts.tremor = new Chart(ctxTremor, {
+          type: 'bar',
+          data: {
+            datasets: [{
+              label: 'PSD',
+              data: specData,
+              backgroundColor: specData.map(p => (p.x >= 4.0 && p.x <= 6.0) ? 'rgba(244, 63, 94, 0.85)' : 'rgba(56, 189, 248, 0.6)'),
+              borderColor: specData.map(p => (p.x >= 4.0 && p.x <= 6.0) ? '#f43f5e' : '#38bdf8'),
+              borderWidth: 1,
+              borderRadius: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                type: 'linear',
+                title: { display: true, text: 'Frequency (Hz) [4-6 Hz band]', color: '#94a3b8', font: { size: 10 } },
+                min: 0.5,
+                max: 12.0,
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
+              },
+              y: {
+                title: { display: true, text: 'Power', color: '#94a3b8', font: { size: 10 } },
+                grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } }
+              }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+
+      /* ================= 7. EXPORT DATA & MOBILE WEB SHARE ================= */
+
+      async handleShareOrCopyJson() {
+        if (!this.screeningResults) {
+          this.showToast('No screening results available.');
+          return;
+        }
+
+        const jsonString = JSON.stringify(this.screeningResults, null, 2);
+
+        // 1. Try Mobile Web Share API first if supported
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: 'NeuroScreen Motor Assessment Report',
+              text: jsonString
+            });
+            this.showToast('Report shared successfully! (แชร์สำเร็จ)');
+            return;
+          } catch (err) {
+            if (err.name !== 'AbortError') {
+              console.warn('Web Share failed, falling back to clipboard:', err);
+            } else {
+              return; // User cancelled share sheet
+            }
+          }
+        }
+
+        // 2. Clipboard API Fallback
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          try {
+            await navigator.clipboard.writeText(jsonString);
+            this.showToast('JSON Schema Copied! (คัดลอก JSON แล้ว)');
+            const btnText = document.getElementById('copyJsonBtnText');
+            btnText.textContent = 'Copied!';
+            setTimeout(() => { btnText.textContent = 'Copy / Share JSON'; }, 2000);
+            return;
+          } catch (err) {
+            console.warn('Clipboard write error:', err);
+          }
+        }
+
+        // 3. Direct File Download Fallback
+        this.downloadBlob(jsonString, `neuroscreen_${this.screeningResults.session_id}.json`, 'application/json');
+        this.showToast('JSON file downloaded!');
+      }
+
+      exportCsv() {
+        if (!this.screeningResults) {
+          this.showToast('No screening results available.');
+          return;
+        }
+
+        const res = this.screeningResults;
+        const rows = [];
+
+        rows.push(['# NEUROSCREEN MOBILE MOTOR & COGNITIVE SCREENING EXPORT']);
+        rows.push(['Session ID', res.session_id]);
+        rows.push(['Timestamp', res.timestamp]);
+        rows.push(['Camera Facing Mode', res.camera_facing]);
+        rows.push(['Device FPS', res.device_fps]);
+        rows.push(['Composite Score', res.summary.composite_score]);
+        rows.push(['Clinical Status', res.summary.motor_status]);
+        rows.push([]);
+
+        rows.push(['# MODULE A: FINGER TAPPING & TREMOR METRICS']);
+        rows.push(['Metric', 'Value', 'Unit']);
+        rows.push(['Total Taps', res.finger_tapping.total_taps, 'count']);
+        rows.push(['Tapping Frequency', res.finger_tapping.frequency_hz, 'Hz']);
+        rows.push(['Mean Inter-Tap Interval (ITI)', res.finger_tapping.mean_iti_ms, 'ms']);
+        rows.push(['SD of ITI', res.finger_tapping.sd_iti_ms, 'ms']);
+        rows.push(['Rhythm CV', res.finger_tapping.rhythm_cv_pct, '%']);
+        rows.push(['Mean Peak Aperture (0-5s)', res.finger_tapping.mean_peak_first_5s, 'D_t']);
+        rows.push(['Mean Peak Aperture (10-15s)', res.finger_tapping.mean_peak_last_5s, 'D_t']);
+        rows.push(['Amplitude Decay Rate', res.finger_tapping.amplitude_decay_pct, '%']);
+        rows.push(['Tremor Dominant Frequency', res.finger_tapping.static_hold.dominant_frequency_hz, 'Hz']);
+        rows.push(['Tremor Flag (4-6 Hz)', res.finger_tapping.static_hold.tremor_flag ? 'TRUE' : 'FALSE', 'boolean']);
+        rows.push([]);
+
+        rows.push(['# MODULE B: BIMANUAL COORDINATION TRIALS']);
+        rows.push(['Trial #', 'Left Target', 'Right Target', 'Reaction Time (ms)', 'Commission Errors', 'Success']);
+        res.dual_task.trials.forEach(t => {
+          rows.push([t.trial, t.leftTarget, t.rightTarget, t.rtMs, t.commissionErrors, t.success ? 'PASS' : 'FAIL']);
+        });
+        rows.push([]);
+
+        rows.push(['# HIGH-RESOLUTION KINEMATIC RAW SERIES (15s)']);
+        rows.push(['Time (ms)', 'Normalized Aperture (D_t)', 'Wrist Y Coordinate']);
+        res.raw_series.forEach(pt => {
+          rows.push([pt.t_ms, pt.d_t, pt.wrist_y]);
+        });
+
+        const csvContent = rows.map(r => r.join(',')).join('\n');
+        this.downloadBlob(csvContent, `neuroscreen_${res.session_id}_${Date.now()}.csv`, 'text/csv;charset=utf-8;');
+        this.showToast('CSV Export Downloaded Successfully!');
+      }
+
+      downloadBlob(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+
+      showCameraAlert(msg) {
+        this.dom.cameraAlertMsg.textContent = msg;
+        this.dom.cameraAlert.classList.remove('hidden');
+      }
+
+      showToast(msg) {
+        this.dom.toastMsg.textContent = msg;
+        this.dom.toastNotification.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+        this.dom.toastNotification.classList.add('translate-y-0', 'opacity-100');
+
+        setTimeout(() => {
+          this.dom.toastNotification.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+          this.dom.toastNotification.classList.remove('translate-y-0', 'opacity-100');
+        }, 3000);
+      }
+    }
+
+    // Initialize application on DOM ready
+    window.addEventListener('DOMContentLoaded', () => {
+      const app = new MobileScreeningApp();
+      app.init();
+      window.__neuroScreenApp = app;
+    });
+  </script>
+</body>
+</html>
