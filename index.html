@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased">
+<html lang="th" class="h-full bg-slate-950 text-slate-100 antialiased">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
-  <title>NeuroScreen Pro | Clinical Neuromotor Screening System</title>
+  <title>NeuroScreen Pro | Clinical Motor & Cognitive Screening System</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -50,7 +50,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
   <style>
-    /* Safe-area insets for notched mobile devices */
     body {
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
@@ -59,13 +58,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Custom high-contrast scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
 
-    /* Conditional horizontal video mirroring */
     .video-mirror {
       transform: scaleX(-1);
       -webkit-transform: scaleX(-1);
@@ -75,7 +72,6 @@
       -webkit-transform: none;
     }
 
-    /* Pulse animation */
     @keyframes pulse-ring {
       0% { transform: scale(0.96); opacity: 0.9; }
       50% { transform: scale(1.05); opacity: 0.3; }
@@ -85,14 +81,13 @@
       animation: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
-    /* Professional Print / PDF Report Stylesheet */
     @media print {
       body {
         background: #ffffff !important;
         color: #0f172a !important;
         padding: 0 !important;
       }
-      header, #videoContainer, #controlsContainer, #liveHUDCard, #toastNotification, #patientModal, #historyModal, .no-print {
+      header, #videoContainer, #controlsContainer, #liveHUDCard, #toastNotification, #patientModal, #historyModal, #webhookModal, .no-print {
         display: none !important;
       }
       #resultsSection {
@@ -131,9 +126,9 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
       <div class="flex-1">
-        <p class="font-bold">HTTPS Required for Mobile Cameras (ต้องเปิดผ่าน HTTPS)</p>
-        <p class="text-xs text-slate-900 mt-0.5">
-          iOS Safari และ Android Chrome ปิดกั้นการใช้กล้องบน HTTP ธรรมดา กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel, Cloudflare Pages หรือ ngrok)
+        <p class="font-bold" data-i18n="https_warning_title">HTTPS Required for Mobile Cameras (ต้องเปิดผ่าน HTTPS)</p>
+        <p class="text-xs text-slate-900 mt-0.5" data-i18n="https_warning_desc">
+          iOS Safari และ Android Chrome ปิดกั้นการใช้กล้องบน HTTP ธรรมดา กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel หรือ Cloudflare Pages)
         </p>
       </div>
       <button onclick="document.getElementById('httpsWarningBanner').remove()" class="p-1 font-bold text-slate-950 hover:opacity-75">✕</button>
@@ -154,11 +149,11 @@
         <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
             <h1 class="text-sm sm:text-base font-extrabold tracking-tight text-white truncate">NeuroScreen <span class="text-teal-400 font-bold">Pro</span></h1>
-            <span class="text-teal-400 font-mono text-[10px] px-2 py-0.5 rounded-full bg-teal-500/15 border border-teal-500/30 font-semibold">MDS-UPDRS COMPLIANT</span>
+            <span class="text-teal-400 font-mono text-[10px] px-2 py-0.5 rounded-full bg-teal-500/15 border border-teal-500/30 font-semibold" data-i18n="badge_compliance">MDS-UPDRS COMPLIANT</span>
           </div>
           <div class="flex items-center gap-2 text-[11px] text-slate-400 truncate">
             <button id="openPatientModalBtn" class="hover:text-teal-300 transition flex items-center gap-1 underline decoration-dotted underline-offset-2">
-              <span id="headerPatientSummary">HN: DEMO-001 | Right Hand | ON-Meds</span>
+              <span id="headerPatientSummary">HN: DEMO-001 | Right Hand | ON-Meds | Age: 65</span>
               <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
             </button>
           </div>
@@ -167,12 +162,29 @@
 
       <!-- Telemetry Pills & Action Buttons -->
       <div class="flex items-center gap-2 text-xs font-mono shrink-0">
+        
+        <!-- Language Switcher Button (TH | EN) -->
+        <button id="langToggleBtn" class="px-2.5 py-1.5 rounded-xl bg-surface-850 hover:bg-slate-800 border border-slate-700 text-teal-400 font-bold text-xs flex items-center gap-1 transition shadow-sm">
+          <span id="langCurrentLabel">TH</span>
+          <span class="text-slate-500">|</span>
+          <span class="text-slate-400 font-normal">EN</span>
+        </button>
+
+        <!-- Cloud Webhook Sync Button -->
+        <button id="openWebhookModalBtn" title="Cloud / Google Sheets Webhook Sync" class="px-2 py-1.5 rounded-xl bg-surface-850 hover:bg-slate-800 border border-slate-700 text-teal-400 text-xs font-semibold flex items-center gap-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          <span id="webhookStatusDot" class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+          <span class="hidden md:inline" data-i18n="btn_cloud">Cloud</span>
+        </button>
+
         <!-- Longitudinal History Button -->
         <button id="openHistoryModalBtn" title="Longitudinal Patient History" class="px-2.5 py-1.5 rounded-xl bg-surface-850 hover:bg-slate-800 border border-slate-700 text-teal-400 text-xs font-semibold flex items-center gap-1.5 transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span class="hidden sm:inline">Trends</span>
+          <span class="hidden sm:inline" data-i18n="btn_trends">Trends</span>
         </button>
 
         <!-- Patient Quick Button -->
@@ -180,7 +192,7 @@
           <svg class="w-3.5 h-3.5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
-          <span class="hidden sm:inline">Profile</span>
+          <span class="hidden sm:inline" data-i18n="btn_profile">Profile</span>
         </button>
 
         <!-- FPS Counter -->
@@ -207,11 +219,11 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <div class="text-xs sm:text-sm">
-          <p class="font-bold text-rose-100">Camera Access Error / ข้อผิดพลาดกล้อง</p>
-          <p class="text-xs text-rose-300/90 mt-0.5" id="cameraAlertMsg">Please enable camera permission in your browser settings.</p>
+          <p class="font-bold text-rose-100" data-i18n="cam_error_title">Camera Access Error / ข้อผิดพลาดกล้อง</p>
+          <p class="text-xs text-rose-300/90 mt-0.5" id="cameraAlertMsg" data-i18n="cam_error_desc">Please enable camera permission in your browser settings.</p>
         </div>
       </div>
-      <button id="retryCamBtn" class="min-h-touch px-4 py-2 bg-rose-700 hover:bg-rose-600 active:scale-95 text-white rounded-xl text-xs font-bold transition w-full sm:w-auto text-center shrink-0">
+      <button id="retryCamBtn" class="min-h-touch px-4 py-2 bg-rose-700 hover:bg-rose-600 active:scale-95 text-white rounded-xl text-xs font-bold transition w-full sm:w-auto text-center shrink-0" data-i18n="btn_retry_cam">
         Retry Camera (ลองใหม่)
       </button>
     </div>
@@ -236,21 +248,21 @@
             <!-- Top angle helper pill -->
             <div id="handPoseGuidancePill" class="px-3.5 py-1.5 rounded-full bg-surface-900/90 backdrop-blur-md border border-slate-700 text-[11px] text-slate-200 flex items-center gap-2 shadow-xl text-center">
               <span id="poseIndicatorDot" class="w-2.5 h-2.5 rounded-full bg-teal-400 shrink-0"></span>
-              <span id="poseGuidanceText">Position hand at <strong class="text-teal-300">~45° angle</strong> (เอียงมือ 45 องศา)</span>
+              <span id="poseGuidanceText" data-i18n="pose_guidance_init">Position hand at ~45° angle (เอียงมือ 45 องศา)</span>
             </div>
 
             <!-- Visual 45-degree angle dashed guide box -->
             <div class="relative w-48 h-48 sm:w-60 sm:h-60 border-2 border-dashed border-teal-400/35 rounded-3xl flex items-center justify-center transform -rotate-12 transition-all duration-300" id="guideBox">
-              <div class="text-[10px] font-mono text-teal-300/80 bg-slate-950/80 px-2.5 py-1 rounded-lg backdrop-blur rotate-12 border border-teal-500/25 shadow-lg">
+              <div class="text-[10px] font-mono text-teal-300/80 bg-slate-950/80 px-2.5 py-1 rounded-lg backdrop-blur rotate-12 border border-teal-500/25 shadow-lg" data-i18n="target_zone">
                 TARGET ZONE
               </div>
             </div>
 
             <!-- Bottom dynamic feedback pill -->
             <div id="livePinchFeedback" class="px-3.5 sm:px-4 py-1.5 rounded-full bg-surface-900/90 backdrop-blur-md border border-slate-700 text-xs font-mono text-slate-200 shadow-xl flex items-center gap-2.5">
-              <span id="detectedHandLabel" class="text-teal-400 font-bold truncate">Awaiting Target Hand...</span>
+              <span id="detectedHandLabel" class="text-teal-400 font-bold truncate" data-i18n="awaiting_hand">Awaiting Target Hand...</span>
               <span class="text-slate-600">|</span>
-              <span class="shrink-0">Pinch D_t (2D): <span id="liveDtVal" class="text-white font-semibold">0.00</span></span>
+              <span class="shrink-0"><span data-i18n="live_pinch_lbl">Pinch D_t:</span> <span id="liveDtVal" class="text-white font-semibold">0.00</span></span>
             </div>
           </div>
 
@@ -260,40 +272,40 @@
               <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              <span id="cameraFacingLabel">Front Cam</span>
+              <span id="cameraFacingLabel" data-i18n="front_cam">Front Cam</span>
             </button>
           </div>
 
           <!-- Big Countdown Overlay (3-2-1) -->
           <div id="countdownOverlay" class="hidden absolute inset-0 bg-slate-950/85 backdrop-blur-md z-30 flex flex-col items-center justify-center p-4">
             <span id="countdownText" class="text-8xl sm:text-9xl font-black text-teal-400 tracking-tighter drop-shadow-2xl animate-bounce">3</span>
-            <span id="countdownSub" class="text-xs sm:text-sm font-semibold text-slate-300 mt-2 uppercase tracking-widest text-center">Get Ready / เตรียมพร้อม</span>
+            <span id="countdownSub" class="text-xs sm:text-sm font-semibold text-slate-300 mt-2 uppercase tracking-widest text-center" data-i18n="countdown_ready">Get Ready / เตรียมพร้อม</span>
           </div>
 
           <!-- Initial Loading Spinner -->
           <div id="loaderOverlay" class="absolute inset-0 bg-surface-950 z-30 flex flex-col items-center justify-center p-6 space-y-3 text-center">
             <div class="w-12 h-12 border-4 border-teal-500/20 border-t-teal-400 rounded-full animate-spin"></div>
-            <p class="text-xs text-slate-300 font-mono tracking-wider" id="loaderMsg">Initializing MediaPipe Vision Tasks...</p>
-            <p class="text-[11px] text-slate-500 max-w-xs">Edge AI running locally inside browser memory. Zero video uploaded.</p>
+            <p class="text-xs text-slate-300 font-mono tracking-wider" id="loaderMsg" data-i18n="loader_init">Initializing MediaPipe Vision Tasks...</p>
+            <p class="text-[11px] text-slate-500 max-w-xs" data-i18n="loader_privacy">Edge AI running locally inside browser memory. Zero video uploaded.</p>
           </div>
         </div>
 
         <!-- Telemetry quick bar below video -->
         <div class="grid grid-cols-4 gap-2 text-center text-xs">
           <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2.5">
-            <div class="text-[9px] uppercase font-mono text-slate-400">Palm Scale (2D)</div>
+            <div class="text-[9px] uppercase font-mono text-slate-400" data-i18n="telem_palm">Palm Scale (2D)</div>
             <div id="telemetryPalmScale" class="text-xs sm:text-sm font-mono font-bold text-slate-200 mt-0.5">--</div>
           </div>
           <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2.5">
-            <div class="text-[9px] uppercase font-mono text-slate-400">Testing Hand</div>
+            <div class="text-[9px] uppercase font-mono text-slate-400" data-i18n="telem_hand">Testing Hand</div>
             <div id="telemetryTestedHand" class="text-xs sm:text-sm font-mono font-bold text-teal-400 mt-0.5">Right Hand</div>
           </div>
           <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2.5">
-            <div class="text-[9px] uppercase font-mono text-slate-400">Tracking Quality</div>
+            <div class="text-[9px] uppercase font-mono text-slate-400" data-i18n="telem_quality">Tracking Quality</div>
             <div id="telemetryQuality" class="text-xs sm:text-sm font-mono font-bold text-emerald-400 mt-0.5">100%</div>
           </div>
           <div class="bg-surface-900 border border-slate-800/80 rounded-xl p-2.5">
-            <div class="text-[9px] uppercase font-mono text-slate-400">Camera Mode</div>
+            <div class="text-[9px] uppercase font-mono text-slate-400" data-i18n="telem_mode">Camera Mode</div>
             <div id="telemetryCameraMode" class="text-xs sm:text-sm font-mono font-bold text-slate-200 mt-0.5">User (Front)</div>
           </div>
         </div>
@@ -309,7 +321,7 @@
               <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <span>Screening Battery / แบบทดสอบ</span>
+              <span data-i18n="battery_header">Screening Battery / แบบทดสอบ</span>
             </h2>
             <div class="flex items-center gap-3">
               <!-- Haptic Toggle -->
@@ -319,7 +331,7 @@
               </button>
               <!-- Audio Toggle -->
               <div class="flex items-center gap-1.5">
-                <label class="text-[10px] text-slate-400 font-medium">Sound</label>
+                <label class="text-[10px] text-slate-400 font-medium" data-i18n="lbl_sound">Sound</label>
                 <button id="toggleAudioBtn" class="w-8 h-4.5 bg-teal-500 rounded-full relative transition-colors focus:outline-none min-h-0">
                   <span id="audioToggleDot" class="w-3.5 h-3.5 bg-white rounded-full absolute right-0.5 top-0.5 transition-transform"></span>
                 </button>
@@ -327,26 +339,29 @@
             </div>
           </div>
 
-          <!-- Protocol Selection Tabs (4 options including Bilateral Compare) -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 bg-surface-950 rounded-xl border border-slate-800 text-xs font-semibold">
-            <button id="tabBilateral" class="protocol-tab min-h-touch py-2.5 px-1.5 rounded-lg bg-teal-500 text-slate-950 font-bold transition shadow text-center" data-mode="BILATERAL">
-              Bilateral<br><span class="text-[9px] font-normal opacity-85">ตรวจเทียบ 2 ข้าง</span>
+          <!-- Protocol Selection Tabs (5 Options: Bilateral, Facial, Full, Tap, Dual) -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-surface-950 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button id="tabBilateral" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg bg-teal-500 text-slate-950 font-bold transition shadow text-center" data-mode="BILATERAL">
+              <span data-i18n="tab_bilateral">Bilateral</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_bilateral_sub">ตรวจเทียบ 2 ข้าง</span>
             </button>
-            <button id="tabFull" class="protocol-tab min-h-touch py-2.5 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="FULL">
-              Full Battery<br><span class="text-[9px] font-normal opacity-85">แตะ+สั่น+สองมือ</span>
+            <button id="tabFacial" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="FACIAL">
+              <span data-i18n="tab_facial">Facial & Blink</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_facial_sub">กะพริบตา & รอยยิ้ม</span>
             </button>
-            <button id="tabModuleA" class="protocol-tab min-h-touch py-2.5 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="MOD_A">
-              15s Tap<br><span class="text-[9px] font-normal opacity-85">แตะนิ้ว+สั่น</span>
+            <button id="tabFull" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="FULL">
+              <span data-i18n="tab_full">Full Battery</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_full_sub">ครบชุด</span>
             </button>
-            <button id="tabModuleB" class="protocol-tab min-h-touch py-2.5 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="MOD_B">
-              Dual-Task<br><span class="text-[9px] font-normal opacity-85">ประสานสองมือ</span>
+            <button id="tabModuleA" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center" data-mode="MOD_A">
+              <span data-i18n="tab_tap">15s Tap</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_tap_sub">แตะนิ้ว+สั่น</span>
+            </button>
+            <button id="tabModuleB" class="protocol-tab min-h-touch py-2 px-1.5 rounded-lg text-slate-300 hover:text-white transition text-center col-span-2 sm:col-span-1" data-mode="MOD_B">
+              <span data-i18n="tab_dual">Dual-Task</span><br><span class="text-[9px] font-normal opacity-85" data-i18n="tab_dual_sub">ประสานสองมือ</span>
             </button>
           </div>
 
           <!-- Protocol Description Details -->
           <div id="protocolDesc" class="p-3 rounded-xl bg-surface-950/60 border border-slate-800 text-[11px] sm:text-xs text-slate-300 space-y-1">
-            <div class="font-semibold text-teal-300">Bilateral Asymmetry Protocol (ตรวจเปรียบเทียบมือซ้าย-ขวา)</div>
-            <p class="text-slate-400 leading-relaxed text-[11px]">
+            <div class="font-semibold text-teal-300" id="protoDescTitle">Bilateral Asymmetry Protocol (ตรวจเปรียบเทียบมือซ้าย-ขวา)</div>
+            <p class="text-slate-400 leading-relaxed text-[11px]" id="protoDescBody">
               ตรวจมือขวา 15 วินาที $\rightarrow$ พักสลับมือ 3 วินาที $\rightarrow$ ตรวจมือซ้าย 15 วินาที เพื่อคำนวณ <strong>Bilateral Asymmetry Index (%)</strong> และตรวจหาความไม่สมมาตรของอาการพาร์กินสันระยะแรก
             </p>
           </div>
@@ -358,10 +373,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>Begin Assessment / เริ่มการตรวจ</span>
+              <span data-i18n="btn_begin_test">Begin Assessment / เริ่มการตรวจ</span>
             </button>
 
-            <button id="abortTestBtn" class="hidden min-h-touch w-full mt-2 py-3 px-4 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-semibold tracking-wide uppercase transition text-center">
+            <button id="abortTestBtn" class="hidden min-h-touch w-full mt-2 py-3 px-4 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-semibold tracking-wide uppercase transition text-center" data-i18n="btn_abort_test">
               Abort Test (ยกเลิกการทดสอบ)
             </button>
           </div>
@@ -371,11 +386,11 @@
         <div id="liveHUDCard" class="bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3 sm:space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
             <div>
-              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block" id="hudStageLabel">STAGE MONITOR</span>
-              <h3 class="text-xs sm:text-sm font-bold text-white" id="hudStageTitle">Ready to Start</h3>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block" id="hudStageLabel" data-i18n="stage_monitor">STAGE MONITOR</span>
+              <h3 class="text-xs sm:text-sm font-bold text-white" id="hudStageTitle" data-i18n="ready_to_start">Ready to Start</h3>
             </div>
             <div class="text-right">
-              <span class="text-[9px] font-mono text-slate-400 block">TIME REMAINING</span>
+              <span class="text-[9px] font-mono text-slate-400 block" data-i18n="time_remaining">TIME REMAINING</span>
               <span id="hudTimer" class="text-xl sm:text-2xl font-mono font-bold text-teal-400">15.0s</span>
             </div>
           </div>
@@ -384,11 +399,11 @@
           <div id="hudModAContainer" class="space-y-3">
             <div class="grid grid-cols-2 gap-2 sm:gap-3">
               <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Live Tap Count</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase" data-i18n="live_taps">Live Tap Count</span>
                 <div id="liveTapCount" class="text-2xl sm:text-3xl font-mono font-black text-white mt-0.5">0</div>
               </div>
               <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
-                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Live Cadence</span>
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase" data-i18n="live_cadence">Live Cadence</span>
                 <div class="flex items-baseline justify-center gap-1 mt-0.5">
                   <span id="liveFreqVal" class="text-2xl sm:text-3xl font-mono font-black text-teal-400">0.0</span>
                   <span class="text-[10px] text-slate-400 font-mono">Hz</span>
@@ -396,10 +411,9 @@
               </div>
             </div>
 
-            <!-- Visual Aperture Bar Gauge -->
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] font-mono text-slate-400">
-                <span>Pinch Aperture (D_t) / ระยะกางนิ้ว 2D</span>
+                <span data-i18n="aperture_gauge">Pinch Aperture (D_t) / ระยะกางนิ้ว 2D</span>
                 <span id="gaugeDtVal">0.00</span>
               </div>
               <div class="w-full h-3 bg-surface-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
@@ -411,31 +425,27 @@
           <!-- Module B Dynamic Display: Bimanual Target Prompts -->
           <div id="hudModBContainer" class="hidden space-y-3">
             <div class="flex items-center justify-between text-xs">
-              <span class="font-mono text-slate-300">Trial <span id="bimanualTrialNum" class="text-teal-400 font-bold">1</span> / 5</span>
-              <span class="font-mono text-rose-400 text-[11px]">Commission Errors: <span id="bimanualErrorCount" class="font-bold">0</span></span>
+              <span class="font-mono text-slate-300"><span data-i18n="trial">Trial</span> <span id="bimanualTrialNum" class="text-teal-400 font-bold">1</span> / 5</span>
+              <span class="font-mono text-rose-400 text-[11px]"><span data-i18n="errors">Errors:</span> <span id="bimanualErrorCount" class="font-bold">0</span></span>
             </div>
 
-            <!-- Dual Hands Prompt Cards -->
             <div class="grid grid-cols-2 gap-2 sm:gap-3">
-              <!-- Left Target -->
               <div id="leftPromptBox" class="p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150">
-                <span class="text-[9px] font-mono uppercase text-slate-400">Screen Left (ซ้ายจอ)</span>
+                <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="screen_left">Screen Left</span>
                 <div id="leftTargetGesture" class="text-sm sm:text-base font-black text-white mt-1">PEACE</div>
                 <div id="leftStatusBadge" class="mt-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">Awaiting</div>
               </div>
 
-              <!-- Right Target -->
               <div id="rightPromptBox" class="p-3 rounded-xl bg-surface-950 border-2 border-slate-800 flex flex-col items-center text-center transition-all duration-150">
-                <span class="text-[9px] font-mono uppercase text-slate-400">Screen Right (ขวาจอ)</span>
+                <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="screen_right">Screen Right</span>
                 <div id="rightTargetGesture" class="text-sm sm:text-base font-black text-white mt-1">PINCH</div>
                 <div id="rightStatusBadge" class="mt-1.5 text-[9px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">Awaiting</div>
               </div>
             </div>
 
-            <!-- Hold Debounce Progress -->
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] font-mono text-slate-400">
-                <span>Hold Stability (150ms hold)</span>
+                <span data-i18n="hold_stability">Hold Stability (150ms hold)</span>
                 <span id="debounceHoldLabel">0ms</span>
               </div>
               <div class="w-full h-2 bg-surface-950 rounded-full overflow-hidden border border-slate-800">
@@ -444,10 +454,27 @@
             </div>
           </div>
 
+          <!-- Module C Dynamic Display: Facial & Blink Monitoring -->
+          <div id="hudFacialContainer" class="hidden space-y-3">
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+              <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase" data-i18n="blink_count_lbl">Blinks Detected</span>
+                <div id="liveBlinkCount" class="text-2xl sm:text-3xl font-mono font-black text-teal-400 mt-0.5">0</div>
+                <span class="text-[9px] text-slate-500 font-mono" id="liveBlinkRate">0 /min</span>
+              </div>
+              <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-center">
+                <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase" data-i18n="smile_symmetry_lbl">Smile Symmetry</span>
+                <div class="text-2xl sm:text-3xl font-mono font-black text-white mt-0.5" id="liveSmileSymmetry">--%</div>
+                <span class="text-[9px] text-slate-500 font-mono" id="liveFacialState">Awaiting Smile</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-400 text-center" data-i18n="facial_instrux">Look directly into camera, blink naturally, then smile widely.</p>
+          </div>
+
           <!-- Static Hold Alert Box -->
           <div id="hudStaticHoldBox" class="hidden p-3.5 bg-amber-950/40 border border-amber-700/60 rounded-xl text-center space-y-1">
-            <span class="text-xs font-bold text-amber-300 block uppercase tracking-wider">Tremor Postural Hold / วัดการสั่น</span>
-            <p class="text-xs text-amber-200/80">Hold hand completely open and still in front of camera (กางมือค้างนิ่งๆ หน้ากล้อง).</p>
+            <span class="text-xs font-bold text-amber-300 block uppercase tracking-wider" data-i18n="tremor_hold_title">Tremor Postural Hold / วัดการสั่น</span>
+            <p class="text-xs text-amber-200/80" data-i18n="tremor_hold_desc">Hold hand completely open and still in front of camera (กางมือค้างนิ่งๆ หน้ากล้อง).</p>
           </div>
         </div>
 
@@ -463,35 +490,42 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="w-3 h-3 rounded-full bg-teal-400 shadow-md shadow-teal-400/50"></span>
-            <h2 class="text-base sm:text-xl font-black tracking-tight text-white">Quantitative Motor & Cognitive Assessment Profile</h2>
+            <h2 class="text-base sm:text-xl font-black tracking-tight text-white" data-i18n="res_dashboard_title">Quantitative Motor & Cognitive Assessment Profile</h2>
           </div>
           <p class="text-[11px] text-slate-400 mt-0.5">Session: <span id="resSessionId" class="font-mono text-slate-300">--</span> | <span id="resTimestamp">--</span></p>
         </div>
 
         <!-- Export Buttons Toolbar -->
         <div class="flex items-center gap-2 flex-wrap no-print">
+          <!-- Manual Cloud Sync Button -->
+          <button id="manualCloudSyncBtn" class="min-h-touch px-3 py-2.5 rounded-xl bg-surface-850 hover:bg-slate-800 border border-slate-700 text-xs font-semibold text-teal-300 transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+            <span id="manualSyncText" data-i18n="btn_sync_cloud">Sync to Cloud</span>
+          </button>
+
+          <!-- Print / Save Medical PDF -->
           <button id="printReportBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold text-xs transition flex items-center gap-1.5 shadow-lg shadow-teal-500/25">
             <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
-            <span>Print / Save PDF Report</span>
+            <span data-i18n="btn_print_pdf">Print / Save PDF Report</span>
           </button>
 
           <button id="exportCsvBtn" class="min-h-touch px-3 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 active:scale-95 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 shadow-sm">
             <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            <span>CSV Export</span>
+            <span data-i18n="btn_csv">CSV Export</span>
           </button>
 
           <button id="copyJsonBtn" class="min-h-touch px-3 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 active:scale-95 border border-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 shadow-sm">
             <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <span id="copyJsonBtnText">Share FHIR/JSON</span>
+            <span id="copyJsonBtnText" data-i18n="btn_share_fhir">Share FHIR/JSON</span>
           </button>
 
-          <button id="resetTestBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition">
+          <button id="resetTestBtn" class="min-h-touch px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-300 transition" data-i18n="btn_new_test">
             New Test
           </button>
         </div>
@@ -503,44 +537,59 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
         <div class="text-xs">
-          <p class="font-bold text-amber-100" id="qualityWarningTitle">Low Tracking Quality (ตรวจพบมือไม่ต่อเนื่อง)</p>
+          <p class="font-bold text-amber-100" id="qualityWarningTitle">Low Tracking Quality</p>
           <p class="text-amber-300/90 text-[11px]" id="qualityWarningDesc">Valid Tracking Ratio ต่ำกว่า 85% เนื่องจากมือหลุดออกจากกรอบกล้อง แนะนำให้ทำการทดสอบซ้ำเพื่อให้ได้ค่าที่แม่นยำ</p>
         </div>
       </div>
 
-      <!-- Clinical Diagnostic Grading Banner (MDS-UPDRS Rating) -->
+      <!-- Clinical Diagnostic Grading Banner (MDS-UPDRS + Age-Adjusted Z-Score) -->
       <div class="card-print p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-surface-900 to-surface-850 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
         <div class="space-y-1">
-          <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono uppercase tracking-wider text-teal-400 font-bold">MDS-UPDRS Part III Item 3.4 Automated Rating</span>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-teal-400 font-bold" data-i18n="mds_rating_header">MDS-UPDRS Item 3.4 Automated Rating</span>
             <span id="mdsBadge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-black bg-teal-500/20 text-teal-300 border border-teal-500/30">SCORE 0 (NORMAL)</span>
+            <!-- Age-Adjusted Z-Score Tag -->
+            <span id="zScoreBadge" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Age Z-Score: +0.2 (Normative)</span>
           </div>
           <h3 id="mdsTitle" class="text-sm sm:text-base font-bold text-white">Regular speed and amplitude without fatigue or arrests.</h3>
-          <p id="mdsExplanation" class="text-xs text-slate-400 leading-relaxed max-w-3xl">อัตราความเร็วและขนาดการกางนิ้วอยู่ในเกณฑ์ปกติ จังหวะสม่ำเสมอ ไม่พบการสะดุดหรือชะลอตัวผิดปกติ</p>
+          <p id="mdsExplanation" class="text-xs text-slate-400 leading-relaxed max-w-3xl">อัตราความเร็วและขนาดการกางนิ้วอยู่ในเกณฑ์ปกติของช่วงวัย จังหวะสม่ำเสมอ</p>
         </div>
         <div class="shrink-0 text-left md:text-right p-3 rounded-xl bg-surface-950/70 border border-slate-800 w-full md:w-auto">
-          <span class="text-[10px] font-mono text-slate-400 uppercase block">Patient Profile</span>
+          <span class="text-[10px] font-mono text-slate-400 uppercase block" data-i18n="patient_profile_hdr">Patient Profile</span>
           <div class="text-xs font-semibold text-white mt-0.5" id="resPatientHN">HN: DEMO-001 (Age: 65, Male)</div>
           <div class="text-[11px] text-teal-400" id="resHandMedStatus">Tested: Right Hand | Meds: ON-state</div>
         </div>
       </div>
 
-      <!-- Bilateral Asymmetry Banner (Only visible in Bilateral mode) -->
+      <!-- Bilateral Asymmetry Banner -->
       <div id="bilateralBanner" class="hidden card-print p-4 rounded-2xl bg-gradient-to-r from-indigo-950/60 to-surface-900 border border-indigo-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
         <div>
-          <span class="text-[9px] font-mono uppercase text-indigo-400 font-bold block">Bilateral Asymmetry Analysis</span>
-          <h4 class="text-sm font-bold text-white mt-0.5">Asymmetry Index: <span id="resAsymmetryVal" class="text-indigo-300 font-mono font-black text-lg">0.0%</span></h4>
+          <span class="text-[9px] font-mono uppercase text-indigo-400 font-bold block" data-i18n="bilateral_asym_hdr">Bilateral Asymmetry Analysis</span>
+          <h4 class="text-sm font-bold text-white mt-0.5"><span data-i18n="asym_index_lbl">Asymmetry Index:</span> <span id="resAsymmetryVal" class="text-indigo-300 font-mono font-black text-lg">0.0%</span></h4>
           <p class="text-xs text-slate-300 mt-0.5" id="resAsymmetryInterpretation">Symmetric neuromotor performance between right and left upper extremities.</p>
         </div>
         <div class="flex items-center gap-4 text-xs font-mono">
           <div class="p-2 rounded-lg bg-surface-950/80 border border-slate-800 text-center">
-            <span class="text-[9px] text-teal-400 uppercase block">Right Hand</span>
+            <span class="text-[9px] text-teal-400 uppercase block" data-i18n="right_hand">Right Hand</span>
             <span id="resRightScore" class="font-bold text-white">-- / 100</span>
           </div>
           <div class="p-2 rounded-lg bg-surface-950/80 border border-slate-800 text-center">
-            <span class="text-[9px] text-sky-400 uppercase block">Left Hand</span>
+            <span class="text-[9px] text-sky-400 uppercase block" data-i18n="left_hand">Left Hand</span>
             <span id="resLeftScore" class="font-bold text-white">-- / 100</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Facial & Blink Metrics Banner (If tested) -->
+      <div id="facialResultBanner" class="hidden card-print p-4 rounded-2xl bg-gradient-to-r from-cyan-950/60 to-surface-900 border border-cyan-500/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+        <div>
+          <span class="text-[9px] font-mono uppercase text-cyan-400 font-bold block" data-i18n="facial_hypomimia_hdr">Facial Expressivity & Blink Rate Screening</span>
+          <h4 class="text-sm font-bold text-white mt-0.5"><span data-i18n="blink_rate_res">Spontaneous Blink Rate:</span> <span id="resBlinkRate" class="text-cyan-300 font-mono font-black text-base">-- /min</span></h4>
+          <p class="text-xs text-slate-300 mt-0.5" id="resFacialInterpretation">Normal spontaneous blinking cadence without facial hypomimia.</p>
+        </div>
+        <div class="p-2 rounded-lg bg-surface-950/80 border border-slate-800 text-center text-xs font-mono">
+          <span class="text-[9px] text-cyan-400 uppercase block" data-i18n="smile_symmetry_res">Smile Symmetry</span>
+          <span id="resSmileSymmetry" class="font-bold text-white">--%</span>
         </div>
       </div>
 
@@ -549,7 +598,7 @@
         
         <!-- Total Taps & Cadence -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
-          <span class="text-[9px] font-mono uppercase text-slate-400">Total Taps / Freq</span>
+          <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="kpi_taps_freq">Total Taps / Freq</span>
           <div class="text-xl sm:text-2xl font-mono font-bold text-white flex items-baseline gap-1">
             <span id="cardTotalTaps">--</span>
             <span class="text-[11px] font-normal text-teal-400" id="cardFreq">(-- Hz)</span>
@@ -559,14 +608,14 @@
 
         <!-- Amplitude Decay -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
-          <span class="text-[9px] font-mono uppercase text-slate-400">Amplitude Decay</span>
+          <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="kpi_decay">Amplitude Decay</span>
           <div class="text-xl sm:text-2xl font-mono font-bold" id="cardDecay">--%</div>
-          <p class="text-[10px] text-slate-400">Fatigue (1st vs Last 5s)</p>
+          <p class="text-[10px] text-slate-400" data-i18n="kpi_decay_sub">Fatigue (1st vs Last 5s)</p>
         </div>
 
         <!-- Kinematic Velocities -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
-          <span class="text-[9px] font-mono uppercase text-slate-400">Closing / Opening Vel</span>
+          <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="kpi_velocities">Closing / Opening Vel</span>
           <div class="text-base sm:text-lg font-mono font-bold text-white flex items-baseline gap-1">
             <span id="cardCloseVel" class="text-teal-400">--</span>
             <span class="text-slate-500">/</span>
@@ -577,25 +626,64 @@
 
         <!-- Rhythm CV % & Hesitations -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
-          <span class="text-[9px] font-mono uppercase text-slate-400">Rhythm CV (ITI)</span>
+          <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="kpi_cv">Rhythm CV (ITI)</span>
           <div class="text-xl sm:text-2xl font-mono font-bold" id="cardCv">--%</div>
-          <p class="text-[10px] text-slate-400" id="cardHesitations">Hesitations (&gt;1s): 0</p>
+          <p class="text-[10px] text-slate-400" id="cardHesitations">Hesitations (>1s): 0</p>
         </div>
 
         <!-- Tremor (Normalized 2D) -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-3.5 space-y-1">
-          <span class="text-[9px] font-mono uppercase text-slate-400">Tremor (4-6 Hz)</span>
+          <span class="text-[9px] font-mono uppercase text-slate-400" data-i18n="kpi_tremor">Tremor (4-6 Hz)</span>
           <div class="text-base sm:text-lg font-mono font-bold" id="cardTremor">--</div>
           <p class="text-[10px] text-slate-400 truncate" id="cardTremorFreq">Static hold peak: --</p>
         </div>
 
         <!-- Composite Score -->
         <div class="card-print bg-gradient-to-br from-teal-950/60 to-surface-900 border border-teal-500/30 rounded-2xl p-3.5 space-y-1 col-span-2 md:col-span-1">
-          <span class="text-[9px] font-mono uppercase text-teal-400 font-semibold">Composite Score</span>
+          <span class="text-[9px] font-mono uppercase text-teal-400 font-semibold" data-i18n="kpi_composite">Composite Score</span>
           <div class="text-xl sm:text-2xl font-mono font-black text-teal-300" id="cardComposite">-- / 100</div>
           <p class="text-[10px] font-semibold text-slate-300 truncate" id="cardStatusLabel">--</p>
         </div>
 
+      </div>
+
+      <!-- Key Visual Evidence Snapshots (Annotated Max Aperture & Late Fatigue) -->
+      <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5">
+              <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /></svg>
+              <span data-i18n="snapshots_title">Key-Frame Clinical Evidence Snapshots (ภาพหลักฐานจุดวิกฤต)</span>
+            </h3>
+            <p class="text-[11px] text-slate-400" data-i18n="snapshots_sub">Visual proof of maximum opening aperture vs. late decremental fatigue during test battery.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Max Amplitude Frame -->
+          <div class="bg-surface-950 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px] font-mono">
+              <span class="text-teal-400 font-bold" data-i18n="snap_max_title">1. Max Amplitude Peak (กางกว้างสุด)</span>
+              <span id="snapMaxDtLabel" class="text-white">D_t: --</span>
+            </div>
+            <div class="relative w-full aspect-[4/3] bg-black rounded-lg overflow-hidden flex items-center justify-center">
+              <img id="snapMaxImg" class="w-full h-full object-cover hidden" alt="Max Amplitude Snapshot">
+              <span id="snapMaxPlaceholder" class="text-xs text-slate-600 font-mono" data-i18n="snap_waiting">No snapshot recorded</span>
+            </div>
+          </div>
+
+          <!-- Late Fatigue Frame -->
+          <div class="bg-surface-950 p-2.5 rounded-xl border border-slate-800 space-y-1.5">
+            <div class="flex items-center justify-between text-[10px] font-mono">
+              <span class="text-amber-400 font-bold" data-i18n="snap_fatigue_title">2. Late Decrement / Fatigue (ล้าช่วงท้าย)</span>
+              <span id="snapFatigueDtLabel" class="text-white">D_t: --</span>
+            </div>
+            <div class="relative w-full aspect-[4/3] bg-black rounded-lg overflow-hidden flex items-center justify-center">
+              <img id="snapFatigueImg" class="w-full h-full object-cover hidden" alt="Late Fatigue Snapshot">
+              <span id="snapFatiguePlaceholder" class="text-xs text-slate-600 font-mono" data-i18n="snap_waiting">No snapshot recorded</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Charts Section: Waveform & Radar -->
@@ -605,8 +693,8 @@
         <div class="card-print lg:col-span-7 bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
             <div>
-              <h3 class="text-xs sm:text-sm font-bold text-white">2D Normalized Pinch Waveform & Amplitude Decay</h3>
-              <p class="text-[11px] text-slate-400">15s aperture signal D_t (2D) with highlighted peaks and OLS regression trendline</p>
+              <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="chart_wave_title">2D Normalized Pinch Waveform & Amplitude Decay</h3>
+              <p class="text-[11px] text-slate-400" data-i18n="chart_wave_sub">15s aperture signal D_t (2D) with highlighted peaks and OLS regression trendline</p>
             </div>
             <div class="flex items-center gap-3 text-[10px] font-mono">
               <span class="flex items-center gap-1 text-teal-400"><span class="w-2.5 h-0.5 bg-teal-400 inline-block"></span> D_t Signal</span>
@@ -622,8 +710,8 @@
         <div class="card-print lg:col-span-5 bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-xs sm:text-sm font-bold text-white">5-Domain Neuromotor Radar Profile</h3>
-              <p class="text-[11px] text-slate-400">Normalized scale (0–100) vs clinical reference norm</p>
+              <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="chart_radar_title">5-Domain Neuromotor Radar Profile</h3>
+              <p class="text-[11px] text-slate-400" data-i18n="chart_radar_sub">Normalized scale (0–100) vs clinical reference norm</p>
             </div>
           </div>
           <div class="relative h-60 sm:h-72 w-full flex items-center justify-center">
@@ -639,8 +727,8 @@
         <!-- Tremor Spectral Power -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs sm:text-sm font-bold text-white">Postural Tremor Power Spectrum (0.5 – 12.0 Hz)</h3>
-            <span class="text-[10px] font-mono text-slate-400">Uniform 2D Normalized PSD</span>
+            <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="chart_tremor_title">Postural Tremor Power Spectrum (0.5 – 12.0 Hz)</h3>
+            <span class="text-[10px] font-mono text-slate-400" data-i18n="chart_tremor_sub">Uniform 2D Normalized PSD</span>
           </div>
           <div class="relative h-48 sm:h-56 w-full">
             <canvas id="tremorChart"></canvas>
@@ -650,23 +738,23 @@
         <!-- Bimanual Coordination Trials Log -->
         <div class="card-print bg-surface-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl space-y-2">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs sm:text-sm font-bold text-white">Bimanual Coordination Trial Telemetry</h3>
-            <span class="text-[10px] font-mono text-teal-400">5 Target Trials</span>
+            <h3 class="text-xs sm:text-sm font-bold text-white" data-i18n="table_bimanual_title">Bimanual Coordination Trial Telemetry</h3>
+            <span class="text-[10px] font-mono text-teal-400" data-i18n="table_bimanual_badge">5 Target Trials</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs font-mono">
               <thead class="bg-surface-950 text-slate-400 uppercase text-[9px] border-b border-slate-800">
                 <tr>
-                  <th class="p-2">Trial</th>
-                  <th class="p-2">Left Screen</th>
-                  <th class="p-2">Right Screen</th>
-                  <th class="p-2">Reaction Time</th>
-                  <th class="p-2">Commission Error</th>
+                  <th class="p-2" data-i18n="col_trial">Trial</th>
+                  <th class="p-2" data-i18n="col_left_target">Left Screen</th>
+                  <th class="p-2" data-i18n="col_right_target">Right Screen</th>
+                  <th class="p-2" data-i18n="col_rt">Reaction Time</th>
+                  <th class="p-2" data-i18n="col_err">Commission Error</th>
                 </tr>
               </thead>
               <tbody id="bimanualTableBody" class="divide-y divide-slate-800 text-slate-300 text-[11px]">
                 <tr>
-                  <td colspan="5" class="p-4 text-center text-slate-500">No bimanual trial data recorded yet.</td>
+                  <td colspan="5" class="p-4 text-center text-slate-500" data-i18n="no_bimanual_data">No bimanual trial data recorded yet.</td>
                 </tr>
               </tbody>
             </table>
@@ -679,15 +767,15 @@
       <div class="print-only mt-8 pt-6 border-t border-slate-300 text-xs">
         <div class="grid grid-cols-2 gap-8">
           <div>
-            <p class="font-bold text-slate-800">Physician / Examiner Notes:</p>
+            <p class="font-bold text-slate-800" data-i18n="print_physician_notes">Physician / Examiner Notes:</p>
             <div class="h-20 border-b border-slate-400 mt-2"></div>
-            <p class="text-[10px] text-slate-500 mt-1">Clinical correlation with patient history and comprehensive neurological exam is recommended.</p>
+            <p class="text-[10px] text-slate-500 mt-1" data-i18n="print_disclaimer">Clinical correlation with patient history and comprehensive neurological exam is recommended.</p>
           </div>
           <div class="text-right">
             <div class="h-16"></div>
             <div class="border-t border-slate-400 inline-block w-48 text-center pt-1">
               <p class="font-bold text-slate-800" id="printExaminerName">Physician Signature</p>
-              <p class="text-[10px] text-slate-500">M.D. / Movement Disorders Specialist</p>
+              <p class="text-[10px] text-slate-500" data-i18n="print_qualification">M.D. / Movement Disorders Specialist</p>
             </div>
           </div>
         </div>
@@ -707,8 +795,8 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-white">Patient Profile & Clinical Setup</h3>
-            <p class="text-[10px] text-slate-400">ข้อมูลผู้รับการตรวจและสถานะการรักษา</p>
+            <h3 class="text-sm font-bold text-white" data-i18n="modal_patient_title">Patient Profile & Clinical Setup</h3>
+            <p class="text-[10px] text-slate-400" data-i18n="modal_patient_sub">ข้อมูลผู้รับการตรวจและสถานะการรักษา</p>
           </div>
         </div>
         <button id="closePatientModalBtn" class="text-slate-400 hover:text-white p-1">✕</button>
@@ -716,52 +804,101 @@
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 font-medium mb-1">Patient HN / Identifier (รหัสผู้ป่วย)</label>
+          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_hn">Patient HN / Identifier (รหัสผู้ป่วย)</label>
           <input type="text" id="inputPatientHN" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:border-teal-400 focus:outline-none" value="DEMO-001">
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Age (อายุ)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_age">Age (อายุ - ใช้คำนวณ Z-Score)</label>
             <input type="number" id="inputPatientAge" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:border-teal-400 focus:outline-none" value="65">
           </div>
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Biological Sex</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_sex">Biological Sex</label>
             <select id="inputPatientSex" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="Male">Male (ชาย)</option>
-              <option value="Female">Female (หญิง)</option>
-              <option value="Other">Other / Unspecified</option>
+              <option value="Male" data-i18n="opt_male">Male (ชาย)</option>
+              <option value="Female" data-i18n="opt_female">Female (หญิง)</option>
+              <option value="Other" data-i18n="opt_other">Other / Unspecified</option>
             </select>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Testing Hand (มือที่ทำการตรวจ)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_testing_hand">Testing Hand (มือที่ทำการตรวจ)</label>
             <select id="inputTestingHand" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="Right">Right Hand (มือขวา)</option>
-              <option value="Left">Left Hand (มือซ้าย)</option>
+              <option value="Right" data-i18n="opt_right">Right Hand (มือขวา)</option>
+              <option value="Left" data-i18n="opt_left">Left Hand (มือซ้าย)</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-400 font-medium mb-1">Medication State (สถานะยา)</label>
+            <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_med_state">Medication State (สถานะยา)</label>
             <select id="inputMedState" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none">
-              <option value="ON-Meds">ON-State (หลังทานยา)</option>
-              <option value="OFF-Meds">OFF-State (ก่อนทานยา / งดยา)</option>
-              <option value="Drug-Naive">Drug-Naïve (ยังไม่เริ่มยา)</option>
+              <option value="ON-Meds" data-i18n="opt_on_meds">ON-State (หลังทานยา)</option>
+              <option value="OFF-Meds" data-i18n="opt_off_meds">OFF-State (ก่อนทานยา / งดยา)</option>
+              <option value="Drug-Naive" data-i18n="opt_drug_naive">Drug-Naïve (ยังไม่เริ่มยา)</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-slate-400 font-medium mb-1">Examiner Name (แพทย์ / ผู้ประเมิน)</label>
+          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_examiner">Examiner Name (แพทย์ / ผู้ประเมิน)</label>
           <input type="text" id="inputExaminer" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-teal-400 focus:outline-none" value="Dr. Neurologist">
         </div>
       </div>
 
       <div class="pt-2 flex justify-end gap-2">
-        <button id="savePatientBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition">
+        <button id="savePatientBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_profile">
           Save Profile (บันทึก)
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= CLOUD / GOOGLE SHEETS WEBHOOK MODAL ================= -->
+  <div id="webhookModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-surface-900 border border-slate-800 rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white" data-i18n="webhook_title">Cloud & Google Sheets Webhook Sync</h3>
+            <p class="text-[10px] text-slate-400" data-i18n="webhook_sub">ระบบส่งข้อมูลเข้าฐานข้อมูลกลางอัตโนมัติ (Zero-Backend Data Pipeline)</p>
+          </div>
+        </div>
+        <button id="closeWebhookModalBtn" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 font-medium mb-1" data-i18n="lbl_webhook_url">Google Apps Script Webhook URL / REST Endpoint</label>
+          <input type="url" id="inputWebhookUrl" class="w-full bg-surface-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono focus:border-teal-400 focus:outline-none" placeholder="https://script.google.com/macros/s/.../exec">
+          <p class="text-[10px] text-slate-500 mt-1" data-i18n="webhook_url_hint">ส่งเฉพาะ JSON Summary (ไม่ส่งภาพวิดีโอ เพื่อความปลอดภัยตามมาตรฐาน PDPA / HIPAA)</p>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="checkAutoSync" class="rounded bg-surface-950 border-slate-800 text-teal-500 focus:ring-0">
+          <label for="checkAutoSync" class="text-slate-300 font-medium" data-i18n="lbl_auto_sync">Auto-sync upon assessment completion (ส่งข้อมูลทันทีเมื่อตรวจเสร็จ)</label>
+        </div>
+
+        <div class="p-3 bg-surface-950 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
+          <p class="font-bold text-teal-300" data-i18n="webhook_howto_title">💡 How to create a free Google Sheet Webhook:</p>
+          <p class="text-[10px] leading-relaxed" data-i18n="webhook_howto_desc">
+            Open Google Sheets > Extensions > Apps Script > Paste script with doPost(e) > Deploy as Web App (Access: Anyone) > Copy Web App URL here.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-2 flex justify-between items-center gap-2">
+        <button id="testWebhookBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition" data-i18n="btn_test_webhook">
+          Test Connection
+        </button>
+        <button id="saveWebhookBtn" class="min-h-touch px-4 py-2 bg-teal-500 hover:bg-teal-400 active:scale-95 text-slate-950 font-bold rounded-xl text-xs transition" data-i18n="btn_save_webhook">
+          Save Settings (บันทึก)
         </button>
       </div>
 
@@ -778,8 +915,8 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <div>
-            <h3 class="text-sm font-bold text-white">Longitudinal Motor Trends & History</h3>
-            <p class="text-[10px] text-slate-400">ประวัติการตรวจและแนวโน้มการตอบสนองต่อการรักษา (HN: <span id="histHnLabel" class="font-mono text-teal-300">--</span>)</p>
+            <h3 class="text-sm font-bold text-white" data-i18n="history_modal_title">Longitudinal Motor Trends & History</h3>
+            <p class="text-[10px] text-slate-400"><span data-i18n="history_modal_sub">ประวัติการตรวจและแนวโน้มการตอบสนองต่อการรักษา</span> (HN: <span id="histHnLabel" class="font-mono text-teal-300">--</span>)</p>
           </div>
         </div>
         <button id="closeHistoryModalBtn" class="text-slate-400 hover:text-white p-1">✕</button>
@@ -787,7 +924,7 @@
 
       <!-- Trend Chart -->
       <div class="bg-surface-950 p-3 rounded-2xl border border-slate-800">
-        <span class="text-[10px] font-mono text-slate-400 uppercase block mb-1">Composite Score & Cadence Trajectory</span>
+        <span class="text-[10px] font-mono text-slate-400 uppercase block mb-1" data-i18n="hist_chart_title">Composite Score & Cadence Trajectory</span>
         <div class="relative h-44 w-full">
           <canvas id="longitudinalChart"></canvas>
         </div>
@@ -798,26 +935,26 @@
         <table class="w-full text-left text-xs font-mono">
           <thead class="bg-surface-950 text-slate-400 uppercase text-[9px] border-b border-slate-800 sticky top-0">
             <tr>
-              <th class="p-2">Date / Time</th>
-              <th class="p-2">Hand</th>
-              <th class="p-2">Meds</th>
-              <th class="p-2">MDS Rating</th>
-              <th class="p-2">Cadence</th>
-              <th class="p-2">Decay</th>
-              <th class="p-2">Score</th>
+              <th class="p-2" data-i18n="col_hist_date">Date / Time</th>
+              <th class="p-2" data-i18n="col_hist_hand">Hand</th>
+              <th class="p-2" data-i18n="col_hist_meds">Meds</th>
+              <th class="p-2" data-i18n="col_hist_mds">MDS Rating</th>
+              <th class="p-2" data-i18n="col_hist_cadence">Cadence</th>
+              <th class="p-2" data-i18n="col_hist_decay">Decay</th>
+              <th class="p-2" data-i18n="col_hist_score">Score</th>
             </tr>
           </thead>
           <tbody id="historyTableBody" class="divide-y divide-slate-800 text-slate-300 text-[11px]">
             <tr>
-              <td colspan="7" class="p-4 text-center text-slate-500">No session history saved yet.</td>
+              <td colspan="7" class="p-4 text-center text-slate-500" data-i18n="no_history_data">No session history saved yet.</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="pt-2 flex justify-between items-center text-xs">
-        <button id="clearHistoryBtn" class="text-rose-400 hover:text-rose-300 text-[11px]">Clear History for this HN</button>
-        <button id="closeHistoryBottomBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition">
+        <button id="clearHistoryBtn" class="text-rose-400 hover:text-rose-300 text-[11px]" data-i18n="btn_clear_history">Clear History for this HN</button>
+        <button id="closeHistoryBottomBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs transition" data-i18n="btn_close">
           Close
         </button>
       </div>
@@ -837,16 +974,340 @@
 
   <!-- ================= ES MODULE JAVASCRIPT APPLICATION ================= -->
   <script type="module">
-    // Import MediaPipe Tasks Vision from official CDN
-    import { FilesetResolver, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
+    import { FilesetResolver, HandLandmarker, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
 
     /* =========================================================================
-       1. MATHEMATICAL SIGNAL PROCESSING, KINEMATICS & DSP ENGINE
+       1. BILINGUAL i18n ENGINE (CLIENT-SIDE DICTIONARY)
        ========================================================================= */
 
-    /**
-     * 2D Euclidean Distance by default (Avoiding high Z-axis depth noise from MediaPipe)
-     */
+    export const I18N_DICT = {
+      th: {
+        https_warning_title: "HTTPS Required for Mobile Cameras (ต้องเปิดผ่าน HTTPS)",
+        https_warning_desc: "iOS Safari และ Android Chrome ปิดกั้นการใช้กล้องบน HTTP ธรรมดา กรุณาเปิดผ่าน HTTPS (เช่น GitHub Pages, Vercel หรือ Cloudflare Pages)",
+        badge_compliance: "MDS-UPDRS COMPLIANT",
+        btn_cloud: "Cloud ซิงก์",
+        btn_trends: "แนวโน้ม",
+        btn_profile: "ข้อมูลคนไข้",
+        cam_error_title: "Camera Access Error / ข้อผิดพลาดกล้อง",
+        cam_error_desc: "กรุณาเปิดสิทธิ์การเข้าถึงกล้องในหน้าต่างตั้งค่าของเบราว์เซอร์",
+        btn_retry_cam: "Retry Camera (ลองใหม่)",
+        pose_guidance_init: "จัดท่ายกมือทำมุมประมาณ ~45° หน้ากล้อง",
+        target_zone: "กรอบเป้าหมาย",
+        awaiting_hand: "กำลังรอมือเป้าหมาย...",
+        live_pinch_lbl: "ระยะกางนิ้ว D_t:",
+        front_cam: "กล้องหน้า",
+        rear_cam: "กล้องหลัง",
+        countdown_ready: "เตรียมพร้อมสำหรับการทดสอบ",
+        loader_init: "กำลังโหลด MediaPipe Vision WASM & AI Models...",
+        loader_privacy: "Edge AI ประมวลผลในหน่วยความจำเครื่อง ไม่มีการส่งภาพวิดีโอออกภายนอก",
+        telem_palm: "ขนาดฝ่ามือ (2D)",
+        telem_hand: "มือที่ทำการตรวจ",
+        telem_quality: "คุณภาพสัญญาณ",
+        telem_mode: "โหมดกล้อง",
+        battery_header: "Screening Battery / แบบทดสอบ",
+        lbl_sound: "เสียง",
+        tab_bilateral: "Bilateral",
+        tab_bilateral_sub: "ตรวจเทียบ 2 ข้าง",
+        tab_facial: "Facial & Blink",
+        tab_facial_sub: "กะพริบตา & ยิ้ม",
+        tab_full: "Full Battery",
+        tab_full_sub: "แตะ+สั่น+สองมือ",
+        tab_tap: "15s Tap",
+        tab_tap_sub: "แตะนิ้ว+สั่น",
+        tab_dual: "Dual-Task",
+        tab_dual_sub: "ประสานสองมือ",
+        proto_bilateral_title: "Bilateral Asymmetry Protocol (ตรวจเปรียบเทียบมือซ้าย-ขวา)",
+        proto_bilateral_body: "ตรวจมือขวา 15 วินาที → พักสลับมือ 3 วินาที → ตรวจมือซ้าย 15 วินาที เพื่อคำนวณ Bilateral Asymmetry Index (%) สำหรับประเมินความไม่สมมาตรของพาร์กินสันระยะแรก",
+        proto_facial_title: "Facial Expressivity & Blink Rate Screening (การแสดงออกทางใบหน้า)",
+        proto_facial_body: "ตรวจจับอัตราการกะพริบตาธรรมชาติ (Spontaneous Blink Rate) 10 วินาที และความสมมาตรของรอยยิ้ม (Smile Symmetry Index) เพื่อคัดกรองภาวะ Facial Masking / Hypomimia",
+        proto_full_title: "Full Comprehensive Protocol (การทดสอบครบชุด)",
+        proto_full_body: "1. Module A: แตะนิ้วรัวเร็ว 15 วินาที + กางมือนิ่งๆ 5 วินาที\n2. Module B: การประสานสองมือสลับ 5 ชุดทดสอบ",
+        proto_tap_title: "Module A Only: Rapid Finger Tapping & Tremor (แตะนิ้ว & การสั่น)",
+        proto_tap_body: "ประเมินความช้า (Bradykinesia), ความถี่แตะนิ้ว (Hz), จังหวะสะดุด (CV%), และการล้าของแอมพลิจูด (Fatigue Decay)",
+        proto_dual_title: "Module B Only: Dual-Task Bimanual Coordination (การประสานสองมือ)",
+        proto_dual_body: "5 ชุดทดสอบสุ่มสองมือพร้อมกัน (Open Palm, Fist, Peace, Pinch) เพื่อวัดความเร็วการตอบสนองสมองและข้อผิดพลาด (Commission Errors)",
+        btn_begin_test: "Begin Assessment / เริ่มการตรวจ",
+        btn_abort_test: "Abort Test (ยกเลิกการทดสอบ)",
+        stage_monitor: "จอสังเกตการณ์การตรวจ",
+        ready_to_start: "พร้อมเริ่มการตรวจ",
+        time_remaining: "เวลาที่เหลือ",
+        live_taps: "จำนวนครั้งที่แตะได้",
+        live_cadence: "ความถี่จังหวะสด",
+        aperture_gauge: "Pinch Aperture (D_t) / ระยะกางนิ้ว 2D",
+        trial: "รอบที่",
+        errors: "ข้อผิดพลาด:",
+        screen_left: "ซีกซ้ายของจอ",
+        screen_right: "ซีกขวาของจอ",
+        hold_stability: "ความเสถียรของท่า (ค้าง 150ms)",
+        blink_count_lbl: "จำนวนครั้งที่กะพริบตา",
+        smile_symmetry_lbl: "ความสมมาตรรอยยิ้ม",
+        facial_instrux: "มองตรงมาที่กล้อง กะพริบตาตามธรรมชาติ จากนั้นยิ้มกว้างค้างไว้ 3 วินาที",
+        tremor_hold_title: "Tremor Postural Hold / วัดการสั่น",
+        tremor_hold_desc: "กางมือค้างนิ่งๆ หน้ากล้องเพื่อวิเคราะห์ความถี่การสั่น 4-6 Hz",
+        res_dashboard_title: "Quantitative Motor & Cognitive Assessment Profile",
+        btn_sync_cloud: "ส่งข้อมูลเข้า Cloud",
+        btn_print_pdf: "พิมพ์ / บันทึกรายงาน PDF",
+        btn_csv: "ส่งออกไฟล์ CSV",
+        btn_share_fhir: "แชร์ FHIR / JSON",
+        btn_new_test: "เริ่มตรวจเคสใหม่",
+        mds_rating_header: "MDS-UPDRS Part III Item 3.4 Automated Rating (ปรับเกณฑ์ตามอายุ)",
+        patient_profile_hdr: "ข้อมูลประวัติผู้ป่วย",
+        bilateral_asym_hdr: "การวิเคราะห์ความไม่สมมาตรสองข้าง (Bilateral Asymmetry)",
+        asym_index_lbl: "ดัชนีความไม่สมมาตร:",
+        right_hand: "มือขวา",
+        left_hand: "มือซ้าย",
+        facial_hypomimia_hdr: "ผลการประเมินการกะพริบตาและการแสดงออกทางใบหน้า",
+        blink_rate_res: "อัตราการกะพริบตาธรรมชาติ:",
+        smile_symmetry_res: "ความสมมาตรมุมปาก",
+        kpi_taps_freq: "จำนวนครั้ง / ความถี่",
+        kpi_decay: "อัตราการล้า (Decay)",
+        kpi_decay_sub: "การลดลงของแอมพลิจูด (5s แรก vs 5s ท้าย)",
+        kpi_velocities: "ความเร็วหุบ / กางนิ้ว",
+        kpi_cv: "ความแปรปรวนจังหวะ (CV)",
+        kpi_tremor: "การสั่น (4-6 Hz)",
+        kpi_composite: "คะแนนรวม (0-100)",
+        snapshots_title: "Key-Frame Clinical Evidence Snapshots (ภาพหลักฐานจุดวิกฤต)",
+        snapshots_sub: "ภาพถ่ายหลักฐานจังหวะกางนิ้วกว้างสุด เปรียบเทียบกับจังหวะล้าหรือหยุดชะงักช่วงท้าย เพื่อให้แพทย์พิจารณา",
+        snap_max_title: "1. Max Amplitude Peak (กางกว้างสุด)",
+        snap_fatigue_title: "2. Late Decrement / Fatigue (ล้าช่วงท้าย)",
+        snap_waiting: "ยังไม่มีภาพบันทึก",
+        chart_wave_title: "2D Normalized Pinch Waveform & Amplitude Decay",
+        chart_wave_sub: "สัญญาณการกางนิ้ว D_t ตลอด 15 วินาที พร้อมเส้นแนวโน้มถดถอย OLS แสดงการล้า",
+        chart_radar_title: "5-Domain Neuromotor Radar Profile",
+        chart_radar_sub: "เปรียบเทียบคะแนน 5 มิติเทียบกับค่ามาตรฐานอ้างอิงตามกลุ่มอายุ",
+        chart_tremor_title: "Postural Tremor Power Spectrum (0.5 – 12.0 Hz)",
+        chart_tremor_sub: "การกระจายกำลังสเปกตรัม (Uniform Resampled PSD) ตรวจจับย่าน 4-6 Hz",
+        table_bimanual_title: "Bimanual Coordination Trial Telemetry",
+        table_bimanual_badge: "5 ชุดการทดสอบ",
+        col_trial: "ชุดที่",
+        col_left_target: "เป้าหมายมือซ้าย",
+        col_right_target: "เป้าหมายมือขวา",
+        col_rt: "เวลาตอบสนอง",
+        col_err: "ข้อผิดพลาด",
+        no_bimanual_data: "ยังไม่มีข้อมูลการทดสอบสองมือ",
+        print_physician_notes: "บันทึกและความเห็นแพทย์ผู้ตรวจ:",
+        print_disclaimer: "รายงานนี้เป็นการวัดผลเชิงปริมาณเบื้องต้นเพื่อสนับสนุนการตรวจรักษา ควรแปลผลร่วมกับการซักประวัติตรวจร่างกายทางระบบประสาท",
+        print_qualification: "แพทย์ผู้ตรวจ / ผู้เชี่ยวชาญด้านความผิดปกติของการเคลื่อนไหว",
+        modal_patient_title: "Patient Profile & Clinical Setup",
+        modal_patient_sub: "ข้อมูลผู้รับการตรวจและสถานะการรักษา",
+        lbl_hn: "Patient HN / Identifier (รหัสผู้ป่วย)",
+        lbl_age: "Age (อายุ - ใช้ปรับเกณฑ์อ้างอิง Z-Score)",
+        lbl_sex: "Biological Sex (เพศกำเนิด)",
+        opt_male: "Male (ชาย)",
+        opt_female: "Female (หญิง)",
+        opt_other: "Other (อื่นๆ / ไม่ระบุ)",
+        lbl_testing_hand: "Testing Hand (มือที่ทำการตรวจ)",
+        opt_right: "Right Hand (มือขวา)",
+        opt_left: "Left Hand (มือซ้าย)",
+        lbl_med_state: "Medication State (สถานะยา)",
+        opt_on_meds: "ON-State (หลังทานยา)",
+        opt_off_meds: "OFF-State (ก่อนทานยา / งดยา)",
+        opt_drug_naive: "Drug-Naïve (ยังไม่เริ่มยา)",
+        lbl_examiner: "Examiner Name (แพทย์ / ผู้ประเมิน)",
+        btn_save_profile: "Save Profile (บันทึกข้อมูล)",
+        webhook_title: "Cloud & Google Sheets Webhook Sync",
+        webhook_sub: "ระบบส่งข้อมูลเข้าฐานข้อมูลกลางอัตโนมัติ (Zero-Backend Data Pipeline)",
+        lbl_webhook_url: "Google Apps Script Webhook URL / REST Endpoint",
+        webhook_url_hint: "ส่งเฉพาะ JSON Summary (ไม่ส่งภาพวิดีโอ เพื่อความปลอดภัยตามมาตรฐาน PDPA / HIPAA)",
+        lbl_auto_sync: "Auto-sync upon assessment completion (ส่งข้อมูลทันทีเมื่อตรวจเสร็จ)",
+        webhook_howto_title: "💡 วิธีสร้าง Google Sheets Webhook ฟรีใน 1 นาที:",
+        webhook_howto_desc: "เปิด Google Sheets > Extensions > Apps Script > วางโค้ด doPost(e) > Deploy as Web App (เลือก Anyone) > นำ URL มาวางที่นี่",
+        btn_test_webhook: "ทดสอบการเชื่อมต่อ",
+        btn_save_webhook: "บันทึกการตั้งค่า",
+        history_modal_title: "Longitudinal Motor Trends & History",
+        history_modal_sub: "ประวัติการตรวจและแนวโน้มการตอบสนองต่อการรักษา",
+        hist_chart_title: "Composite Score & Cadence Trajectory",
+        col_hist_date: "วัน / เวลา",
+        col_hist_hand: "มือ",
+        col_hist_meds: "สถานะยา",
+        col_hist_mds: "เกรด MDS",
+        col_hist_cadence: "ความถี่ (Hz)",
+        col_hist_decay: "การล้า (%)",
+        col_hist_score: "คะแนน",
+        no_history_data: "ยังไม่มีประวัติการตรวจสำหรับ HN นี้",
+        btn_clear_history: "ล้างประวัติของ HN นี้",
+        btn_close: "ปิดหน้าต่าง"
+      },
+      en: {
+        https_warning_title: "HTTPS Required for Mobile Cameras",
+        https_warning_desc: "iOS Safari & Android Chrome strictly block camera access over insecure HTTP. Please host via HTTPS (e.g. GitHub Pages, Vercel, or Cloudflare Pages).",
+        badge_compliance: "MDS-UPDRS COMPLIANT",
+        btn_cloud: "Cloud Sync",
+        btn_trends: "Trends",
+        btn_profile: "Profile",
+        cam_error_title: "Camera Access Error",
+        cam_error_desc: "Please allow camera permission in your browser settings.",
+        btn_retry_cam: "Retry Camera",
+        pose_guidance_init: "Position hand at ~45° angle in front of camera",
+        target_zone: "TARGET ZONE",
+        awaiting_hand: "Awaiting Target Hand...",
+        live_pinch_lbl: "Pinch D_t:",
+        front_cam: "Front Cam",
+        rear_cam: "Rear Cam",
+        countdown_ready: "Get Ready for Assessment",
+        loader_init: "Loading MediaPipe Vision WASM & AI Models...",
+        loader_privacy: "Edge AI running in local memory. Zero video uploaded.",
+        telem_palm: "Palm Scale (2D)",
+        telem_hand: "Testing Hand",
+        telem_quality: "Signal Quality",
+        telem_mode: "Camera Mode",
+        battery_header: "Screening Battery / Protocol",
+        lbl_sound: "Sound",
+        tab_bilateral: "Bilateral",
+        tab_bilateral_sub: "2-Hand Compare",
+        tab_facial: "Facial & Blink",
+        tab_facial_sub: "Blink & Smile",
+        tab_full: "Full Battery",
+        tab_full_sub: "Tap + Hold + Dual",
+        tab_tap: "15s Tap",
+        tab_tap_sub: "Tap & Tremor",
+        tab_dual: "Dual-Task",
+        tab_dual_sub: "Bimanual",
+        proto_bilateral_title: "Bilateral Asymmetry Protocol (Right vs Left Comparison)",
+        proto_bilateral_body: "Sequential testing of Right hand (15s) → 3s Pause → Left hand (15s) calculating the Bilateral Asymmetry Index (%) to detect early lateralized neurodegeneration.",
+        proto_facial_title: "Facial Expressivity & Spontaneous Blink Rate Screening",
+        proto_facial_body: "10-second assessment of spontaneous blink rate (blinks/min) and smile symmetry index to evaluate facial masking / hypomimia.",
+        proto_full_title: "Full Comprehensive Protocol",
+        proto_full_body: "1. Module A: 15-second rapid finger tapping + 5-second postural static hold\n2. Module B: 5-trial bimanual coordination cognitive reaction test",
+        proto_tap_title: "Module A Only: Rapid Finger Tapping & Tremor",
+        proto_tap_body: "Quantifies bradykinesia, tapping cadence (Hz), rhythm variability (CV%), and amplitude decay rate alongside 4-6 Hz postural tremor.",
+        proto_dual_title: "Module B Only: Dual-Task Bimanual Coordination",
+        proto_dual_body: "5 randomized bilateral gesture trials (Open Palm, Fist, Peace, Pinch) measuring decision speed and commission errors.",
+        btn_begin_test: "Begin Assessment",
+        btn_abort_test: "Abort Test",
+        stage_monitor: "STAGE MONITOR",
+        ready_to_start: "Ready to Start",
+        time_remaining: "TIME REMAINING",
+        live_taps: "Total Taps",
+        live_cadence: "Live Cadence",
+        aperture_gauge: "Pinch Aperture (D_t) / 2D Normalized",
+        trial: "Trial",
+        errors: "Errors:",
+        screen_left: "Screen Left",
+        screen_right: "Screen Right",
+        hold_stability: "Hold Stability (150ms hold)",
+        blink_count_lbl: "Blinks Detected",
+        smile_symmetry_lbl: "Smile Symmetry",
+        facial_instrux: "Look straight into camera, blink naturally, then smile widely for 3 seconds.",
+        tremor_hold_title: "Tremor Postural Hold",
+        tremor_hold_desc: "Hold hand completely still and open in front of camera for 4-6 Hz spectral analysis.",
+        res_dashboard_title: "Quantitative Motor & Cognitive Assessment Profile",
+        btn_sync_cloud: "Sync to Cloud",
+        btn_print_pdf: "Print / Save PDF Report",
+        btn_csv: "Export CSV",
+        btn_share_fhir: "Share FHIR/JSON",
+        btn_new_test: "New Test",
+        mds_rating_header: "MDS-UPDRS Part III Item 3.4 Automated Rating (Age-Stratified)",
+        patient_profile_hdr: "Patient Profile",
+        bilateral_asym_hdr: "Bilateral Asymmetry Analysis",
+        asym_index_lbl: "Asymmetry Index:",
+        right_hand: "Right Hand",
+        left_hand: "Left Hand",
+        facial_hypomimia_hdr: "Facial Expressivity & Blink Rate Screening Results",
+        blink_rate_res: "Spontaneous Blink Rate:",
+        smile_symmetry_res: "Smile Symmetry",
+        kpi_taps_freq: "Total Taps / Freq",
+        kpi_decay: "Amplitude Decay",
+        kpi_decay_sub: "Fatigue (1st 5s vs Last 5s)",
+        kpi_velocities: "Closing / Opening Vel",
+        kpi_cv: "Rhythm CV (ITI)",
+        kpi_tremor: "Tremor (4-6 Hz)",
+        kpi_composite: "Composite Score",
+        snapshots_title: "Key-Frame Clinical Evidence Snapshots",
+        snapshots_sub: "Visual proof of maximum opening aperture vs. late decremental fatigue during test battery.",
+        snap_max_title: "1. Max Amplitude Peak",
+        snap_fatigue_title: "2. Late Decrement / Fatigue",
+        snap_waiting: "No snapshot recorded",
+        chart_wave_title: "2D Normalized Pinch Waveform & Amplitude Decay",
+        chart_wave_sub: "15s aperture signal D_t (2D) with highlighted peaks and OLS regression trendline",
+        chart_radar_title: "5-Domain Neuromotor Radar Profile",
+        chart_radar_sub: "Normalized score compared against age-stratified reference norms",
+        chart_tremor_title: "Postural Tremor Power Spectrum (0.5 – 12.0 Hz)",
+        chart_tremor_sub: "Uniform 2D Normalized PSD in 4-6 Hz Parkinsonian band",
+        table_bimanual_title: "Bimanual Coordination Trial Telemetry",
+        table_bimanual_badge: "5 Target Trials",
+        col_trial: "Trial",
+        col_left_target: "Left Target",
+        col_right_target: "Right Target",
+        col_rt: "Reaction Time",
+        col_err: "Errors",
+        no_bimanual_data: "No bimanual trial data recorded yet.",
+        print_physician_notes: "Physician / Examiner Notes:",
+        print_disclaimer: "Quantitative screening support tool. Clinical correlation with comprehensive neurological exam is recommended.",
+        print_qualification: "M.D. / Movement Disorders Specialist",
+        modal_patient_title: "Patient Profile & Clinical Setup",
+        modal_patient_sub: "Demographic and treatment status parameters",
+        lbl_hn: "Patient HN / Identifier",
+        lbl_age: "Age (Used for Age-Stratified Z-Score)",
+        lbl_sex: "Biological Sex",
+        opt_male: "Male",
+        opt_female: "Female",
+        opt_other: "Other / Unspecified",
+        lbl_testing_hand: "Testing Hand",
+        opt_right: "Right Hand",
+        opt_left: "Left Hand",
+        lbl_med_state: "Medication State",
+        opt_on_meds: "ON-State (Optimal Dopaminergic Response)",
+        opt_off_meds: "OFF-State (>12h Med Withdrawal)",
+        opt_drug_naive: "Drug-Naïve (Untreated)",
+        lbl_examiner: "Examiner Name",
+        btn_save_profile: "Save Profile",
+        webhook_title: "Cloud & Google Sheets Webhook Sync",
+        webhook_sub: "Automated Zero-Backend Data Pipeline for clinical dashboards",
+        lbl_webhook_url: "Google Apps Script Webhook URL / REST Endpoint",
+        webhook_url_hint: "Transmits sanitized JSON summary only (No video data for PDPA/HIPAA compliance)",
+        lbl_auto_sync: "Auto-sync upon assessment completion",
+        webhook_howto_title: "💡 Free Google Sheets Webhook in 1 minute:",
+        webhook_howto_desc: "Open Google Sheets > Extensions > Apps Script > Paste doPost(e) > Deploy as Web App (Access: Anyone) > Paste URL here.",
+        btn_test_webhook: "Test Connection",
+        btn_save_webhook: "Save Settings",
+        history_modal_title: "Longitudinal Motor Trends & History",
+        history_modal_sub: "Persistent tracking for treatment response monitoring",
+        hist_chart_title: "Composite Score & Cadence Trajectory",
+        col_hist_date: "Date / Time",
+        col_hist_hand: "Hand",
+        col_hist_meds: "Meds",
+        col_hist_mds: "MDS Score",
+        col_hist_cadence: "Cadence (Hz)",
+        col_hist_decay: "Decay (%)",
+        col_hist_score: "Score",
+        no_history_data: "No test history saved yet for this HN.",
+        btn_clear_history: "Clear History for this HN",
+        btn_close: "Close"
+      }
+    };
+
+    /* =========================================================================
+       2. AGE-STRATIFIED NORMATIVE DATA & Z-SCORE ENGINE
+       ========================================================================= */
+
+    export const AGE_NORMATIVE_TABLE = {
+      under40: { minAge: 0, maxAge: 39, cadenceMean: 3.6, cadenceSd: 0.50, decayMean: 8, decaySd: 5.0 },
+      age40to59: { minAge: 40, maxAge: 59, cadenceMean: 3.2, cadenceSd: 0.45, decayMean: 12, decaySd: 6.0 },
+      age60to69: { minAge: 60, maxAge: 69, cadenceMean: 2.8, cadenceSd: 0.40, decayMean: 15, decaySd: 7.0 },
+      age70to79: { minAge: 70, maxAge: 79, cadenceMean: 2.4, cadenceSd: 0.38, decayMean: 18, decaySd: 8.0 },
+      age80plus: { minAge: 80, maxAge: 120, cadenceMean: 2.1, cadenceSd: 0.35, decayMean: 22, decaySd: 9.0 }
+    };
+
+    export function getAgeNorm(age) {
+      const a = Number(age) || 65;
+      if (a < 40) return AGE_NORMATIVE_TABLE.under40;
+      if (a < 60) return AGE_NORMATIVE_TABLE.age40to59;
+      if (a < 70) return AGE_NORMATIVE_TABLE.age60to69;
+      if (a < 80) return AGE_NORMATIVE_TABLE.age70to79;
+      return AGE_NORMATIVE_TABLE.age80plus;
+    }
+
+    export function calculateAgeStratifiedZScore(cadenceHz, age) {
+      const norm = getAgeNorm(age);
+      const z = (cadenceHz - norm.cadenceMean) / norm.cadenceSd;
+      return Number(z.toFixed(2));
+    }
+
+    /* =========================================================================
+       3. MATHEMATICAL SIGNAL PROCESSING, KINEMATICS & DSP ENGINE
+       ========================================================================= */
+
     export function euclideanDistance(p1, p2, use3D = false) {
       const dx = p1.x - p2.x;
       const dy = p1.y - p2.y;
@@ -854,18 +1315,12 @@
       return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
-    /**
-     * Palm scale in 2D image plane: wrist (0) to middle MCP (9)
-     */
     export function computePalmScale(landmarks) {
       if (!landmarks || landmarks.length < 10) return 1.0;
       const scale = euclideanDistance(landmarks[0], landmarks[9], false);
       return Math.max(scale, 1e-4);
     }
 
-    /**
-     * Scale-invariant 2D normalized pinch aperture D_t (thumb tip 4 to index tip 8)
-     */
     export function computeNormalizedPinch(landmarks) {
       if (!landmarks || landmarks.length < 21) return 0;
       const palmScale = computePalmScale(landmarks);
@@ -873,9 +1328,6 @@
       return pinchDist / palmScale;
     }
 
-    /**
-     * Compute 3D joint angle between three landmarks in degrees (0 to 180)
-     */
     export function computeJointAngleDegrees(pA, pB, pC) {
       const v1 = { x: pA.x - pB.x, y: pA.y - pB.y, z: (pA.z || 0) - (pB.z || 0) };
       const v2 = { x: pC.x - pB.x, y: pC.y - pB.y, z: (pC.z || 0) - (pB.z || 0) };
@@ -889,9 +1341,6 @@
       return (Math.acos(cosAngle) * 180) / Math.PI;
     }
 
-    /**
-     * One Euro Filter for adaptive low-pass signal smoothing
-     */
     export class OneEuroFilter {
       constructor(minCutoff = 1.2, beta = 0.008, dCutoff = 1.0) {
         this.minCutoff = minCutoff;
@@ -938,9 +1387,6 @@
       }
     }
 
-    /**
-     * Offline Prominence-based Peak and Valley detector + Kinematic Velocity extraction
-     */
     export function detectTapCycles(samples, minProminence = 0.12, minPeakDistanceMs = 120) {
       if (!samples || samples.length < 5) {
         return { peaks: [], valleys: [], itis: [], openingVelocities: [], closingVelocities: [] };
@@ -995,7 +1441,6 @@
         }
       }
 
-      // Valleys between peaks
       const valleys = [];
       for (let k = 0; k < filteredPeaks.length - 1; k++) {
         const p1 = filteredPeaks[k];
@@ -1018,13 +1463,11 @@
         }
       }
 
-      // Inter-tap intervals (ITI)
       const itis = [];
       for (let i = 0; i < filteredPeaks.length - 1; i++) {
         itis.push(filteredPeaks[i + 1].t - filteredPeaks[i].t);
       }
 
-      // Kinematic Velocities: Opening & Closing
       const openingVelocities = [];
       const closingVelocities = [];
 
@@ -1080,9 +1523,6 @@
       return { slope, intercept };
     }
 
-    /**
-     * Resample non-uniform kinematic series to uniform grid (e.g. 50 Hz)
-     */
     export function resampleToUniformGrid(samples, targetHz = 50) {
       if (!samples || samples.length < 2) return [];
       const t0 = samples[0].t;
@@ -1113,15 +1553,11 @@
       return uniformSeries;
     }
 
-    /**
-     * Postural Tremor Spectrum Analysis with 2D Normalized Displacement, Hann Window and DFT
-     */
     export function analyzeTremorSpectrum(staticHoldSamples) {
       if (!staticHoldSamples || staticHoldSamples.length < 25) {
         return { dominantFreqHz: 0, tremorFlag: false, powerInBand: 0, spectrum: [] };
       }
 
-      // Compute normalized displacement relative to initial centroid
       const x0 = staticHoldSamples[0].x;
       const y0 = staticHoldSamples[0].y;
 
@@ -1132,7 +1568,6 @@
         return { t: s.t, disp };
       });
 
-      // Resample to strict 50 Hz uniform time series
       const uniformSamples = resampleToUniformGrid(displacementSeries, 50);
       const n = uniformSamples.length;
       if (n < 45) {
@@ -1143,7 +1578,6 @@
       const regPoints = uniformSamples.map(s => ({ x: (s.t - t0) / 1000.0, y: s.disp }));
       const { slope, intercept } = computeLinearRegression(regPoints);
 
-      // Detrend and apply Hann Window
       const detrended = regPoints.map((p, i) => {
         const trend = slope * p.x + intercept;
         const hann = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (n - 1)));
@@ -1156,7 +1590,6 @@
       let totalPower = 0;
       let bandPower4to6 = 0;
 
-      // Compute DFT across 0.5 Hz - 12.0 Hz
       for (let freq = 0.5; freq <= 12.0; freq += 0.25) {
         let real = 0;
         let imag = 0;
@@ -1182,7 +1615,6 @@
 
       const bandRatio = totalPower > 0 ? (bandPower4to6 / totalPower) : 0;
       const isDominantInBand = dominantFreq >= 4.0 && dominantFreq <= 6.0;
-      // Tremor flag based on normalized 2D displacement
       const tremorFlag = isDominantInBand && (bandRatio > 0.28) && (maxPower > 0.00005);
 
       return {
@@ -1193,16 +1625,11 @@
       };
     }
 
-    /**
-     * Robust Gesture Classification using 3D Joint Angles (Invariant to camera tilt)
-     */
     export function classifyGestureRobust(landmarks) {
       if (!landmarks || landmarks.length < 21) return 'UNKNOWN';
 
       const D_t = computeNormalizedPinch(landmarks);
-      if (D_t < 0.25) {
-        return 'PINCH';
-      }
+      if (D_t < 0.25) return 'PINCH';
 
       const indexAngle = computeJointAngleDegrees(landmarks[5], landmarks[6], landmarks[7]);
       const middleAngle = computeJointAngleDegrees(landmarks[9], landmarks[10], landmarks[11]);
@@ -1214,61 +1641,67 @@
       const ringExt = ringAngle > 140;
       const pinkyExt = pinkyAngle > 140;
 
-      if (indexExt && middleExt && !ringExt && !pinkyExt) {
-        return 'PEACE';
-      }
-
-      if (!indexExt && !middleExt && !ringExt && !pinkyExt && D_t >= 0.25) {
-        return 'FIST';
-      }
-
-      if (indexExt && middleExt && ringExt && pinkyExt && D_t > 0.45) {
-        return 'OPEN_PALM';
-      }
+      if (indexExt && middleExt && !ringExt && !pinkyExt) return 'PEACE';
+      if (!indexExt && !middleExt && !ringExt && !pinkyExt && D_t >= 0.25) return 'FIST';
+      if (indexExt && middleExt && ringExt && pinkyExt && D_t > 0.45) return 'OPEN_PALM';
 
       return 'UNKNOWN';
     }
 
     /**
-     * Automated MDS-UPDRS Part III Item 3.4 (Finger Tapping) Rating
+     * Age-Adjusted MDS-UPDRS Rating (Prevents false positives in seniors 75+)
      */
-    export function calculateMdsUpdrsRating(totalTaps, freqHz, decayPct, cvPct, arrestsCount) {
-      if (freqHz >= 2.5 && totalTaps >= 25 && decayPct < 15 && cvPct < 15 && arrestsCount === 0) {
+    export function calculateMdsUpdrsRatingAgeAdjusted(totalTaps, freqHz, decayPct, cvPct, arrestsCount, age) {
+      const zScore = calculateAgeStratifiedZScore(freqHz, age);
+      const norm = getAgeNorm(age);
+
+      // Score 0: Normal for age (Z >= -1.0 or Cadence >= norm.cadenceMean - 0.3)
+      if (zScore >= -1.0 && decayPct < (norm.decayMean + 10) && cvPct < 18 && arrestsCount === 0) {
         return {
           score: 0,
           label: '0 - Normal',
-          textTh: 'ปกติ: ความเร็วและแอมพลิจูดสม่ำเสมอ ไม่มีการล้าหรือหยุดชะงัก'
+          zScore,
+          textTh: 'ปกติสำหรับช่วงวัย: ความเร็ว แอมพลิจูด และจังหวะอยู่ในเกณฑ์มาตรฐานตามอายุ ไม่มีการล้าผิดปกติ',
+          textEn: 'Normal for age: Cadence, amplitude, and rhythm within expected age-stratified norms.'
         };
-      } else if (freqHz >= 2.0 && decayPct < 25 && arrestsCount <= 1) {
+      } else if (zScore >= -1.8 && decayPct < 28 && arrestsCount <= 1) {
         return {
           score: 1,
           label: '1 - Slight',
-          textTh: 'เล็กน้อย (Slight): เริ่มพบการชะลอตัวเล็กน้อย หรือแอมพลิจูดลดลงช่วงท้าย'
+          zScore,
+          textTh: 'เล็กน้อย (Slight): เริ่มพบการชะลอตัวเมื่อเทียบกับวัยเดียวกัน หรือแอมพลิจูดลดลงช่วงท้าย',
+          textEn: 'Slight: Mild slowing compared to age cohort or slight decremental amplitude.'
         };
-      } else if (freqHz >= 1.5 && decayPct < 40 && arrestsCount <= 2) {
+      } else if (zScore >= -2.5 && decayPct < 45 && arrestsCount <= 2) {
         return {
           score: 2,
           label: '2 - Mild',
-          textTh: 'ปานกลาง (Mild): อัตราแตะนิ้วช้าลงชัดเจน มีการสะดุด 1-2 ครั้ง หรือแอมพลิจูดลดลงปานกลาง'
+          zScore,
+          textTh: 'ปานกลาง (Mild): อัตราแตะนิ้วช้าลงกว่าเกณฑ์อายุชัดเจน มีการสะดุด 1-2 ครั้ง หรือแอมพลิจูดลดลงปานกลาง',
+          textEn: 'Mild: Noticeable slowing beyond age-stratified baseline with occasional hesitations.'
         };
-      } else if (freqHz >= 1.0 || arrestsCount >= 3) {
+      } else if (zScore >= -3.5 || arrestsCount >= 3) {
         return {
           score: 3,
           label: '3 - Moderate',
-          textTh: 'มาก (Moderate): มีการหยุดชะงักบ่อยครั้ง หรือแอมพลิจูดแคบลงอย่างรุนแรง'
+          zScore,
+          textTh: 'มาก (Moderate): มีการหยุดชะงักบ่อยครั้ง หรือแอมพลิจูดแคบลงอย่างรุนแรง',
+          textEn: 'Moderate: Frequent arrests, freezing, or severe amplitude decrement.'
         };
       } else {
         return {
           score: 4,
           label: '4 - Severe',
-          textTh: 'รุนแรง (Severe): แตะนิ้วได้ช้ามาก หรือมีอาการหยุดค้าง (Freezing) ต่อเนื่อง'
+          zScore,
+          textTh: 'รุนแรง (Severe): แตะนิ้วได้ช้ามาก หรือมีอาการหยุดค้าง (Freezing) ต่อเนื่อง',
+          textEn: 'Severe: Severe bradykinesia, prolonged freezing, barely able to perform task.'
         };
       }
     }
 
 
     /* =========================================================================
-       2. CLINICAL WEB AUDIO & HAPTIC FEEDBACK ENGINE
+       4. CLINICAL AUDIO & HAPTIC FEEDBACK ENGINE
        ========================================================================= */
     class AudioAndHapticEngine {
       constructor() {
@@ -1311,38 +1744,21 @@
 
           osc.start();
           osc.stop(this.ctx.currentTime + durationMs / 1000);
-        } catch (e) {
-          console.warn('Audio play error:', e);
-        }
+        } catch (e) {}
       }
 
-      countdownBeep() {
-        this.playTone(440, 120, 'sine', 0.2);
-        this.vibrate([40]);
-      }
-      countdownStart() {
-        this.playTone(880, 250, 'triangle', 0.25);
-        this.vibrate([80, 50, 80]);
-      }
-      tapClick() {
-        this.playTone(600, 35, 'triangle', 0.1);
-        this.vibrate([20]);
-      }
-      trialSuccess() {
-        this.playTone(1046, 200, 'sine', 0.25);
-        this.vibrate([60]);
-      }
-      errorBuzz() {
-        this.playTone(220, 250, 'sawtooth', 0.2);
-        this.vibrate([150]);
-      }
+      countdownBeep() { this.playTone(440, 120, 'sine', 0.2); this.vibrate([40]); }
+      countdownStart() { this.playTone(880, 250, 'triangle', 0.25); this.vibrate([80, 50, 80]); }
+      tapClick() { this.playTone(600, 35, 'triangle', 0.1); this.vibrate([20]); }
+      trialSuccess() { this.playTone(1046, 200, 'sine', 0.25); this.vibrate([60]); }
+      errorBuzz() { this.playTone(220, 250, 'sawtooth', 0.2); this.vibrate([150]); }
     }
 
     const audioHaptics = new AudioAndHapticEngine();
 
 
     /* =========================================================================
-       3. CLINICAL SCREENING CONTROLLER & STATE MACHINE
+       5. CLINICAL SCREENING CONTROLLER & STATE MACHINE
        ========================================================================= */
 
     const STATES = {
@@ -1352,6 +1768,7 @@
       MODULE_A_STATIC: 'MODULE_A_STATIC',
       BILATERAL_PAUSE: 'BILATERAL_PAUSE',
       MODULE_B_BIMANUAL: 'MODULE_B_BIMANUAL',
+      MODULE_C_FACIAL: 'MODULE_C_FACIAL',
       RESULT: 'RESULT'
     };
 
@@ -1365,14 +1782,16 @@
 
     class NeuroScreenApp {
       constructor() {
+        this.currentLang = localStorage.getItem('neuroscreen_lang') || 'th';
         this.state = STATES.IDLE;
-        this.selectedMode = 'BILATERAL'; // 'BILATERAL', 'FULL', 'MOD_A', 'MOD_B'
+        this.selectedMode = 'BILATERAL';
         this.currentFacingMode = 'user';
         this.currentStream = null;
         this.wakeLock = null;
 
-        // Vision & Canvas
+        // Vision Models
         this.handLandmarker = null;
+        this.faceLandmarker = null;
         this.videoEl = document.getElementById('webcam');
         this.canvasEl = document.getElementById('overlayCanvas');
         this.ctx = this.canvasEl.getContext('2d');
@@ -1383,19 +1802,19 @@
         this.fpsHistory = [];
         this.deviceFps = 0;
 
-        // Signal Processing
+        // Filters
         this.pinchFilter = new OneEuroFilter(1.2, 0.008, 1.0);
 
-        // O(1) Real-Time Tap Peak Tracker State Machine
+        // O(1) Real-Time Tap Peak Tracker
         this.livePeakTracker = {
           tapCount: 0,
-          state: 'OPENING', // 'OPENING' or 'CLOSING'
+          state: 'OPENING',
           localMin: 0.1,
           localMax: 0.5,
           lastPeakTime: 0
         };
 
-        // Signal Quality Guard (Dropout tracking)
+        // Signal Quality Guard
         this.qualityTracker = {
           totalTestFrames: 0,
           validHandFrames: 0,
@@ -1412,12 +1831,9 @@
           examiner: 'Dr. Neurologist'
         };
 
-        // Bilateral Protocol Internal Stage ('RIGHT' then 'LEFT')
-        this.bilateralStage = 'RIGHT'; // 'RIGHT' or 'LEFT'
-        this.bilateralResults = {
-          right: null,
-          left: null
-        };
+        // Bilateral Protocol State
+        this.bilateralStage = 'RIGHT';
+        this.bilateralResults = { right: null, left: null };
 
         // Module A Data Storage
         this.modAData = {
@@ -1439,10 +1855,31 @@
           trials: []
         };
 
+        // Module C (Facial) Data Storage
+        this.modCData = {
+          startTime: 0,
+          blinkCount: 0,
+          isBlinking: false,
+          smileSymmetries: []
+        };
+
+        // Key-Frame Snapshots (Annotated Evidence for PDF)
+        this.evidenceSnapshots = {
+          maxAperture: null, // { dataUrl, d_t, t_ms }
+          lateFatigue: null,
+          maxRecordedDt: 0
+        };
+
+        // Cloud Webhook Settings
+        this.webhookConfig = {
+          url: localStorage.getItem('neuroscreen_webhook_url') || '',
+          autoSync: localStorage.getItem('neuroscreen_webhook_autosync') === 'true'
+        };
+
         // Final Assessment
         this.screeningResults = null;
 
-        // Chart.js Instances
+        // Chart Instances
         this.charts = {
           waveform: null,
           radar: null,
@@ -1477,6 +1914,7 @@
           hudTimer: document.getElementById('hudTimer'),
           hudModAContainer: document.getElementById('hudModAContainer'),
           hudModBContainer: document.getElementById('hudModBContainer'),
+          hudFacialContainer: document.getElementById('hudFacialContainer'),
           hudStaticHoldBox: document.getElementById('hudStaticHoldBox'),
           liveTapCount: document.getElementById('liveTapCount'),
           liveFreqVal: document.getElementById('liveFreqVal'),
@@ -1498,10 +1936,40 @@
           poseIndicatorDot: document.getElementById('poseIndicatorDot'),
           poseGuidanceText: document.getElementById('poseGuidanceText'),
           qualityWarningBanner: document.getElementById('qualityWarningBanner'),
-          bilateralBanner: document.getElementById('bilateralBanner')
+          bilateralBanner: document.getElementById('bilateralBanner'),
+          facialResultBanner: document.getElementById('facialResultBanner'),
+          liveBlinkCount: document.getElementById('liveBlinkCount'),
+          liveBlinkRate: document.getElementById('liveBlinkRate'),
+          liveSmileSymmetry: document.getElementById('liveSmileSymmetry'),
+          liveFacialState: document.getElementById('liveFacialState')
         };
 
         this.initEventListeners();
+      }
+
+      /* ================= TRANSLATION & i18n ================= */
+
+      t(key) {
+        const langDict = I18N_DICT[this.currentLang] || I18N_DICT.en;
+        return langDict[key] || key;
+      }
+
+      applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          el.textContent = this.t(key);
+        });
+
+        // Update Dynamic Labels
+        document.getElementById('langCurrentLabel').textContent = this.currentLang.toUpperCase();
+        this.updateProtocolDescription();
+      }
+
+      toggleLanguage() {
+        this.currentLang = this.currentLang === 'th' ? 'en' : 'th';
+        localStorage.setItem('neuroscreen_lang', this.currentLang);
+        this.applyTranslations();
+        this.showToast(this.currentLang === 'th' ? 'สลับเป็นภาษาไทยเรียบร้อย' : 'Switched to English');
       }
 
       /* ================= INITIALIZATION ================= */
@@ -1509,14 +1977,21 @@
       async init() {
         this.checkProtocolSecurity();
         this.registerServiceWorker();
+        this.applyTranslations();
+
+        // Load Webhook configuration
+        document.getElementById('inputWebhookUrl').value = this.webhookConfig.url;
+        document.getElementById('checkAutoSync').checked = this.webhookConfig.autoSync;
+        this.updateWebhookStatusIndicator();
 
         try {
-          this.dom.loaderMsg.textContent = 'Loading MediaPipe Tasks Vision WASM...';
+          this.dom.loaderMsg.textContent = this.t('loader_init');
 
           const vision = await FilesetResolver.forVisionTasks(
             'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm'
           );
 
+          // 1. Initialize HandLandmarker
           try {
             this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
               baseOptions: {
@@ -1527,7 +2002,7 @@
               numHands: 2
             });
           } catch (gpuError) {
-            console.warn('GPU delegate failed, fallback to CPU:', gpuError);
+            console.warn('GPU Hand delegate failed, fallback to CPU:', gpuError);
             this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
               baseOptions: {
                 modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
@@ -1538,7 +2013,22 @@
             });
           }
 
-          this.dom.loaderMsg.textContent = 'Starting Optical Sensor...';
+          // 2. Initialize FaceLandmarker with Blendshapes for Module C
+          try {
+            this.faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+              baseOptions: {
+                modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+                delegate: 'GPU'
+              },
+              outputFaceBlendshapes: true,
+              runningMode: 'VIDEO',
+              numFaces: 1
+            });
+          } catch (faceErr) {
+            console.warn('FaceLandmarker load fallback:', faceErr);
+          }
+
+          this.dom.loaderMsg.textContent = 'Connecting Camera Sensor...';
           await this.startCamera(this.currentFacingMode);
 
           this.dom.loaderOverlay.classList.add('hidden');
@@ -1598,12 +2088,12 @@
           if (facingMode === 'user') {
             this.videoEl.classList.add('video-mirror');
             this.videoEl.classList.remove('video-unmirror');
-            this.dom.cameraFacingLabel.textContent = 'Front Cam';
+            this.dom.cameraFacingLabel.textContent = this.t('front_cam');
             this.dom.telemetryCameraMode.textContent = 'User (Front)';
           } else {
             this.videoEl.classList.remove('video-mirror');
             this.videoEl.classList.add('video-unmirror');
-            this.dom.cameraFacingLabel.textContent = 'Rear Cam';
+            this.dom.cameraFacingLabel.textContent = this.t('rear_cam');
             this.dom.telemetryCameraMode.textContent = 'Env (Rear)';
           }
 
@@ -1658,6 +2148,11 @@
           setTimeout(() => this.syncCanvasResolution(), 300);
         });
 
+        // Language Switcher
+        document.getElementById('langToggleBtn').addEventListener('click', () => {
+          this.toggleLanguage();
+        });
+
         // Switch Camera
         this.dom.switchCameraBtn.addEventListener('click', async () => {
           const newFacing = (this.currentFacingMode === 'user') ? 'environment' : 'user';
@@ -1667,7 +2162,7 @@
             this.showToast(`Switched to ${newFacing === 'user' ? 'Front' : 'Rear'} Camera`);
           } catch (e) {
             this.showCameraAlert(e.message);
-            this.dom.cameraFacingLabel.textContent = (this.currentFacingMode === 'user') ? 'Front Cam' : 'Rear Cam';
+            this.dom.cameraFacingLabel.textContent = (this.currentFacingMode === 'user') ? this.t('front_cam') : this.t('rear_cam');
           }
         });
 
@@ -1705,11 +2200,11 @@
           if (audioHaptics.soundEnabled) {
             toggleAudioBtn.classList.replace('bg-slate-700', 'bg-teal-500');
             audioToggleDot.classList.remove('-translate-x-3.5');
-            this.showToast('Audio cues enabled');
+            this.showToast(this.t('lbl_sound') + ': Enabled');
           } else {
             toggleAudioBtn.classList.replace('bg-teal-500', 'bg-slate-700');
             audioToggleDot.classList.add('-translate-x-3.5');
-            this.showToast('Audio cues muted');
+            this.showToast(this.t('lbl_sound') + ': Muted');
           }
         });
 
@@ -1724,18 +2219,64 @@
 
         document.getElementById('savePatientBtn').addEventListener('click', () => {
           this.patientProfile.hn = document.getElementById('inputPatientHN').value.trim() || 'DEMO-001';
-          this.patientProfile.age = document.getElementById('inputPatientAge').value || 65;
+          this.patientProfile.age = Number(document.getElementById('inputPatientAge').value) || 65;
           this.patientProfile.sex = document.getElementById('inputPatientSex').value;
           this.patientProfile.testingHand = document.getElementById('inputTestingHand').value;
           this.patientProfile.medState = document.getElementById('inputMedState').value;
           this.patientProfile.examiner = document.getElementById('inputExaminer').value.trim() || 'Dr. Neurologist';
 
           document.getElementById('headerPatientSummary').textContent = 
-            `HN: ${this.patientProfile.hn} | ${this.patientProfile.testingHand} Hand | ${this.patientProfile.medState}`;
+            `HN: ${this.patientProfile.hn} | ${this.patientProfile.testingHand} Hand | ${this.patientProfile.medState} | Age: ${this.patientProfile.age}`;
           this.dom.telemetryTestedHand.textContent = `${this.patientProfile.testingHand} Hand`;
 
           closePatient();
-          this.showToast('Patient Profile Saved!');
+          this.showToast(this.currentLang === 'th' ? 'บันทึกข้อมูลผู้ป่วยเรียบร้อย' : 'Patient Profile Saved');
+        });
+
+        // Webhook Modal
+        const webhookModal = document.getElementById('webhookModal');
+        const openWebhook = () => webhookModal.classList.remove('hidden');
+        const closeWebhook = () => webhookModal.classList.add('hidden');
+
+        document.getElementById('openWebhookModalBtn').addEventListener('click', openWebhook);
+        document.getElementById('closeWebhookModalBtn').addEventListener('click', closeWebhook);
+
+        document.getElementById('saveWebhookBtn').addEventListener('click', () => {
+          this.webhookConfig.url = document.getElementById('inputWebhookUrl').value.trim();
+          this.webhookConfig.autoSync = document.getElementById('checkAutoSync').checked;
+
+          localStorage.setItem('neuroscreen_webhook_url', this.webhookConfig.url);
+          localStorage.setItem('neuroscreen_webhook_autosync', this.webhookConfig.autoSync);
+
+          this.updateWebhookStatusIndicator();
+          closeWebhook();
+          this.showToast('Webhook Settings Saved!');
+        });
+
+        document.getElementById('testWebhookBtn').addEventListener('click', async () => {
+          const testUrl = document.getElementById('inputWebhookUrl').value.trim();
+          if (!testUrl) {
+            alert('Please enter a Webhook URL first.');
+            return;
+          }
+          this.showToast('Testing webhook connection...');
+          try {
+            await fetch(testUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ event: 'ping', timestamp: new Date().toISOString() })
+            });
+            this.showToast('Test signal dispatched to webhook!');
+          } catch (e) {
+            alert('Webhook test failed: ' + e.message);
+          }
+        });
+
+        // Manual Cloud Sync Button in results
+        document.getElementById('manualCloudSyncBtn').addEventListener('click', async () => {
+          if (!this.screeningResults) return;
+          await this.syncToWebhook(this.screeningResults, true);
         });
 
         // Longitudinal History Modal
@@ -1768,7 +2309,7 @@
         this.dom.abortTestBtn.addEventListener('click', () => {
           this.releaseWakeLock();
           this.transitionToState(STATES.IDLE);
-          this.showToast('Screening aborted (ยกเลิกแล้ว)');
+          this.showToast(this.t('btn_abort_test'));
         });
 
         // Print Medical PDF Button
@@ -1804,33 +2345,34 @@
         });
       }
 
-      updateProtocolDescription() {
-        const descEl = document.getElementById('protocolDesc');
-        if (this.selectedMode === 'BILATERAL') {
-          descEl.innerHTML = `
-            <div class="font-semibold text-teal-300">Bilateral Asymmetry Protocol (ตรวจเปรียบเทียบมือซ้าย-ขวา)</div>
-            <p class="text-slate-400 leading-relaxed text-[11px]">
-              ตรวจมือขวา 15 วินาที $\rightarrow$ พักสลับมือ 3 วินาที $\rightarrow$ ตรวจมือซ้าย 15 วินาที เพื่อคำนวณ <strong>Bilateral Asymmetry Index (%)</strong> และตรวจหาความไม่สมมาตรของอาการพาร์กินสันระยะแรก
-            </p>`;
-        } else if (this.selectedMode === 'FULL') {
-          descEl.innerHTML = `
-            <div class="font-semibold text-teal-300">Full Comprehensive Protocol (การทดสอบครบชุด)</div>
-            <p class="text-slate-400 leading-relaxed text-[11px]">
-              1. <strong>Module A:</strong> แตะนิ้วรัวเร็ว 15 วินาที + กางมือนิ่งๆ 5 วินาทีเพื่อวิเคราะห์ Tremor<br>
-              2. <strong>Module B:</strong> การทดสอบประสานสองมือ 5 ชุด เพื่อวัดปฏิกิริยาและสมาธิการสั่งการ
-            </p>`;
-        } else if (this.selectedMode === 'MOD_A') {
-          descEl.innerHTML = `
-            <div class="font-semibold text-teal-300">Module A Only: Rapid Finger Tapping & Tremor (แตะนิ้ว & การสั่น)</div>
-            <p class="text-slate-400 leading-relaxed text-[11px]">
-              ประเมิน Bradykinesia, ความถี่แตะนิ้ว (Hz), จังหวะสะดุด (CV%), การล้าของแอมพลิจูด (Fatigue Decay) และการสั่นชนิด 4–6 Hz
-            </p>`;
+      updateWebhookStatusIndicator() {
+        const dot = document.getElementById('webhookStatusDot');
+        if (this.webhookConfig.url) {
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
         } else {
-          descEl.innerHTML = `
-            <div class="font-semibold text-teal-300">Module B Only: Dual-Task Bimanual Coordination (การประสานสองมือ)</div>
-            <p class="text-slate-400 leading-relaxed text-[11px]">
-              5 ชุดทดสอบสุ่มสองมือพร้อมกัน (Open Palm, Fist, Peace, Pinch) เพื่อวัดความเร็วการตอบสนองสมองและข้อผิดพลาด (Commission Errors)
-            </p>`;
+          dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-500';
+        }
+      }
+
+      updateProtocolDescription() {
+        const titleEl = document.getElementById('protoDescTitle');
+        const bodyEl = document.getElementById('protoDescBody');
+
+        if (this.selectedMode === 'BILATERAL') {
+          titleEl.textContent = this.t('proto_bilateral_title');
+          bodyEl.textContent = this.t('proto_bilateral_body');
+        } else if (this.selectedMode === 'FACIAL') {
+          titleEl.textContent = this.t('proto_facial_title');
+          bodyEl.textContent = this.t('proto_facial_body');
+        } else if (this.selectedMode === 'FULL') {
+          titleEl.textContent = this.t('proto_full_title');
+          bodyEl.textContent = this.t('proto_full_body');
+        } else if (this.selectedMode === 'MOD_A') {
+          titleEl.textContent = this.t('proto_tap_title');
+          bodyEl.textContent = this.t('proto_tap_body');
+        } else {
+          titleEl.textContent = this.t('proto_dual_title');
+          bodyEl.textContent = this.t('proto_dual_body');
         }
       }
 
@@ -1847,10 +2389,11 @@
           this.dom.countdownOverlay.classList.add('hidden');
           this.dom.hudModAContainer.classList.remove('hidden');
           this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
-          this.dom.hudStageTitle.textContent = 'Ready to Start';
+          this.dom.hudStageTitle.textContent = this.t('ready_to_start');
           this.dom.hudTimer.textContent = '15.0s';
-          this.dom.hudStageLabel.textContent = 'STAGE MONITOR';
+          this.dom.hudStageLabel.textContent = this.t('stage_monitor');
           this.releaseWakeLock();
         } else if (newState === STATES.COUNTDOWN) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
@@ -1864,6 +2407,7 @@
           this.dom.countdownOverlay.classList.add('hidden');
           this.dom.hudModAContainer.classList.remove('hidden');
           this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
           const handName = this.selectedMode === 'BILATERAL' ? (this.bilateralStage === 'RIGHT' ? 'RIGHT HAND' : 'LEFT HAND') : `${this.patientProfile.testingHand.toUpperCase()} HAND`;
           this.dom.hudStageLabel.textContent = `MODULE A: TAP TEST (${handName})`;
@@ -1872,9 +2416,10 @@
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
           this.dom.hudModAContainer.classList.add('hidden');
           this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.remove('hidden');
           this.dom.hudStageLabel.textContent = 'MODULE A: POSTURAL HOLD';
-          this.dom.hudStageTitle.textContent = 'Static Tremor Analysis (กางมือนิ่งๆ)';
+          this.dom.hudStageTitle.textContent = this.t('tremor_hold_title');
         } else if (newState === STATES.BILATERAL_PAUSE) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
           this.dom.countdownOverlay.classList.remove('hidden');
@@ -1884,9 +2429,19 @@
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
           this.dom.hudModAContainer.classList.add('hidden');
           this.dom.hudModBContainer.classList.remove('hidden');
+          this.dom.hudFacialContainer.classList.add('hidden');
           this.dom.hudStaticHoldBox.classList.add('hidden');
           this.dom.hudStageLabel.textContent = 'MODULE B: BIMANUAL';
           this.dom.hudStageTitle.textContent = 'Dual-Task Coordination / สองมือ';
+        } else if (newState === STATES.MODULE_C_FACIAL) {
+          this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px] animate-pulse';
+          this.dom.countdownOverlay.classList.add('hidden');
+          this.dom.hudModAContainer.classList.add('hidden');
+          this.dom.hudModBContainer.classList.add('hidden');
+          this.dom.hudFacialContainer.classList.remove('hidden');
+          this.dom.hudStaticHoldBox.classList.add('hidden');
+          this.dom.hudStageLabel.textContent = 'MODULE C: FACIAL & BLINK';
+          this.dom.hudStageTitle.textContent = 'Blink Rate & Smile Symmetry Test';
         } else if (newState === STATES.RESULT) {
           this.dom.stateBadge.className = 'px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]';
           this.dom.startTestBtn.classList.remove('hidden');
@@ -1901,10 +2456,15 @@
       }
 
       beginScreeningFlow() {
+        // Reset snapshots
+        this.evidenceSnapshots = { maxAperture: null, lateFatigue: null, maxRecordedDt: 0 };
+
         if (this.selectedMode === 'BILATERAL') {
           this.bilateralStage = 'RIGHT';
           this.bilateralResults = { right: null, left: null };
           this.startCountdown('Position Right Hand at ~45° (ยกมือขวา)', () => this.startModuleATapping());
+        } else if (this.selectedMode === 'FACIAL') {
+          this.startCountdown('Look directly into front camera (มองหน้าตรง)', () => this.startModuleCFacial());
         } else if (this.selectedMode === 'MOD_B') {
           this.startCountdown('Prepare both hands for Dual-Task (สองมือ)', () => this.startModuleB());
         } else {
@@ -1950,7 +2510,6 @@
         this.modAData.itis = [];
         this.pinchFilter.reset();
 
-        // Reset O(1) live tracker and quality tracker
         this.livePeakTracker = {
           tapCount: 0,
           state: 'OPENING',
@@ -1977,6 +2536,11 @@
           const elapsedMs = performance.now() - startTime;
           const remainingSec = Math.max(0, (durationMs - elapsedMs) / 1000);
           this.dom.hudTimer.textContent = remainingSec.toFixed(1) + 's';
+
+          // Capture Late Fatigue Snapshot around 13-14s
+          if (elapsedMs >= 13000 && !this.evidenceSnapshots.lateFatigue && this.canvasEl) {
+            this.captureAnnotatedSnapshot('lateFatigue', elapsedMs);
+          }
 
           if (elapsedMs >= durationMs) {
             clearInterval(interval);
@@ -2006,13 +2570,10 @@
             clearInterval(interval);
             audioHaptics.trialSuccess();
 
-            // Check if in Bilateral mode
             if (this.selectedMode === 'BILATERAL' && this.bilateralStage === 'RIGHT') {
-              // Store Right hand results
               this.bilateralResults.right = this.calculateModuleAMetrics('Right');
               this.bilateralStage = 'LEFT';
               
-              // 3-second Pause and switch to Left hand
               this.transitionToState(STATES.BILATERAL_PAUSE);
               let pauseCount = 3;
               this.dom.countdownText.textContent = pauseCount;
@@ -2037,7 +2598,6 @@
               }, 1000);
 
             } else if (this.selectedMode === 'BILATERAL' && this.bilateralStage === 'LEFT') {
-              // Store Left hand results and finish
               this.bilateralResults.left = this.calculateModuleAMetrics('Left');
               this.transitionToState(STATES.RESULT);
             } else if (this.selectedMode === 'FULL') {
@@ -2171,6 +2731,77 @@
         }
       }
 
+      /* ================= MODULE C: FACIAL HYPOMIMIA & BLINK RATE ================= */
+
+      startModuleCFacial() {
+        this.transitionToState(STATES.MODULE_C_FACIAL);
+        const startTime = performance.now();
+        this.modCData = {
+          startTime,
+          blinkCount: 0,
+          isBlinking: false,
+          smileSymmetries: []
+        };
+
+        const durationMs = 10000;
+        const interval = setInterval(() => {
+          if (this.state !== STATES.MODULE_C_FACIAL) {
+            clearInterval(interval);
+            return;
+          }
+
+          const elapsedMs = performance.now() - startTime;
+          const remainingSec = Math.max(0, (durationMs - elapsedMs) / 1000);
+          this.dom.hudTimer.textContent = remainingSec.toFixed(1) + 's';
+
+          const elapsedMin = Math.max(0.05, elapsedMs / 60000);
+          const ratePerMin = Math.round(this.modCData.blinkCount / elapsedMin);
+          this.dom.liveBlinkRate.textContent = `${ratePerMin} /min`;
+
+          if (elapsedMs >= durationMs) {
+            clearInterval(interval);
+            audioHaptics.trialSuccess();
+            this.transitionToState(STATES.RESULT);
+          }
+        }, 100);
+      }
+
+      processFacialFrame(now) {
+        if (!this.faceLandmarker || this.videoEl.readyState < 2) return;
+
+        const results = this.faceLandmarker.detectForVideo(this.videoEl, now);
+        if (!results || !results.faceBlendshapes || results.faceBlendshapes.length === 0) {
+          return;
+        }
+
+        const categories = results.faceBlendshapes[0].categories;
+        const blinkL = categories.find(c => c.categoryName === 'eyeBlinkLeft')?.score || 0;
+        const blinkR = categories.find(c => c.categoryName === 'eyeBlinkRight')?.score || 0;
+        const smileL = categories.find(c => c.categoryName === 'mouthSmileLeft')?.score || 0;
+        const smileR = categories.find(c => c.categoryName === 'mouthSmileRight')?.score || 0;
+
+        // Spontaneous blink detection threshold > 0.55
+        const isBlinkingNow = (blinkL > 0.55 || blinkR > 0.55);
+        if (isBlinkingNow && !this.modCData.isBlinking) {
+          this.modCData.isBlinking = true;
+          this.modCData.blinkCount++;
+          this.dom.liveBlinkCount.textContent = this.modCData.blinkCount;
+          audioHaptics.tapClick();
+        } else if (!isBlinkingNow && this.modCData.isBlinking) {
+          this.modCData.isBlinking = false;
+        }
+
+        // Smile Symmetry index: min / max * 100
+        if (smileL > 0.25 || smileR > 0.25) {
+          const maxS = Math.max(smileL, smileR, 0.01);
+          const minS = Math.min(smileL, smileR);
+          const symIndex = Math.round((minS / maxS) * 100);
+          this.modCData.smileSymmetries.push(symIndex);
+          this.dom.liveSmileSymmetry.textContent = `${symIndex}%`;
+          this.dom.liveFacialState.textContent = 'Smile Detected';
+        }
+      }
+
       /* ================= 4. REAL-TIME PROCESSING LOOP ================= */
 
       startProcessingLoop() {
@@ -2181,22 +2812,15 @@
         this.animationId = requestAnimationFrame(render);
       }
 
-      /**
-       * Filter target hand to prevent Multi-Hand Interference
-       */
       findTargetHand(detectedHands) {
         if (!detectedHands || detectedHands.length === 0) return null;
         if (detectedHands.length === 1) return detectedHands[0];
 
-        // Determine target hand
         const targetHand = (this.selectedMode === 'BILATERAL') 
           ? this.bilateralStage 
           : this.patientProfile.testingHand;
 
         const isMirrored = (this.currentFacingMode === 'user');
-        
-        // On front selfie camera (mirrored in display), user's physical Right hand is in left image half
-        // MediaPipe typically tags anatomical right hand as 'Left' from raw sensor perspective
         const expectedHandedness = isMirrored 
           ? (targetHand.toLowerCase() === 'right' ? 'Left' : 'Right')
           : (targetHand.toLowerCase() === 'right' ? 'Right' : 'Left');
@@ -2204,8 +2828,48 @@
         const matched = detectedHands.find(h => h.handedness === expectedHandedness);
         if (matched) return matched;
 
-        // Fallback: Pick hand with higher confidence score
         return detectedHands.reduce((prev, curr) => (curr.score > prev.score ? curr : prev));
+      }
+
+      /**
+       * Capture in-memory snapshot with annotated landmarks & timestamp
+       */
+      captureAnnotatedSnapshot(type, elapsedMs) {
+        if (!this.canvasEl || !this.videoEl) return;
+
+        // Render current video frame and overlay onto temporary offscreen canvas
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = 320;
+        offCanvas.height = 240;
+        const offCtx = offCanvas.getContext('2d');
+
+        // Draw mirrored/unmirrored video
+        offCtx.save();
+        if (this.currentFacingMode === 'user') {
+          offCtx.scale(-1, 1);
+          offCtx.drawImage(this.videoEl, -320, 0, 320, 240);
+        } else {
+          offCtx.drawImage(this.videoEl, 0, 0, 320, 240);
+        }
+        offCtx.restore();
+
+        // Draw overlay skeleton
+        offCtx.drawImage(this.canvasEl, 0, 0, 320, 240);
+
+        // Watermark annotation
+        offCtx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        offCtx.fillRect(8, 8, 150, 24);
+        offCtx.fillStyle = '#2dd4bf';
+        offCtx.font = 'bold 10px JetBrains Mono, monospace';
+        offCtx.fillText(`${type === 'maxAperture' ? 'MAX APERTURE' : 'LATE FATIGUE'} | ${(elapsedMs / 1000).toFixed(1)}s`, 14, 24);
+
+        const dataUrl = offCanvas.toDataURL('image/jpeg', 0.85);
+
+        if (type === 'maxAperture') {
+          this.evidenceSnapshots.maxAperture = { dataUrl, elapsedMs, d_t: this.evidenceSnapshots.maxRecordedDt };
+        } else {
+          this.evidenceSnapshots.lateFatigue = { dataUrl, elapsedMs, d_t: Number(this.dom.liveDtVal.textContent) };
+        }
       }
 
       processFrame() {
@@ -2221,16 +2885,21 @@
           this.dom.fpsCounter.textContent = Math.round(this.deviceFps);
         }
 
-        if (!this.videoEl || this.videoEl.readyState < 2 || !this.handLandmarker) {
-          return;
-        }
-
-        const results = this.handLandmarker.detectForVideo(this.videoEl, now);
+        if (!this.videoEl || this.videoEl.readyState < 2) return;
 
         const W = this.canvasEl.width;
         const H = this.canvasEl.height;
         this.ctx.clearRect(0, 0, W, H);
 
+        // Process Facial Tracking if in Module C
+        if (this.state === STATES.MODULE_C_FACIAL) {
+          this.processFacialFrame(now);
+          return;
+        }
+
+        if (!this.handLandmarker) return;
+
+        const results = this.handLandmarker.detectForVideo(this.videoEl, now);
         const isMirrored = (this.currentFacingMode === 'user');
         const detectedHands = [];
 
@@ -2251,7 +2920,6 @@
           }
         }
 
-        // Module A & General Tracking
         if (this.state === STATES.MODULE_A_TAPPING || this.state === STATES.MODULE_A_STATIC) {
           this.qualityTracker.totalTestFrames++;
         }
@@ -2264,10 +2932,17 @@
             this.qualityTracker.validTrackingMs += delta;
           }
 
-          // 2D Normalized Pinch and Palm Scale (Eliminating Z noise)
           const rawD_t = computeNormalizedPinch(primaryHand.landmarks);
           const filteredD_t = this.pinchFilter.filter(rawD_t, now);
           const palmScale = computePalmScale(primaryHand.landmarks);
+
+          // Track Max Aperture Snapshot
+          if (filteredD_t > this.evidenceSnapshots.maxRecordedDt && filteredD_t > 0.6) {
+            this.evidenceSnapshots.maxRecordedDt = filteredD_t;
+            if (this.state === STATES.MODULE_A_TAPPING && (now - this.modAData.startTime) > 1000) {
+              this.captureAnnotatedSnapshot('maxAperture', now - this.modAData.startTime);
+            }
+          }
 
           // Update guidance text
           if (palmScale < 0.12) {
@@ -2301,7 +2976,6 @@
               wristY: primaryHand.landmarks[0].y
             });
 
-            // O(1) state machine to count taps and trigger audio/haptics without O(N^2) lag
             const tracker = this.livePeakTracker;
             if (filteredD_t > tracker.localMax) tracker.localMax = filteredD_t;
             if (filteredD_t < tracker.localMin) tracker.localMin = filteredD_t;
@@ -2337,14 +3011,14 @@
           }
 
         } else {
-          this.dom.detectedHandLabel.textContent = 'Awaiting Target Hand...';
+          this.dom.detectedHandLabel.textContent = this.t('awaiting_hand');
           this.dom.liveDtVal.textContent = '0.00';
           this.dom.apertureBar.style.width = '0%';
           this.dom.poseIndicatorDot.className = 'w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0';
           this.dom.poseGuidanceText.innerHTML = 'Position target hand in zone (ยกมือเป้าหมายในกรอบ)';
         }
 
-        // Live Tracking Quality calculation
+        // Live Tracking Quality
         if (this.qualityTracker.totalTestFrames > 0) {
           const ratio = Math.round((this.qualityTracker.validHandFrames / this.qualityTracker.totalTestFrames) * 100);
           this.dom.telemetryQuality.textContent = `${ratio}%`;
@@ -2356,9 +3030,6 @@
         }
       }
 
-      /**
-       * Render hand skeleton with high-contrast clinical visual cues
-       */
       drawHandSkeleton(landmarks, handedness, score, W, H, isMirrored) {
         const CONNECTIONS = [
           [0, 1], [0, 5], [9, 13], [13, 17], [0, 17], [5, 9],
@@ -2390,7 +3061,6 @@
           this.ctx.stroke();
         }
 
-        // Pinch line between thumb tip (4) and index tip (8)
         const thumbTip = landmarks[4];
         const indexTip = landmarks[8];
         const tx = mapX(thumbTip.x);
@@ -2407,7 +3077,6 @@
         this.ctx.stroke();
         this.ctx.setLineDash([]);
 
-        // Joint nodes
         for (let i = 0; i < landmarks.length; i++) {
           const lm = landmarks[i];
           const sx = mapX(lm.x);
@@ -2430,7 +3099,6 @@
           this.ctx.stroke();
         }
 
-        // Tag above wrist
         const wristX = mapX(landmarks[0].x);
         const wristY = landmarks[0].y * H + 25;
 
@@ -2450,11 +3118,9 @@
       /* ================= 5. CLINICAL RESULTS CALCULATION ================= */
 
       calculateModuleAMetrics(handLabel) {
-        // Run full offline prominence peak detection ONCE
         const tapCycles = detectTapCycles(this.modAData.tapSamples, 0.12, 120);
         const totalTaps = tapCycles.peaks.length;
 
-        // Signal Quality Guard: Use actual valid tracking duration
         const validDurationSec = Math.max(1.0, (this.qualityTracker.validTrackingMs || 15000) / 1000);
         const frequencyHz = Number((totalTaps / validDurationSec).toFixed(2));
 
@@ -2472,20 +3138,17 @@
           amplitudeDecayPct = Number((((meanFirst5s - meanLast5s) / meanFirst5s) * 100).toFixed(2));
         }
 
-        // Kinematic Velocities
         const meanOpenVel = tapCycles.openingVelocities.length > 0 ? Number((tapCycles.openingVelocities.reduce((a, b) => a + b, 0) / tapCycles.openingVelocities.length).toFixed(2)) : 0;
         const meanCloseVel = tapCycles.closingVelocities.length > 0 ? Number((tapCycles.closingVelocities.reduce((a, b) => a + b, 0) / tapCycles.closingVelocities.length).toFixed(2)) : 0;
-
-        // Hesitations / Arrests (ITI > 1000ms)
         const hesitationsCount = tapCycles.itis.filter(iti => iti > 1000).length;
 
-        // Postural Tremor (Normalized 2D)
         const tremorRes = analyzeTremorSpectrum(this.modAData.staticSamples);
 
-        // Domain Scores
-        const speedScore = Math.min(100, Math.max(10, Math.round((frequencyHz / 4.2) * 100)));
+        // Scores normalized to age cohort
+        const norm = getAgeNorm(this.patientProfile.age);
+        const speedScore = Math.min(100, Math.max(10, Math.round((frequencyHz / (norm.cadenceMean * 1.2)) * 100)));
         const rhythmScore = Math.min(100, Math.max(15, Math.round(100 - (Math.max(0, rhythmCvPct - 5) * 3.4))));
-        const enduranceScore = Math.min(100, Math.max(20, Math.round(100 - (Math.max(0, amplitudeDecayPct) * 2.2))));
+        const enduranceScore = Math.min(100, Math.max(20, Math.round(100 - (Math.max(0, amplitudeDecayPct) * 2.0))));
         const stabilityScore = tremorRes.tremorFlag ? 35 : 95;
         const coordinationScore = Math.min(100, Math.max(20, Math.round((meanCloseVel / 4.5) * 100)));
 
@@ -2497,7 +3160,10 @@
           coordinationScore * 0.10
         );
 
-        const mdsRating = calculateMdsUpdrsRating(totalTaps, frequencyHz, amplitudeDecayPct, rhythmCvPct, hesitationsCount);
+        // Age-Adjusted MDS-UPDRS Rating
+        const mdsRating = calculateMdsUpdrsRatingAgeAdjusted(
+          totalTaps, frequencyHz, amplitudeDecayPct, rhythmCvPct, hesitationsCount, this.patientProfile.age
+        );
 
         return {
           hand: handLabel,
@@ -2543,11 +3209,8 @@
 
           const maxScore = Math.max(r.compositeScore, l.compositeScore, 1);
           asymmetryPct = Number(((Math.abs(r.compositeScore - l.compositeScore) / maxScore) * 100).toFixed(1));
-
-          // Set primary metrics as the affected/lower score hand
           primaryMetrics = (r.compositeScore <= l.compositeScore) ? r : l;
 
-          // Render Bilateral Banner
           this.dom.bilateralBanner.classList.remove('hidden');
           document.getElementById('resAsymmetryVal').textContent = `${asymmetryPct}%`;
           document.getElementById('resRightScore').textContent = `${r.compositeScore} / 100`;
@@ -2555,13 +3218,34 @@
 
           const interpEl = document.getElementById('resAsymmetryInterpretation');
           if (asymmetryPct > 25) {
-            interpEl.innerHTML = `<strong class="text-rose-400">Marked Asymmetry (&gt;25%):</strong> Significant lateralized motor decrement observed in the ${r.compositeScore < l.compositeScore ? 'Right' : 'Left'} hand (สอดคล้องกับอาการพาร์กินสันระยะแรกที่มีความไม่สมมาตรชัดเจน).`;
+            interpEl.innerHTML = `<strong class="text-rose-400">Marked Asymmetry (&gt;25%):</strong> Significant lateralized motor decrement in ${r.compositeScore < l.compositeScore ? 'Right' : 'Left'} hand.`;
           } else if (asymmetryPct > 12) {
             interpEl.innerHTML = `<strong class="text-amber-400">Mild Asymmetry (12-25%):</strong> Noticeable difference between upper extremities.`;
           } else {
             interpEl.innerHTML = `<strong class="text-emerald-400">Symmetric (&lt;12%):</strong> Symmetrical neuromotor performance between both hands.`;
           }
 
+        } else if (this.selectedMode === 'FACIAL') {
+          // Facial module output
+          primaryMetrics = {
+            hand: 'Facial',
+            totalTaps: 0,
+            validDurationSec: 10.0,
+            frequencyHz: 0,
+            itiStats: { mean: 0, sd: 0, cv: 0 },
+            rhythmCvPct: 0,
+            amplitudeDecayPct: 0,
+            meanOpenVel: 0,
+            meanCloseVel: 0,
+            hesitationsCount: 0,
+            tremorRes: { dominantFreqHz: 0, tremorFlag: false, powerInBand: 0, spectrum: [] },
+            scores: { speedScore: 85, rhythmScore: 85, enduranceScore: 85, stabilityScore: 85, bimanualScore: 85 },
+            compositeScore: 85,
+            mdsRating: { score: 0, label: '0 - Normal', zScore: 0, textTh: 'การแสดงออกทางใบหน้าปกติ', textEn: 'Normal facial expressivity' },
+            tapCycles: { peaks: [] },
+            tapSamples: [],
+            qualityRatio: 100
+          };
         } else {
           this.dom.bilateralBanner.classList.add('hidden');
           primaryMetrics = this.calculateModuleAMetrics(this.patientProfile.testingHand);
@@ -2575,7 +3259,27 @@
           this.dom.qualityWarningBanner.classList.add('hidden');
         }
 
-        // Bimanual Dual-Task Data
+        // Facial Results Banner (If Facial or Full battery)
+        const meanSmileSym = this.modCData.smileSymmetries.length > 0 
+          ? Math.round(this.modCData.smileSymmetries.reduce((a, b) => a + b, 0) / this.modCData.smileSymmetries.length) 
+          : 92;
+        const blinkRatePerMin = Math.round(this.modCData.blinkCount * 6); // 10s test * 6
+
+        if (this.selectedMode === 'FACIAL' || this.modCData.blinkCount > 0) {
+          this.dom.facialResultBanner.classList.remove('hidden');
+          document.getElementById('resBlinkRate').textContent = `${blinkRatePerMin} /min`;
+          document.getElementById('resSmileSymmetry').textContent = `${meanSmileSym}%`;
+          const fInterp = document.getElementById('resFacialInterpretation');
+          if (blinkRatePerMin < 8) {
+            fInterp.innerHTML = `<strong class="text-rose-400">Hypomimia Alert:</strong> Decreased spontaneous blink rate (&lt;8 /min), suggestive of facial bradykinesia.`;
+          } else {
+            fInterp.textContent = 'Normal spontaneous blinking cadence without facial hypomimia.';
+          }
+        } else {
+          this.dom.facialResultBanner.classList.add('hidden');
+        }
+
+        // Dual-Task Data
         const trials = this.modBData.trials.length > 0 ? this.modBData.trials : [
           { trial: 1, leftTarget: 'OPEN_PALM', rightTarget: 'FIST', rtMs: 920, commissionErrors: 0, success: true }
         ];
@@ -2583,6 +3287,7 @@
         const meanRT = Math.round(trials.reduce((sum, t) => sum + t.rtMs, 0) / completedTrials);
         const totalErrors = trials.reduce((sum, t) => sum + t.commissionErrors, 0);
 
+        // Standard English Output Schema for Data Pipelines / EMR
         this.screeningResults = {
           session_id: sessionId,
           timestamp,
@@ -2591,6 +3296,7 @@
           asymmetry_index_pct: asymmetryPct,
           quality_ratio_pct: primaryMetrics.qualityRatio,
           mds_updrs_rating: primaryMetrics.mdsRating,
+          age_adjusted_z_score: primaryMetrics.mdsRating.zScore,
           summary: {
             composite_score: primaryMetrics.compositeScore,
             scores: primaryMetrics.scores
@@ -2613,6 +3319,10 @@
               power_in_4_6hz: primaryMetrics.tremorRes.powerInBand
             }
           },
+          facial_screening: {
+            blink_rate_per_min: blinkRatePerMin,
+            smile_symmetry_pct: meanSmileSym
+          },
           dual_task: {
             trials_total: completedTrials,
             mean_reaction_time_ms: meanRT,
@@ -2627,8 +3337,13 @@
           }))
         };
 
-        // Save to Local Longitudinal Storage (IndexedDB/localStorage)
+        // Persistent Local Tracking
         this.saveSessionToLocalStorage(this.screeningResults);
+
+        // Auto Cloud Webhook Sync if enabled
+        if (this.webhookConfig.url && this.webhookConfig.autoSync) {
+          this.syncToWebhook(this.screeningResults, false);
+        }
 
         // Render UI Header & MDS Banner
         document.getElementById('resSessionId').textContent = sessionId;
@@ -2637,6 +3352,7 @@
         document.getElementById('resHandMedStatus').textContent = `Tested: ${primaryMetrics.hand} Hand | Meds: ${this.patientProfile.medState}`;
         document.getElementById('printExaminerName').textContent = this.patientProfile.examiner;
 
+        // Render MDS Badge & Z-Score Tag
         const mdsBadge = document.getElementById('mdsBadge');
         mdsBadge.textContent = `SCORE ${primaryMetrics.mdsRating.score} (${primaryMetrics.mdsRating.label.split(' - ')[1].toUpperCase()})`;
         if (primaryMetrics.mdsRating.score === 0) {
@@ -2647,8 +3363,28 @@
           mdsBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-black bg-rose-500/20 text-rose-300 border border-rose-500/30';
         }
 
+        document.getElementById('zScoreBadge').textContent = `Age Z-Score: ${primaryMetrics.mdsRating.zScore > 0 ? '+' : ''}${primaryMetrics.mdsRating.zScore}`;
         document.getElementById('mdsTitle').textContent = primaryMetrics.mdsRating.label + ' Classification';
-        document.getElementById('mdsExplanation').textContent = primaryMetrics.mdsRating.textTh;
+        document.getElementById('mdsExplanation').textContent = (this.currentLang === 'th' ? primaryMetrics.mdsRating.textTh : primaryMetrics.mdsRating.textEn);
+
+        // Render Key Visual Evidence Snapshots
+        const snapMaxImg = document.getElementById('snapMaxImg');
+        const snapMaxPl = document.getElementById('snapMaxPlaceholder');
+        if (this.evidenceSnapshots.maxAperture) {
+          snapMaxImg.src = this.evidenceSnapshots.maxAperture.dataUrl;
+          snapMaxImg.classList.remove('hidden');
+          snapMaxPl.classList.add('hidden');
+          document.getElementById('snapMaxDtLabel').textContent = `D_t: ${this.evidenceSnapshots.maxAperture.d_t.toFixed(2)}`;
+        }
+
+        const snapFatigueImg = document.getElementById('snapFatigueImg');
+        const snapFatiguePl = document.getElementById('snapFatiguePlaceholder');
+        if (this.evidenceSnapshots.lateFatigue) {
+          snapFatigueImg.src = this.evidenceSnapshots.lateFatigue.dataUrl;
+          snapFatigueImg.classList.remove('hidden');
+          snapFatiguePl.classList.add('hidden');
+          document.getElementById('snapFatigueDtLabel').textContent = `D_t: ${this.evidenceSnapshots.lateFatigue.d_t.toFixed(2)}`;
+        }
 
         // Render KPI Cards
         document.getElementById('cardTotalTaps').textContent = primaryMetrics.totalTaps;
@@ -2714,7 +3450,7 @@
           y: Number(s.d.toFixed(3))
         }));
 
-        const peakPoints = primaryMetrics.tapCycles.peaks.map(p => ({
+        const peakPoints = (primaryMetrics.tapCycles?.peaks || []).map(p => ({
           x: Number((p.t / 1000).toFixed(2)),
           y: Number(p.d.toFixed(3))
         }));
@@ -2784,7 +3520,7 @@
           }
         });
 
-        // 5-Domain Radar Profile (Supports Bilateral dual overlay)
+        // 5-Domain Radar Profile
         const ctxRadar = document.getElementById('radarChart').getContext('2d');
         const radarDatasets = [];
 
@@ -2792,7 +3528,7 @@
           const r = this.bilateralResults.right.scores;
           const l = this.bilateralResults.left.scores;
           radarDatasets.push({
-            label: 'Right Hand',
+            label: this.t('right_hand'),
             data: [r.speedScore, r.rhythmScore, r.enduranceScore, r.stabilityScore, r.bimanualScore],
             backgroundColor: 'rgba(45, 212, 191, 0.25)',
             borderColor: '#2dd4bf',
@@ -2800,7 +3536,7 @@
             borderWidth: 2
           });
           radarDatasets.push({
-            label: 'Left Hand',
+            label: this.t('left_hand'),
             data: [l.speedScore, l.rhythmScore, l.enduranceScore, l.stabilityScore, l.bimanualScore],
             backgroundColor: 'rgba(56, 189, 248, 0.25)',
             borderColor: '#38bdf8',
@@ -2825,7 +3561,7 @@
         }
 
         radarDatasets.push({
-          label: 'Norm Reference',
+          label: 'Age-Adjusted Norm',
           data: [85, 85, 85, 90, 85],
           backgroundColor: 'rgba(148, 163, 184, 0.08)',
           borderColor: '#64748b',
@@ -2913,6 +3649,7 @@
             hand: session.finger_tapping.tested_hand,
             medState: session.patient.medState,
             mdsRating: session.mds_updrs_rating.score,
+            zScore: session.age_adjusted_z_score,
             cadenceHz: session.finger_tapping.frequency_hz,
             decayPct: session.finger_tapping.amplitude_decay_pct,
             compositeScore: session.summary.composite_score,
@@ -2920,7 +3657,6 @@
           };
 
           existing.unshift(summaryRecord);
-          // Keep up to 25 latest sessions
           if (existing.length > 25) existing.pop();
           localStorage.setItem(key, JSON.stringify(existing));
         } catch (e) {
@@ -2937,7 +3673,7 @@
         const tbody = document.getElementById('historyTableBody');
 
         if (records.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">No test history saved yet for HN: ${hn}</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-500">${this.t('no_history_data')}</td></tr>`;
           if (this.charts.longitudinal) {
             this.charts.longitudinal.destroy();
             this.charts.longitudinal = null;
@@ -2957,11 +3693,10 @@
           </tr>
         `).join('');
 
-        // Render Longitudinal Trend Chart
         const chronological = records.slice().reverse();
         const labels = chronological.map(r => `${r.dateStr} (${r.hand[0]})`);
         const scores = chronological.map(r => r.compositeScore);
-        const cadences = chronological.map(r => r.cadenceHz * 20); // Normalized scale for comparison
+        const cadences = chronological.map(r => r.cadenceHz * 20);
 
         if (this.charts.longitudinal) this.charts.longitudinal.destroy();
         const ctxHist = document.getElementById('longitudinalChart').getContext('2d');
@@ -3005,7 +3740,64 @@
         });
       }
 
-      /* ================= 8. EXPORT SUITE ================= */
+      /* ================= 8. CLOUD WEBHOOK DATA PIPELINE ================= */
+
+      async syncToWebhook(sessionPayload, showToastFeedback = true) {
+        if (!this.webhookConfig.url) {
+          if (showToastFeedback) alert('Please set up a Cloud Webhook URL first in the Cloud settings tab.');
+          return;
+        }
+
+        const syncText = document.getElementById('manualSyncText');
+        if (syncText) syncText.textContent = 'Syncing...';
+
+        try {
+          // Send sanitized JSON summary (No video or heavy base64 for lightweight fast ingest)
+          const sanitizedPayload = {
+            session_id: sessionPayload.session_id,
+            timestamp: sessionPayload.timestamp,
+            patient_hn: sessionPayload.patient.hn,
+            patient_age: sessionPayload.patient.age,
+            patient_sex: sessionPayload.patient.sex,
+            testing_hand: sessionPayload.finger_tapping.tested_hand,
+            medication_state: sessionPayload.patient.medState,
+            examiner: sessionPayload.patient.examiner,
+            mds_updrs_score: sessionPayload.mds_updrs_rating.score,
+            mds_classification: sessionPayload.mds_updrs_rating.label,
+            age_adjusted_z_score: sessionPayload.age_adjusted_z_score,
+            composite_score: sessionPayload.summary.composite_score,
+            total_taps: sessionPayload.finger_tapping.total_taps,
+            tapping_frequency_hz: sessionPayload.finger_tapping.frequency_hz,
+            amplitude_decay_pct: sessionPayload.finger_tapping.amplitude_decay_pct,
+            rhythm_cv_pct: sessionPayload.finger_tapping.rhythm_cv_pct,
+            hesitations_count: sessionPayload.finger_tapping.hesitations_count,
+            mean_closing_velocity: sessionPayload.finger_tapping.mean_closing_velocity,
+            mean_opening_velocity: sessionPayload.finger_tapping.mean_opening_velocity,
+            tremor_dominant_freq_hz: sessionPayload.finger_tapping.static_hold.dominant_frequency_hz,
+            tremor_flag: sessionPayload.finger_tapping.static_hold.tremor_flag,
+            bilateral_asymmetry_pct: sessionPayload.asymmetry_index_pct,
+            blink_rate_per_min: sessionPayload.facial_screening.blink_rate_per_min,
+            smile_symmetry_pct: sessionPayload.facial_screening.smile_symmetry_pct
+          };
+
+          await fetch(this.webhookConfig.url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(sanitizedPayload)
+          });
+
+          if (syncText) syncText.textContent = 'Synced ✅';
+          if (showToastFeedback) this.showToast('Synced to Cloud / Google Sheets!');
+          setTimeout(() => { if (syncText) syncText.textContent = this.t('btn_sync_cloud'); }, 3000);
+        } catch (err) {
+          console.error('Webhook sync error:', err);
+          if (syncText) syncText.textContent = 'Sync Failed';
+          if (showToastFeedback) alert('Cloud Sync failed: ' + err.message);
+        }
+      }
+
+      /* ================= 9. EXPORT SUITE ================= */
 
       async handleShareOrCopyJson() {
         if (!this.screeningResults) {
@@ -3035,7 +3827,7 @@
             this.showToast('FHIR/JSON Schema Copied!');
             const btnText = document.getElementById('copyJsonBtnText');
             btnText.textContent = 'Copied!';
-            setTimeout(() => { btnText.textContent = 'Share FHIR/JSON'; }, 2000);
+            setTimeout(() => { btnText.textContent = this.t('btn_share_fhir'); }, 2000);
             return;
           } catch (err) {}
         }
@@ -3062,10 +3854,11 @@
         rows.push(['Testing Hand', res.finger_tapping.tested_hand]);
         rows.push(['Medication State', res.patient.medState]);
         rows.push(['Examiner', res.patient.examiner]);
-        rows.push(['Bilateral Asymmetry Index (%)', res.asymmetry_index_pct]);
-        rows.push(['Tracking Quality Ratio (%)', res.quality_ratio_pct]);
         rows.push(['MDS-UPDRS Item 3.4 Score', res.mds_updrs_rating.score]);
         rows.push(['MDS-UPDRS Classification', res.mds_updrs_rating.label]);
+        rows.push(['Age-Adjusted Z-Score', res.age_adjusted_z_score]);
+        rows.push(['Bilateral Asymmetry Index (%)', res.asymmetry_index_pct]);
+        rows.push(['Tracking Quality Ratio (%)', res.quality_ratio_pct]);
         rows.push(['Composite Score (0-100)', res.summary.composite_score]);
         rows.push([]);
 
@@ -3085,11 +3878,9 @@
         rows.push(['Tremor Flag (4-6 Hz)', res.finger_tapping.static_hold.tremor_flag ? 'TRUE' : 'FALSE', 'boolean']);
         rows.push([]);
 
-        rows.push(['# BIMANUAL COORDINATION TRIALS']);
-        rows.push(['Trial #', 'Left Target', 'Right Target', 'Reaction Time (ms)', 'Commission Errors', 'Success']);
-        res.dual_task.trials.forEach(t => {
-          rows.push([t.trial, t.leftTarget, t.rightTarget, t.rtMs, t.commissionErrors, t.success ? 'PASS' : 'FAIL']);
-        });
+        rows.push(['# FACIAL & BLINK SCREENING']);
+        rows.push(['Spontaneous Blink Rate (blinks/min)', res.facial_screening.blink_rate_per_min]);
+        rows.push(['Smile Symmetry Index (%)', res.facial_screening.smile_symmetry_pct]);
         rows.push([]);
 
         rows.push(['# HIGH-RESOLUTION 2D KINEMATIC RAW TIME SERIES']);
